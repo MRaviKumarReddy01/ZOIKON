@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Zoiko Mobile — AI Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#00C9A7;--teal-d:#00A88C;--teal-glow:rgba(0,201,167,.25);
+  --dark:#080E1C;--panel:#111827;--card:#1A2235;--border:rgba(0,201,167,.15);
+  --text:#E8EDF5;--muted:#6B7FA0;--red:#FF4757;--gold:#FFD700;
+  --font-h:'Syne',sans-serif;--font-b:'DM Sans',sans-serif;
+}
+body{font-family:var(--font-b);background:var(--dark);color:var(--text);min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 15% 5%,rgba(0,201,167,.1) 0%,transparent 55%),radial-gradient(ellipse 60% 60% at 85% 90%,rgba(0,201,167,.07) 0%,transparent 55%);}
+.grid{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(0,201,167,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,201,167,.03) 1px,transparent 1px);background-size:44px 44px}
+.widget{position:relative;z-index:10;width:430px;max-width:calc(100vw - 16px);height:700px;max-height:calc(100vh - 16px);display:flex;flex-direction:column;border-radius:26px;background:var(--panel);border:1px solid var(--border);box-shadow:0 0 0 1px rgba(0,201,167,.05),0 40px 80px rgba(0,0,0,.7),0 0 100px rgba(0,201,167,.07);overflow:hidden;animation:up .6s cubic-bezier(.22,1,.36,1) both}
+@keyframes up{from{opacity:0;transform:translateY(28px) scale(.96)}to{opacity:1;transform:none}}
+.hdr{background:linear-gradient(135deg,#0C1628,#0E1F30);border-bottom:1px solid var(--border);padding:14px 16px;flex-shrink:0}
+.hdr-top{display:flex;align-items:center;gap:12px}
+.avatar{width:44px;height:44px;border-radius:13px;background:#fff;padding:3px;flex-shrink:0;position:relative;box-shadow:0 0 18px var(--teal-glow)}
+.avatar img{width:100%;height:100%;object-fit:contain;border-radius:10px}
+.status-dot{position:absolute;bottom:1px;right:1px;width:11px;height:11px;border-radius:50%;background:#22d366;border:2px solid var(--panel);animation:blink 2.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.hdr-info{flex:1}
+.hdr-name{font-family:var(--font-h);font-weight:800;font-size:15px;letter-spacing:.01em}
+.hdr-sub{font-size:10px;color:var(--teal);background:rgba(0,201,167,.1);border:1px solid rgba(0,201,167,.2);border-radius:20px;padding:2px 8px;display:inline-block;margin-top:3px;font-weight:600;letter-spacing:.04em}
+.hdr-status{font-size:11.5px;color:var(--teal);display:flex;align-items:center;gap:5px;margin-top:2px}
+.hdr-actions{display:flex;gap:7px}
+.hbtn{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:.2s}
+.hbtn:hover{background:rgba(0,201,167,.12);color:var(--teal);border-color:var(--teal)}
+.hbtn.active{background:rgba(0,201,167,.15);color:var(--teal);border-color:var(--teal)}
+.agent-bar{background:linear-gradient(90deg,rgba(0,201,167,.08),rgba(0,201,167,.03));border-bottom:1px solid var(--border);padding:7px 16px;display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted);flex-shrink:0}
+.agent-bar span{color:var(--teal);font-weight:600}
+/* TOOL ACTIVITY BAR */
+.tool-bar{height:0;overflow:hidden;flex-shrink:0;transition:all .3s;background:rgba(0,201,167,.04);border-bottom:0px solid var(--border);display:flex;align-items:center;gap:8px;padding:0 16px;font-size:11.5px;color:var(--teal);font-weight:600}
+.tool-bar.on{height:36px;border-bottom-width:1px}
+.tool-spinner{width:12px;height:12px;border:2px solid rgba(0,201,167,.2);border-top-color:var(--teal);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.vbar-wrap{height:0;overflow:hidden;flex-shrink:0;transition:height .3s;background:rgba(0,201,167,.04);border-bottom:0px solid var(--border)}
+.vbar-wrap.on{height:52px;border-bottom-width:1px}
+.vbar-inner{height:52px;display:flex;align-items:center;justify-content:center;gap:3px}
+.vb{width:3.5px;border-radius:4px;background:var(--teal)}
+.vb:nth-child(1){animation:wav 1s .00s ease-in-out infinite;height:8px}
+.vb:nth-child(2){animation:wav 1s .08s ease-in-out infinite;height:16px}
+.vb:nth-child(3){animation:wav 1s .16s ease-in-out infinite;height:26px}
+.vb:nth-child(4){animation:wav 1s .12s ease-in-out infinite;height:32px}
+.vb:nth-child(5){animation:wav 1s .04s ease-in-out infinite;height:20px}
+.vb:nth-child(6){animation:wav 1s .20s ease-in-out infinite;height:28px}
+.vb:nth-child(7){animation:wav 1s .08s ease-in-out infinite;height:18px}
+.vb:nth-child(8){animation:wav 1s .16s ease-in-out infinite;height:24px}
+.vb:nth-child(9){animation:wav 1s .24s ease-in-out infinite;height:12px}
+.vb:nth-child(10){animation:wav 1s .04s ease-in-out infinite;height:20px}
+.vb:nth-child(11){animation:wav 1s .12s ease-in-out infinite;height:30px}
+.vb:nth-child(12){animation:wav 1s .20s ease-in-out infinite;height:10px}
+@keyframes wav{0%,100%{transform:scaleY(1);opacity:.6}50%{transform:scaleY(2.4);opacity:1}}
+.vlabel{font-size:11px;color:var(--teal);font-family:var(--font-h);font-weight:700;letter-spacing:.06em;margin-left:14px}
+.msgs{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.msgs::-webkit-scrollbar{width:3px}
+.msgs::-webkit-scrollbar-thumb{background:rgba(0,201,167,.18);border-radius:4px}
+.welcome{text-align:center;padding:8px 0 2px;animation:fade .5s ease}
+.wlogo img{height:46px;width:auto;object-fit:contain}
+.wsub{font-size:12px;color:var(--muted);margin-top:6px}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:4px 0}
+.chip{padding:6px 12px;border-radius:20px;font-size:11.5px;border:1px solid var(--border);background:rgba(0,201,167,.06);color:var(--teal);cursor:pointer;transition:.2s;white-space:nowrap;font-family:var(--font-b)}
+.chip:hover{background:rgba(0,201,167,.18);border-color:var(--teal);transform:translateY(-1px)}
+.msg{display:flex;gap:9px;align-items:flex-end;animation:msgIn .32s cubic-bezier(.22,1,.36,1) both;max-width:90%}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg.user{flex-direction:row-reverse;align-self:flex-end}
+.msg.bot{align-self:flex-start}
+.mava{width:28px;height:28px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.msg.bot .mava{background:#fff;padding:2px}
+.msg.user .mava{background:linear-gradient(135deg,#1E2B40,#2A3A54);font-size:13px}
+.mava img{width:100%;height:100%;object-fit:contain}
+.bubble{padding:10px 14px;border-radius:16px;font-size:13.5px;line-height:1.6;max-width:100%}
+.msg.user .bubble{background:var(--teal);color:#001510;border-bottom-right-radius:4px;font-weight:500}
+.msg.bot .bubble{background:var(--card);border:1px solid var(--border);border-bottom-left-radius:4px}
+/* TOOL BADGE on messages */
+.tool-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--teal);background:rgba(0,201,167,.08);border:1px solid rgba(0,201,167,.2);border-radius:20px;padding:2px 8px;margin-bottom:6px;font-weight:600}
+.dots{display:flex;gap:4px;padding:4px 0}
+.dots span{width:7px;height:7px;border-radius:50%;background:var(--teal);opacity:.5;animation:dotB 1.2s ease infinite}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes dotB{0%,60%,100%{transform:none;opacity:.5}30%{transform:translateY(-6px);opacity:1}}
+.reactions{display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap}
+.react-btn{background:none;border:none;cursor:pointer;font-size:12px;color:var(--muted);padding:2px 6px;border-radius:8px;transition:.2s;display:flex;align-items:center;gap:3px;border:1px solid transparent}
+.react-btn:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.react-btn.liked{color:#22d366;border-color:rgba(34,211,102,.25);background:rgba(34,211,102,.07)}
+.react-btn.disliked{color:var(--red);border-color:rgba(255,71,87,.25);background:rgba(255,71,87,.07)}
+.speak-btn{background:none;border:none;cursor:pointer;font-size:11px;color:var(--muted);transition:.2s;display:flex;align-items:center;gap:3px;padding:2px 6px;border-radius:8px;border:1px solid transparent}
+.speak-btn:hover{color:var(--teal);background:rgba(0,201,167,.08)}
+.speak-btn.on{color:var(--teal);animation:spk 1s infinite}
+@keyframes spk{0%,100%{opacity:1}50%{opacity:.4}}
+.copy-btn{background:none;border:1px solid transparent;cursor:pointer;font-size:11px;color:var(--muted);transition:.2s;display:flex;align-items:center;gap:3px;padding:2px 6px;border-radius:8px}
+.copy-btn:hover{color:var(--text);background:rgba(255,255,255,.06)}
+.copy-btn.done{color:var(--teal)}
+.sat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-top:6px;animation:fade .4s ease}
+.sat-title{font-size:12px;color:var(--muted);margin-bottom:8px}
+.sat-stars{display:flex;gap:6px}
+.star{font-size:22px;cursor:pointer;transition:.15s;filter:grayscale(1) opacity(.4)}
+.star:hover,.star.sel{filter:none;transform:scale(1.2)}
+.sat-thanks{font-size:12px;color:var(--teal);margin-top:6px;font-weight:600}
+.esc-card{background:linear-gradient(135deg,rgba(255,71,87,.08),rgba(255,71,87,.04));border:1px solid rgba(255,71,87,.2);border-radius:14px;padding:12px 14px;margin-top:6px}
+.esc-title{font-size:12px;font-weight:700;color:var(--red);margin-bottom:6px}
+.esc-form input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:7px 10px;font-size:12px;color:var(--text);margin-bottom:6px;font-family:var(--font-b);outline:none}
+.esc-form input:focus{border-color:rgba(255,71,87,.4)}
+.esc-form input::placeholder{color:var(--muted)}
+.esc-submit{width:100%;padding:8px;border-radius:8px;border:none;background:var(--red);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font-b);transition:.2s}
+.esc-submit:hover{background:#e03e4d}
+.suggestions{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.sug{padding:5px 11px;border-radius:14px;font-size:11.5px;border:1px solid var(--border);background:rgba(0,201,167,.05);color:var(--teal);cursor:pointer;transition:.2s}
+.sug:hover{background:rgba(0,201,167,.15);border-color:var(--teal)}
+.input-area{padding:12px 12px 14px;border-top:1px solid var(--border);background:var(--panel);flex-shrink:0}
+.input-row{display:flex;gap:8px;align-items:flex-end}
+.txt{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:10px 14px;font-family:var(--font-b);font-size:13.5px;color:var(--text);outline:none;resize:none;max-height:100px;transition:.2s;line-height:1.5}
+.txt::placeholder{color:var(--muted)}
+.txt:focus{border-color:rgba(0,201,167,.45);box-shadow:0 0 0 3px rgba(0,201,167,.07)}
+.ibtn{width:42px;height:42px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;transition:.2s;flex-shrink:0}
+.ibtn:hover{background:rgba(0,201,167,.1);color:var(--teal);border-color:var(--teal)}
+.send{width:42px;height:42px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#001510;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 4px 14px rgba(0,201,167,.3);transition:.2s}
+.send:hover{transform:scale(1.06);box-shadow:0 6px 20px rgba(0,201,167,.45)}
+.send:active{transform:scale(.96)}
+.send:disabled{opacity:.5;cursor:default;transform:none}
+.mic-on{background:rgba(255,71,87,.15)!important;border-color:var(--red)!important;color:var(--red)!important;animation:micP 1s infinite}
+@keyframes micP{0%,100%{box-shadow:0 0 0 0 rgba(255,71,87,.3)}50%{box-shadow:0 0 0 8px rgba(255,71,87,0)}}
+.hint{font-size:10.5px;color:var(--muted);text-align:center;margin-top:7px;display:flex;align-items:center;justify-content:center;gap:6px}
+.hint kbd{padding:1px 5px;border-radius:4px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);font-family:monospace;font-size:9.5px}
+.char-count{font-size:10px;color:var(--muted);text-align:right;margin-top:3px}
+.char-count.warn{color:#FFB347}
+.char-count.over{color:var(--red)}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:30px;padding:9px 18px;font-size:12.5px;color:var(--text);z-index:9999;white-space:nowrap;box-shadow:0 8px 30px rgba(0,0,0,.5);animation:tIn .3s cubic-bezier(.22,1,.36,1) both}
+@keyframes tIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes tOut{from{opacity:1;transform:translateX(-50%) translateY(0)}to{opacity:0;transform:translateX(-50%) translateY(-8px)}}
+.perm-ov{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:20px;animation:fade .2s ease}
+.perm-box{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:26px 22px;max-width:330px;width:100%;animation:up .3s cubic-bezier(.22,1,.36,1)}
+.perm-ico{font-size:38px;text-align:center;margin-bottom:12px}
+.perm-ttl{font-family:var(--font-h);font-weight:700;font-size:16px;text-align:center;margin-bottom:7px}
+.perm-desc{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:16px}
+.perm-steps{background:rgba(255,255,255,.03);border-radius:11px;padding:12px 14px;margin-bottom:16px;border:1px solid var(--border)}
+.pstep{font-size:12px;display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;line-height:1.5}
+.pstep:last-child{margin-bottom:0}
+.pnum{width:18px;height:18px;border-radius:50%;background:var(--teal);color:#001510;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pbtns{display:flex;gap:8px}
+.pbtn{flex:1;padding:10px;border-radius:11px;font-size:12.5px;font-family:var(--font-b);cursor:pointer;transition:.2s;border:1px solid var(--border);font-weight:500}
+.pbtn.pri{background:var(--teal);color:#001510;border-color:var(--teal)}
+.pbtn.pri:hover{background:var(--teal-d)}
+.pbtn.sec{background:transparent;color:var(--muted)}
+.pbtn.sec:hover{color:var(--text)}
+.hist-modal-ov{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:20px;animation:fade .2s ease}
+.hist-modal-box{background:var(--panel);border:1px solid var(--border);border-radius:20px;width:100%;max-width:420px;max-height:70vh;display:flex;flex-direction:column;animation:up .3s cubic-bezier(.22,1,.36,1)}
+.hist-modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border);flex-shrink:0}
+.hist-modal-body{overflow-y:auto;padding:12px 14px;flex:1}
+.hist-modal-body::-webkit-scrollbar{width:3px}
+.hist-modal-body::-webkit-scrollbar-thumb{background:rgba(0,201,167,.18);border-radius:4px}
+.hist-item{margin:8px 0;border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:rgba(255,255,255,.02)}
+.hist-item summary{cursor:pointer;font-weight:600;color:var(--teal);font-size:12px;list-style:none}
+.hist-item summary::before{content:'▶ ';font-size:10px}
+.hist-item[open] summary::before{content:'▼ '}
+@media(max-width:600px){
+  body{align-items:flex-end;justify-content:center;padding:0}
+  .widget{border-radius:22px 22px 0 0;width:100vw;max-width:100vw;height:93dvh;max-height:93dvh;box-shadow:0 -10px 50px rgba(0,0,0,.65)}
+  .hdr{padding:10px 12px}
+  .avatar{width:38px;height:38px;border-radius:10px}
+  .hdr-name{font-size:13.5px}
+  .hdr-status{font-size:10.5px}
+  .hbtn{width:30px;height:30px;font-size:13px}
+  .msgs{padding:12px 10px;gap:8px}
+  .bubble{font-size:13px;padding:9px 12px}
+  .chip{font-size:11px;padding:5px 10px}
+  .txt{font-size:13px}
+  .ibtn,.send{width:40px;height:40px}
+  .hint{display:none}
+  .agent-bar{font-size:10.5px;padding:5px 12px}
+  .wlogo img{height:38px}
+  .wsub{font-size:11px}
+  .hist-modal-ov{align-items:flex-end;padding:0}
+  .hist-modal-box{max-width:100%;max-height:80vh;border-radius:16px 16px 0 0}
+  .input-area{padding:10px 10px 18px}
+}
+@media(min-width:601px) and (max-width:1024px){
+  body{align-items:center;justify-content:center;padding:24px}
+  .widget{width:min(600px, calc(100vw - 48px));height:min(820px, calc(100vh - 48px));border-radius:28px}
+  .hdr{padding:16px 20px}
+  .avatar{width:50px;height:50px;border-radius:14px}
+  .hdr-name{font-size:16.5px}
+  .msgs{padding:20px 18px;gap:12px}
+  .bubble{font-size:14.5px;padding:12px 17px;line-height:1.65}
+  .chip{font-size:12.5px;padding:7px 14px}
+  .txt{font-size:14.5px;padding:11px 16px}
+  .ibtn,.send{width:46px;height:46px;font-size:18px}
+  .wlogo img{height:52px}
+  .agent-bar{font-size:12px;padding:8px 20px}
+  .input-area{padding:14px 16px 18px}
+}
+@media(min-width:1025px){
+  body{align-items:center;justify-content:center;padding:32px}
+  .widget{width:480px;height:min(780px, calc(100vh - 64px));border-radius:28px}
+  .hdr{padding:16px 20px}
+  .avatar{width:48px;height:48px;border-radius:13px}
+  .msgs{padding:18px 16px;gap:11px}
+  .bubble{font-size:14px;padding:11px 15px;line-height:1.62}
+  .txt{font-size:14px}
+  .ibtn,.send{width:44px;height:44px}
+  .wlogo img{height:50px}
+  .agent-bar{font-size:12px;padding:8px 20px}
+  .input-area{padding:13px 14px 16px}
+}
+@media(min-width:1440px){
+  .widget{width:520px;height:min(840px, calc(100vh - 80px))}
+  .bubble{font-size:14.5px}
+  .hdr-name{font-size:16px}
+}
+</style>
+</head>
+<body>
+<div class="bg"></div><div class="grid"></div>
+<div class="widget" id="widget">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="avatar">
+      <img src="data:image/png;base64,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" alt="Zoikon"/>
+      <div class="status-dot"></div>
+    </div>
+    <div class="hdr-info">
+      <div class="hdr-name">Zoikon</div>
+      <div class="hdr-sub">⚡ AGENTIC AI</div>
+    </div>
+    <div class="hdr-actions">
+      <button class="hbtn" id="muteBtn" title="Toggle voice">🔊</button>
+      <button class="hbtn" id="histBtn" title="Chat history">📋</button>
+      <button class="hbtn" id="clearBtn" title="New chat">✏️</button>
+    </div>
+  </div>
+</div>
+
+<!-- AGENT BAR -->
+<div class="agent-bar">🤖 Agentic AI &nbsp;·&nbsp; Tools: <span>8 active</span> &nbsp;·&nbsp; <span id="sessionTime">Session: 0m</span></div>
+
+<!-- TOOL ACTIVITY BAR -->
+<div class="tool-bar" id="toolBar">
+  <div class="tool-spinner"></div>
+  <span id="toolLabel">Processing...</span>
+</div>
+
+<!-- VOICE VISUALIZER -->
+<div class="vbar-wrap" id="vbarWrap">
+  <div class="vbar-inner">
+    <div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div>
+    <div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div>
+    <div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div>
+    <span class="vlabel" id="vlabel">Listening...</span>
+  </div>
+</div>
+
+<!-- MESSAGES -->
+<div class="msgs" id="msgs">
+  <div class="welcome" id="welcome">
+    <div class="wlogo"><img src="data:image/png;base64,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" alt="Zoikon"/></div>
+    <div class="wsub">Zoiko Mobile Agentic AI — Powered by 8 live tools</div>
+  </div>
+  <div class="chips" id="chips">
+    <div class="chip" onclick="quick('📱 View all plans')">📱 View Plans</div>
+    <div class="chip" onclick="quick('How do I activate my SIM?')">🔌 Activate SIM</div>
+    <div class="chip" onclick="quick('Tell me about family plans')">👨‍👩‍👧 Family Plans</div>
+    <div class="chip" onclick="quick('Which countries can I call free?')">🌍 Intl Calling</div>
+    <div class="chip" onclick="quick('I need help with my account')">🛠️ Support</div>
+    <div class="chip" onclick="quick('What current deals do you have?')">🎉 Deals</div>
+  </div>
+</div>
+
+<!-- INPUT -->
+<div class="input-area">
+  <div class="input-row">
+    <button class="ibtn" id="micBtn" title="Click to speak">🎤</button>
+    <textarea class="txt" id="txt" placeholder="Ask anything — I have live tools to help you..." rows="1"></textarea>
+    <button class="send" id="sendBtn" title="Send">➤</button>
+  </div>
+  <div class="char-count" id="charCount"></div>
+  <div class="hint">
+    <span><kbd>Enter</kbd> send &nbsp;·&nbsp; <kbd>Shift+Enter</kbd> new line &nbsp;·&nbsp; 🎤 voice</span>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  🔑  API KEY — get one free at console.anthropic.com
+// ══════════════════════════════════════════════
+const API_KEY = 'YOUR_API_KEY_HERE';
+
+const LOGO = "data:image/png;base64,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";
+
+// ══════════════════════════════════════════════
+//  AGENTIC SYSTEM PROMPT
+// ══════════════════════════════════════════════
+const SYSTEM = `You are Zoikon, Zoiko Mobile's agentic AI support agent. You're warm, conversational, and sound like a real caring human — not a robot. You have access to 8 live tools and MUST use them to give accurate, specific answers.
+
+PERSONALITY:
+- Sound like a real person: use contractions, natural language, show genuine curiosity about the customer's situation.
+- Match their energy — if they're excited, be excited. If they're frustrated, be calm and empathetic.
+- Never sound scripted or generic. Every response should feel personal.
+- Use emojis naturally, not excessively.
+- Keep responses focused (2-5 sentences for simple queries, more when needed for complex ones).
+
+TOOL USAGE — THIS IS CRITICAL:
+- Customer asks about a plan → ALWAYS call get_plan_details first, then respond with real data
+- Customer mentions their phone model → call check_device_compatibility  
+- Customer mentions their current bill or number of lines → call calculate_family_savings
+- Customer asks about deals or promotions → call get_active_promotions
+- Customer asks about coverage or network → call check_coverage
+- Customer wants a callback or to talk to someone → call create_callback_request
+- Customer asks to compare two plans → call compare_plans
+- Customer mentions a city/state for office → call find_nearest_office
+- You may chain multiple tool calls in a single turn if needed
+- NEVER give plan prices or details from memory — always use get_plan_details to get accurate data
+
+CONVERSATION FLOW:
+1. Greetings → be warm and welcoming, invite them to share their situation
+2. Plan questions → use tool, then explain in human terms what makes it great for them
+3. Complaints → "I'm really sorry about that, let me make this right" then solve it
+4. "Talk to human" or callback request → ask for name + phone + issue, then call create_callback_request
+5. After helping → "Is there anything else I can help you with today? 😊"
+6. Every 5 messages → offer a satisfaction rating
+
+ZOIKO BASICS:
+- Plans from $15/mo, no credit check, no hidden fees, no activation fees
+- Network: T-Mobile 5G + 4G LTE nationwide
+- Support: 800-988-8116 | support@zoikomobile.com | available 24/7
+- Website: zoikomobile.com`;
+
+// ══════════════════════════════════════════════
+//  TOOL DEFINITIONS
+// ══════════════════════════════════════════════
+const TOOLS = [
+  {
+    name: "get_plan_details",
+    description: "Fetch detailed pricing and features for a specific Zoiko Mobile plan. Always use this when a customer asks about any plan — never rely on memory for prices.",
+    input_schema: {
+      type: "object",
+      properties: {
+        plan_name: { type: "string", description: "Plan name: 'Zoiko Flex', 'Zoiko Core', 'Zoiko Max', 'Zoiko Infinity', 'Zoiko Supreme Unlimited', 'BYOD Starter', 'Zoiko Lite'" },
+        plan_type: { type: "string", enum: ["prepaid","postpaid","any"], description: "Filter by type" }
+      },
+      required: ["plan_name"]
+    }
+  },
+  {
+    name: "check_device_compatibility",
+    description: "Check if a customer's phone is compatible with Zoiko Mobile's network. Use when customer mentions a device model or asks about BYOD.",
+    input_schema: {
+      type: "object",
+      properties: {
+        device: { type: "string", description: "Phone model e.g. 'iPhone 15 Pro', 'Samsung Galaxy S24', 'Google Pixel 8'" }
+      },
+      required: ["device"]
+    }
+  },
+  {
+    name: "calculate_family_savings",
+    description: "Calculate how much a customer saves by switching to Zoiko's family plan. Use when they mention their current bill or number of lines.",
+    input_schema: {
+      type: "object",
+      properties: {
+        num_lines: { type: "number", description: "Number of lines needed" },
+        current_monthly_bill: { type: "number", description: "Current monthly bill in USD (optional)" },
+        preferred_plan: { type: "string", description: "Preferred plan if mentioned" }
+      },
+      required: ["num_lines"]
+    }
+  },
+  {
+    name: "find_nearest_office",
+    description: "Find the nearest Zoiko Mobile office based on customer location.",
+    input_schema: {
+      type: "object",
+      properties: {
+        location: { type: "string", description: "Customer's city or state" }
+      },
+      required: ["location"]
+    }
+  },
+  {
+    name: "get_active_promotions",
+    description: "Get all current active deals, promotions, and special offers at Zoiko Mobile.",
+    input_schema: { type: "object", properties: {} }
+  },
+  {
+    name: "create_callback_request",
+    description: "Create a support callback ticket for a customer who wants to speak with a live agent. Collect their name, phone, and issue first.",
+    input_schema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Customer's full name" },
+        phone: { type: "string", description: "Customer's phone number" },
+        issue: { type: "string", description: "Description of their issue" },
+        priority: { type: "string", enum: ["normal","urgent"], description: "Priority level" }
+      },
+      required: ["name","phone","issue"]
+    }
+  },
+  {
+    name: "check_coverage",
+    description: "Check Zoiko Mobile network coverage quality for a specific location.",
+    input_schema: {
+      type: "object",
+      properties: {
+        location: { type: "string", description: "City, state, or zip code" }
+      },
+      required: ["location"]
+    }
+  },
+  {
+    name: "compare_plans",
+    description: "Compare two Zoiko Mobile plans side by side. Use when a customer is deciding between plans.",
+    input_schema: {
+      type: "object",
+      properties: {
+        plan_a: { type: "string", description: "First plan name" },
+        plan_b: { type: "string", description: "Second plan name" }
+      },
+      required: ["plan_a","plan_b"]
+    }
+  }
+];
+
+// ══════════════════════════════════════════════
+//  PLAN DATABASE (ground truth data)
+// ══════════════════════════════════════════════
+const PLANS = {
+  "zoiko flex":             { name:"Zoiko Flex",             type:"prepaid",  price:15, data:"4GB",                 hotspot:"1GB",  talk:"1,500 min", texts:"10,000", countries:"70+",  esim:true, throttle:true,  perks:["No credit check","No hidden fees","Free Wi-Fi Calling","Free Canada & Mexico roaming","eSIM instant activation"] },
+  "zoiko core":             { name:"Zoiko Core",             type:"both",     price:25, price_post:30, data:"5GB",  hotspot:"inc.", talk:"2,000 min", texts:"20,000", countries:"100+", esim:true, throttle:false, perks:["No credit check","No hidden fees","Priority support","Free Wi-Fi Calling","Free Canada & Mexico roaming","eSIM"] },
+  "zoiko max":              { name:"Zoiko Max",              type:"both",     price:40, price_post:45, data:"20GB", hotspot:"inc.", talk:"Unlimited",  texts:"Unlim.", countries:"150+", esim:true, throttle:true,  perks:["No credit check","No hidden fees","T-Mobile 5G","Free Wi-Fi Calling","Free Canada & Mexico roaming","Speeds may reduce after 20GB"] },
+  "zoiko infinity":         { name:"Zoiko Infinity",         type:"postpaid", price:55, data:"Unlimited (ZERO throttle)", hotspot:"inc.", talk:"Unlimited", texts:"Unlim.", countries:"150+", esim:true, throttle:false, perks:["ZERO throttling ever","VIP priority support","Device financing","Free Wi-Fi Calling","Free Canada & Mexico roaming"] },
+  "zoiko supreme unlimited":{ name:"Zoiko Supreme Unlimited",type:"postpaid", price:65, data:"35GB priority + truly unlimited", hotspot:"20GB", talk:"3,000 min", texts:"35,000", countries:"200+", esim:true, throttle:false, perks:["35GB priority data","20GB hotspot","VIP support","Device financing","200+ countries","No throttling ever"] },
+  "byod starter":           { name:"BYOD Starter",           type:"prepaid",  price:15, data:"4GB",  hotspot:"1GB",  talk:"Unlimited", texts:"Unlim.", countries:"70+",  esim:true, throttle:true,  perks:["Bring your own device","Keep your number free","IMEI check at zoikomobile.com/byod-plans/","Instant activation"] },
+  "zoiko lite":             { name:"Zoiko Lite",             type:"postpaid", price:20, data:"Basic",hotspot:"inc.", talk:"Unlimited", texts:"Unlim.", countries:"50+",  esim:true, throttle:false, perks:["Light use plan","No credit check","International calling","Best for occasional users or backup lines"] }
+};
+
+// ══════════════════════════════════════════════
+//  TOOL EXECUTORS
+// ══════════════════════════════════════════════
+function executeTool(name, input) {
+  switch (name) {
+
+    case 'get_plan_details': {
+      const key = (input.plan_name||'').toLowerCase().trim();
+      let plan = PLANS[key];
+      if (!plan) {
+        // fuzzy match
+        const match = Object.keys(PLANS).find(k => k.includes(key.split(' ').slice(-1)[0]) || key.includes(k.split(' ').slice(-1)[0]));
+        plan = match ? PLANS[match] : null;
+      }
+      if (!plan) return { success:false, error:"Plan not found", available: Object.values(PLANS).map(p=>p.name) };
+      return { success:true, plan };
+    }
+
+    case 'check_device_compatibility': {
+      const d = (input.device||'').toLowerCase();
+      const brands5G = ['iphone 12','iphone 13','iphone 14','iphone 15','s21','s22','s23','s24','pixel 6','pixel 7','pixel 8','oneplus 9','oneplus 10','oneplus 11'];
+      const compatible = ['iphone','samsung','galaxy','google','pixel','oneplus','motorola','moto','nokia','sony','xiaomi','lg'].some(b => d.includes(b));
+      const is5G = brands5G.some(m => d.includes(m));
+      return {
+        success: true, device: input.device, compatible, fiveG: is5G,
+        network: "T-Mobile 5G + 4G LTE",
+        message: compatible
+          ? `✅ ${input.device} is compatible with Zoiko Mobile! ${is5G ? "It supports 5G — you'll get blazing fast speeds on our T-Mobile network." : "It'll run on our 4G LTE network smoothly."} Bring it over at zoikomobile.com/byod-plans/`
+          : `Please ensure your device is unlocked (GSM compatible). Check at zoikomobile.com/byod-plans/ — most unlocked phones work!`,
+        check_url: "zoikomobile.com/byod-plans/"
+      };
+    }
+
+    case 'calculate_family_savings': {
+      const lines = Number(input.num_lines) || 2;
+      const bill = Number(input.current_monthly_bill) || 0;
+      const basePerLine = 25; // Zoiko Core
+      const discounted = lines >= 3 ? basePerLine * 0.80 : basePerLine;
+      const total = +(discounted * lines).toFixed(2);
+      const monthly = bill > 0 ? +(bill - total).toFixed(2) : null;
+      const annual = monthly ? +(monthly * 12).toFixed(2) : null;
+      return {
+        success:true, lines, zoiko_total: total, per_line: +discounted.toFixed(2),
+        discount_applied: lines >= 3, discount: lines >= 3 ? "20%" : "0%",
+        monthly_savings: monthly, annual_savings: annual,
+        recommendation: lines >= 3 ? "Zoiko Core Family Plan" : "Zoiko Core",
+        note: lines >= 3 ? `With ${lines} lines you unlock 20% family discount — saving $${+(basePerLine * 0.20 * lines).toFixed(2)}/mo vs individual lines!` : `Add ${3-lines} more line${3-lines>1?'s':''} to unlock our 20% family discount!`
+      };
+    }
+
+    case 'find_nearest_office': {
+      const loc = (input.location||'').toLowerCase();
+      const offices = [
+        { city:"Austin",      state:"TX", address:"5900 Balcones Dr #24685", zip:"78731", phone:"800-988-8116" },
+        { city:"Washington",  state:"DC", address:"1717 N St NW Suite 1",    zip:"20036", phone:"800-988-8116" },
+        { city:"Sacramento",  state:"CA", address:"1401 21st St Suite R",    zip:"95811", phone:"800-988-8116" },
+        { city:"Springfield", state:"IL", address:"2501 Chatham Rd Suite R", zip:"62704", phone:"847-728-6872" },
+        { city:"Dover",       state:"DE", address:"8 The Green Suite A",     zip:"19901", phone:"302-899-7312" },
+        { city:"Orlando",     state:"FL", address:"12386 State Rd 535 #302", zip:"32836", phone:"800-988-8116" }
+      ];
+      const found = offices.find(o => loc.includes(o.city.toLowerCase()) || loc.includes(o.state.toLowerCase()));
+      return { success:true, nearest: found||offices[0], all_offices: offices, found_match: !!found };
+    }
+
+    case 'get_active_promotions': {
+      return {
+        success:true,
+        promotions:[
+          { emoji:"👨‍👩‍👧", title:"Family Saver Deal", desc:"20% OFF when you add 3+ lines. Save up to $25/mo!", badge:"HOT" },
+          { emoji:"📲", title:"Free Port-In", desc:"Transfer your number to Zoiko completely free. Keep your existing number!", badge:"ONGOING" },
+          { emoji:"⚡", title:"Zero Activation Fees", desc:"No activation fees on any plan — ever. Switch without hidden costs.", badge:"ALWAYS" },
+          { emoji:"🎉", title:"First Month 50% Off", desc:"New customers get 50% off their first month on Zoiko Core and above.", badge:"LIMITED" },
+          { emoji:"🌍", title:"Free International Calling", desc:"Call 70-200+ countries free depending on your plan — no extra charges.", badge:"ALL PLANS" }
+        ]
+      };
+    }
+
+    case 'create_callback_request': {
+      const ref = 'ZKN-' + Date.now().toString().slice(-6);
+      setTimeout(() => addEscalateWithData(input.name, input.phone, input.issue, ref), 400);
+      return {
+        success:true, ticket_id:ref,
+        callback_time: input.priority==='urgent' ? "Within 1 hour" : "Within 24 hours",
+        message:`Callback request created! Reference: ${ref}. Our team will call ${input.phone} within ${input.priority==='urgent'?'1 hour':'24 hours'}.`
+      };
+    }
+
+    case 'check_coverage': {
+      return {
+        success:true, location:input.location,
+        coverage_5g:true, coverage_4g:true, quality:"Excellent",
+        network:"T-Mobile nationwide",
+        international:"200+ countries supported",
+        wifi_calling:"Available free on all plans",
+        note:`Great news! Zoiko Mobile has excellent 5G and 4G LTE coverage in ${input.location} through T-Mobile's nationwide network.`
+      };
+    }
+
+    case 'compare_plans': {
+      const findPlan = name => {
+        const k = name.toLowerCase();
+        return PLANS[k] || PLANS[Object.keys(PLANS).find(pk => pk.includes(k.split(' ').pop()))||''] || null;
+      };
+      const a = findPlan(input.plan_a);
+      const b = findPlan(input.plan_b);
+      return { success:true, plan_a:a||{name:input.plan_a,error:"not found"}, plan_b:b||{name:input.plan_b,error:"not found"} };
+    }
+
+    default:
+      return { success:false, error:"Unknown tool: "+name };
+  }
+}
+
+// ══════════════════════════════════════════════
+//  TOOL LABELS (what shows in the activity bar)
+// ══════════════════════════════════════════════
+const TOOL_LABELS = {
+  get_plan_details:          ["🔍 Looking up plan details...", "📋 Fetching plan info..."],
+  check_device_compatibility:["📱 Checking device compatibility...", "🔎 Looking up your phone..."],
+  calculate_family_savings:  ["📊 Calculating your savings...", "💰 Running the numbers..."],
+  find_nearest_office:       ["📍 Finding nearest office...", "🗺️ Locating offices near you..."],
+  get_active_promotions:     ["🎉 Fetching current deals...", "✨ Loading promotions..."],
+  create_callback_request:   ["📞 Creating your callback...", "🎧 Connecting you to our team..."],
+  check_coverage:            ["🌐 Checking coverage...", "📡 Scanning your area..."],
+  compare_plans:             ["⚖️ Comparing plans...", "📊 Running side-by-side comparison..."]
+};
+
+function rndLabel(toolName) {
+  const labels = TOOL_LABELS[toolName] || ["🤔 Processing..."];
+  return labels[Math.floor(Math.random() * labels.length)];
+}
+
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let chatMsgs = [];
+let chatHistory = [];
+let typing = false;
+let autoSpeak = false;
+let listening = false;
+let recognition = null;
+let sessionStart = Date.now();
+let msgCount = 0;
+try { chatHistory = JSON.parse(localStorage.getItem('zoikon_history')||'[]'); } catch(e){ chatHistory=[]; }
+
+// ══════════════════════════════════════════════
+//  DOM REFS
+// ══════════════════════════════════════════════
+const msgs      = document.getElementById('msgs');
+const txt       = document.getElementById('txt');
+const sendBtn   = document.getElementById('sendBtn');
+const micBtn    = document.getElementById('micBtn');
+const muteBtn   = document.getElementById('muteBtn');
+const clearBtn  = document.getElementById('clearBtn');
+const histBtn   = document.getElementById('histBtn');
+const vbarWrap  = document.getElementById('vbarWrap');
+const vlabel    = document.getElementById('vlabel');
+const charCount = document.getElementById('charCount');
+const toolBar   = document.getElementById('toolBar');
+const toolLabel = document.getElementById('toolLabel');
+
+setInterval(()=>{
+  const mins = Math.floor((Date.now()-sessionStart)/60000);
+  const el = document.getElementById('sessionTime');
+  if(el) el.textContent='Session: '+mins+'m';
+},30000);
+
+// ══════════════════════════════════════════════
+//  INPUT HANDLERS
+// ══════════════════════════════════════════════
+txt.addEventListener('input',()=>{
+  txt.style.height='auto';
+  txt.style.height=Math.min(txt.scrollHeight,100)+'px';
+  const len=txt.value.length;
+  if(len>0){
+    charCount.textContent=len+' / 500';
+    charCount.className='char-count'+(len>450?' over':len>350?' warn':'');
+  } else { charCount.textContent=''; }
+});
+txt.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} });
+sendBtn.addEventListener('click',()=>send());
+function quick(t){ txt.value=t; send(); }
+
+// ══════════════════════════════════════════════
+//  TOOL BAR CONTROLS
+// ══════════════════════════════════════════════
+function showToolBar(label) { toolLabel.textContent=label; toolBar.classList.add('on'); }
+function hideToolBar()      { toolBar.classList.remove('on'); }
+
+// ══════════════════════════════════════════════
+//  ⭐ AGENTIC SEND — main logic
+// ══════════════════════════════════════════════
+async function send() {
+  const text = txt.value.trim();
+  if (!text || typing) return;
+  if (text.length>500){ toast('Message too long! Max 500 characters.'); return; }
+
+  document.querySelectorAll('#welcome,#chips').forEach(el=>{
+    el.style.transition='opacity .25s'; el.style.opacity='0';
+    setTimeout(()=>el.remove(),250);
+  });
+
+  addUserMsg(text);
+  chatMsgs.push({ role:'user', content:text });
+  txt.value=''; txt.style.height='auto'; charCount.textContent='';
+  sendBtn.disabled=true; typing=true;
+  showTyping();
+
+
+//Connect Your HTML Chatbot to Backend
+
+async function sendMessage(message) {
+  const response = await fetch("http://localhost:8000/chat", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({message})
+  });
+
+  const data = await response.json();
+  return data.response;
+}
+
+async function handleSend() {
+  const input = document.getElementById("userInput");
+  const userMessage = input.value;
+
+  const reply = await sendMessage(userMessage);
+
+  console.log("Bot:", reply);   // display in chat UI
+}
+
+  // ── Fallback mode (no API key) ──
+  if (!API_KEY || API_KEY==='YOUR_API_KEY_HERE') {
+    await delay(900+Math.random()*600);
+    hideTyping();
+    const reply = smartReply(text, chatMsgs);
+    chatMsgs.push({ role:'assistant', content:reply });
+    streamMsg(reply, ()=>{ if(autoSpeak) speak(reply); });
+    sendBtn.disabled=false; typing=false;
+    return;
+  }
+
+  try {
+    // Build conversation context (text only for clean history)
+    let messages = chatMsgs.slice(-20);
+    let finalReply = null;
+    let toolsUsed = [];
+
+    // ── Agentic loop — up to 6 tool-use turns ──
+    for (let turn=0; turn<6; turn++) {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'x-api-key': API_KEY,
+          'anthropic-version':'2023-06-01',
+          'anthropic-dangerous-direct-browser-access':'true'
+        },
+        body: JSON.stringify({
+          model:'claude-sonnet-4-6',
+          max_tokens:900,
+          system: SYSTEM,
+          tools: TOOLS,
+          messages
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        if (data.error.type==='authentication_error') {
+          hideTyping(); hideToolBar();
+          streamMsg('⚠️ Invalid API key. Get yours free at console.anthropic.com');
+          sendBtn.disabled=false; typing=false; return;
+        }
+        throw new Error(data.error.message||'API error');
+      }
+
+      const toolUses  = (data.content||[]).filter(b=>b.type==='tool_use');
+      const textParts = (data.content||[]).filter(b=>b.type==='text');
+
+      // No tool calls → final answer
+      if (toolUses.length===0) {
+        finalReply = textParts.map(b=>b.text).join('').trim();
+        break;
+      }
+
+      // Tool calls detected → execute them
+      messages.push({ role:'assistant', content:data.content });
+      const toolResults = [];
+
+      for (const tc of toolUses) {
+        toolsUsed.push(tc.name);
+        showToolBar(rndLabel(tc.name));
+        await delay(350); // small pause so user sees the activity bar
+        const result = executeTool(tc.name, tc.input);
+        toolResults.push({ type:'tool_result', tool_use_id:tc.id, content:JSON.stringify(result) });
+      }
+
+      messages.push({ role:'user', content:toolResults });
+      showToolBar('💭 Composing response...');
+    }
+
+    if (!finalReply) finalReply = smartReply(text);
+
+    hideTyping();
+    hideToolBar();
+    chatMsgs.push({ role:'assistant', content:finalReply });
+    streamMsg(finalReply, ()=>{
+      if (autoSpeak) speak(finalReply);
+      saveHistory(text, finalReply, toolsUsed);
+      if (/frustrated|angry|terrible|worst|useless|speak to (human|agent|person)/i.test(text)) {
+        setTimeout(()=>addEscalate(),500);
+      }
+    });
+
+  } catch(err) {
+    hideTyping(); hideToolBar();
+    const reply = smartReply(text, chatMsgs);
+    chatMsgs.push({ role:'assistant', content:reply });
+    streamMsg(reply, ()=>{ if(autoSpeak) speak(reply); });
+    console.error('Zoikon error:', err);
+  }
+
+  sendBtn.disabled=false; typing=false;
+}
+
+// ══════════════════════════════════════════════
+//  ADD USER MESSAGE (instant)
+// ══════════════════════════════════════════════
+function addUserMsg(text) {
+  const wrap = document.createElement('div');
+  wrap.className = 'msg user';
+  const ava = document.createElement('div');
+  ava.className='mava'; ava.textContent='👤';
+  const inner = document.createElement('div');
+  inner.style.cssText='display:flex;flex-direction:column;max-width:100%';
+  const bbl = document.createElement('div');
+  bbl.className='bubble'; bbl.innerHTML=fmt(text);
+  inner.appendChild(bbl);
+  wrap.appendChild(ava); wrap.appendChild(inner);
+  msgs.appendChild(wrap);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+// ══════════════════════════════════════════════
+//  STREAM BOT MESSAGE (typewriter effect)
+// ══════════════════════════════════════════════
+function streamMsg(text, callback) {
+  msgCount++;
+  const wrap = document.createElement('div');
+  wrap.className='msg bot';
+  const ava = document.createElement('div');
+  ava.className='mava'; ava.style.cssText='background:#fff;padding:2px';
+  ava.innerHTML='<img src="'+LOGO+'" alt="Z"/>';
+  const inner = document.createElement('div');
+  inner.style.cssText='display:flex;flex-direction:column;max-width:100%';
+  const bbl = document.createElement('div');
+  bbl.className='bubble';
+  inner.appendChild(bbl);
+  wrap.appendChild(ava); wrap.appendChild(inner);
+  msgs.appendChild(wrap);
+  msgs.scrollTop=msgs.scrollHeight;
+
+  // Word-by-word typewriter with punctuation pauses
+  const words = text.split(' ');
+  let i=0, displayed='';
+  const cursor = '<span style="display:inline-block;width:2px;height:13px;background:var(--teal);margin-left:2px;border-radius:1px;animation:blink .65s infinite;vertical-align:middle"></span>';
+
+  const tick = ()=>{
+    if (i>=words.length) {
+      bbl.innerHTML = fmt(text);
+      appendReactions(inner, text);
+      if (callback) callback();
+      msgs.scrollTop=msgs.scrollHeight;
+      return;
+    }
+    displayed += (i>0?' ':'')+words[i];
+    bbl.innerHTML = fmt(displayed)+cursor;
+    msgs.scrollTop=msgs.scrollHeight;
+    i++;
+    const prev = words[i-1];
+    const pause = (prev.endsWith('.')||prev.endsWith('!')||prev.endsWith('?')||prev.endsWith(':')) ? 85 : 22+Math.random()*16;
+    setTimeout(tick, pause);
+  };
+  tick();
+}
+
+// ══════════════════════════════════════════════
+//  REACTION BUTTONS
+// ══════════════════════════════════════════════
+function appendReactions(inner, text) {
+  const rxns = document.createElement('div');
+  rxns.className='reactions';
+
+  const speakB = document.createElement('button');
+  speakB.className='speak-btn'; speakB.innerHTML='🔊 Listen';
+  speakB.onclick=()=>speak(text,speakB);
+
+  const copyB = document.createElement('button');
+  copyB.className='copy-btn'; copyB.innerHTML='📋 Copy';
+  copyB.onclick=()=>{
+    const clean=text.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
+    navigator.clipboard.writeText(clean).then(()=>{
+      copyB.innerHTML='✅ Copied!'; copyB.classList.add('done');
+      setTimeout(()=>{ copyB.innerHTML='📋 Copy'; copyB.classList.remove('done'); },2000);
+    }).catch(()=>toast('Copy failed — please copy manually.'));
+  };
+
+  const likeB = document.createElement('button');
+  likeB.className='react-btn'; likeB.innerHTML='👍 Helpful';
+  likeB.onclick=()=>{
+    if(!likeB.classList.contains('liked')){
+      likeB.classList.add('liked'); likeB.innerHTML='👍 Thanks!';
+      dislikeB.classList.remove('disliked'); dislikeB.innerHTML='👎';
+      toast('Thanks for the feedback! 😊');
+    }
+  };
+
+  const dislikeB = document.createElement('button');
+  dislikeB.className='react-btn'; dislikeB.innerHTML='👎';
+  dislikeB.onclick=()=>{
+    if(!dislikeB.classList.contains('disliked')){
+      dislikeB.classList.add('disliked'); dislikeB.innerHTML='👎 Got it';
+      likeB.classList.remove('liked'); likeB.innerHTML='👍 Helpful';
+      toast("I'll try to do better! Want me to escalate? 🙏");
+      setTimeout(()=>addEscalate(),600);
+    }
+  };
+
+  rxns.appendChild(speakB); rxns.appendChild(copyB); rxns.appendChild(likeB); rxns.appendChild(dislikeB);
+  inner.appendChild(rxns);
+
+  // Suggested follow-ups (first 4 msgs only)
+  const sugs = getSuggestions(text);
+  if (sugs.length>0 && msgCount<=4) {
+    const sugWrap = document.createElement('div');
+    sugWrap.className='suggestions';
+    sugs.forEach(s=>{
+      const b=document.createElement('div'); b.className='sug'; b.textContent=s;
+      b.onclick=()=>quick(s); sugWrap.appendChild(b);
+    });
+    inner.appendChild(sugWrap);
+  }
+
+  // Satisfaction card every 5 messages
+  if (msgCount>0 && msgCount%5===0) {
+    setTimeout(()=>inner.appendChild(makeSatCard()),700);
+  }
+}
+
+// ══════════════════════════════════════════════
+//  TYPING INDICATOR
+// ══════════════════════════════════════════════
+let typEl=null;
+function showTyping(){
+  typEl=document.createElement('div');
+  typEl.className='msg bot';
+  typEl.innerHTML='<div class="mava" style="background:#fff;padding:2px"><img src="'+LOGO+'" alt="Z"/></div><div class="bubble"><div class="dots"><span></span><span></span><span></span></div></div>';
+  msgs.appendChild(typEl); msgs.scrollTop=msgs.scrollHeight;
+}
+function hideTyping(){ if(typEl){typEl.remove();typEl=null;} }
+
+// ══════════════════════════════════════════════
+//  MARKDOWN FORMAT
+// ══════════════════════════════════════════════
+function fmt(text){
+  return text
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/\n/g,'<br/>');
+}
+
+// ══════════════════════════════════════════════
+//  SMART FALLBACK — Context-aware, memory-driven
+//  Reads last bot reply to handle follow-ups like
+//  "more details", "tell me more", "what else" etc.
+// ══════════════════════════════════════════════
+function smartReply(text) {
+  const t = text.toLowerCase().trim();
+
+  // ── Get last bot message for context-aware replies ──
+  const lastBot = chatMsgs.filter(m=>m.role==='assistant').slice(-1)[0];
+  const ctx = lastBot ? lastBot.content.toLowerCase() : '';
+
+  // ── POSITIVE REACTIONS — "nice", "great", "awesome", "cool", "thanks", etc. ──
+  if (/^(nice|great|awesome|cool|wow|amazing|perfect|excellent|fantastic|wonderful|lovely|brilliant|superb|sweet|solid|good|ok|okay|alright|sounds good|got it|understood|noted|sure|yep|yup|yes|absolutely|of course|definitely|thanks|thank you|thank u|thx|ty|cheers|appreciate|helpful|love it|love this|that helps|that's helpful)[\s!.]*$/i.test(t)) {
+    const positives = [
+      "Glad I could help! 😊 Is there anything else about Zoiko Mobile I can help you with — plans, eSIM, family discounts, or anything else?",
+      "Happy to help! 🙌 Feel free to ask me anything else — I'm here for you!",
+      "That's what I'm here for! 😊 Anything else on your mind? Whether it's plans, activation, or coverage — I've got you covered.",
+      "Wonderful! 🌟 Don't hesitate to ask if you have more questions. I'm always here!",
+      "Great to hear! 😊 Is there anything specific you'd like to explore — like which plan fits your usage, or how to get started?"
+    ];
+    return positives[Math.floor(Math.random()*positives.length)];
+  }
+
+  // ── NEGATIVE / DISAPPOINTED reactions ──
+  if (/^(not good|not helpful|bad|disappointing|useless here|no|nope|nah|not really|not what i needed|that's not|thats not|wrong|incorrect)[\s!.]*$/i.test(t)) {
+    return "I'm sorry I didn't hit the mark there — I genuinely want to help you better 💙 Could you tell me a bit more about what you're looking for? I'll do my best to give you exactly what you need, or connect you with a live agent who can!";
+  }
+
+  // ── OUT-OF-SCOPE / RANDOM / NONSENSE — friendly redirect ──
+  const zoikoKeywords = /plan|sim|esim|data|call|text|phone|network|coverage|pay|bill|port|number|byod|family|international|activate|device|signal|5g|deal|promo|support|agent|help|zoiko|mobile|hotspot|roam|country|wifi|cancel|contract|postpaid|prepaid|unlimited|throttle|protection|office|location|address/i;
+  if (!zoikoKeywords.test(t) && t.length < 30 && !/follow.up|more|detail|tell|about|what|how|which|can|do|is|are/i.test(t)) {
+    const redirects = [
+      `Ha, I think you might have the wrong chat! 😄 I'm Zoikon, Zoiko Mobile's AI assistant — I'm best at helping with plans, eSIM, international calling, and more. What can I help you with today?`,
+      `That's a bit outside my expertise! 😄 I'm Zoikon — your Zoiko Mobile assistant. I can help with plans (from $15/mo), eSIM, family discounts, coverage, and more. What would you like to know?`,
+      `I'm not sure I can help with that one, but I'm a pro at everything Zoiko Mobile! 😊 Ask me about plans, SIM activation, international calling, BYOD, or family discounts — I've got all the answers!`
+    ];
+    return redirects[Math.floor(Math.random()*redirects.length)];
+  }
+
+  // ── FOLLOW-UP DETECTION — "more", "details", "tell me more", "what else", "go on" ──
+  const isFollowUp = /^(more|more details|tell me more|what else|go on|elaborate|explain more|continue|and\??|yes please|sure|ok tell me|i want to know more|details|give me more|expand|full details)/i.test(t);
+
+  if (isFollowUp) {
+    // Context: was talking about Infinity
+    if (ctx.includes('infinity')) return "Here's the full breakdown of **Zoiko Infinity** 🌟\n\n🔥 **Data**: Truly unlimited — ZERO throttling, ever. Full speed 24/7.\n📡 **Hotspot**: Included (high-speed)\n📞 **Talk**: Unlimited minutes\n💬 **Texts**: Unlimited\n🌍 **International**: Free calls to 150+ countries\n🇨🇦🇲🇽 **Roaming**: Free Canada & Mexico\n⚡ **Network**: T-Mobile 5G + 4G LTE nationwide\n📲 **eSIM**: Available — instant activation\n🌟 **VIP Support**: Priority 24/7 customer service\n💳 **Device Financing**: Available to qualified customers\n\n**No credit check. No hidden fees. No activation fees.**\n\nThis is the plan for power users who refuse to compromise. Ready to get started?";
+    if (ctx.includes('supreme')) return "Everything about **Zoiko Supreme Unlimited** 🚀\n\n📊 **35GB Priority Data** — the fastest tier, always\n♾️ **Truly Unlimited** after 35GB — no hard stops\n📡 **20GB Super-Fast Hotspot** — share your connection freely\n📞 **3,000 minutes** talk time\n💬 **35,000 texts**\n🌍 **200+ countries** — free international calling\n🇨🇦🇲🇽 **Free Canada & Mexico roaming**\n⚡ **T-Mobile 5G** nationwide coverage\n📲 **eSIM** — instant digital activation\n🌟 **VIP Priority Support** — skip the queue, always\n💳 **Device Financing** — get a new phone on us\n\n**No credit check. No hidden fees. No contracts required.**\n\nThis is Zoiko's flagship plan — built for people who want everything. Want to sign up?";
+    if (ctx.includes('flex') || ctx.includes('$15')) return "Full details on **Zoiko Flex** 💚\n\n📊 **4GB** premium high-speed data\n📡 **1GB Mobile Hotspot**\n📞 **1,500 minutes** talk\n💬 **10,000 texts**\n🌍 **Free calls to 70+ countries** — no extra charge\n🇨🇦🇲🇽 **Free Canada & Mexico roaming**\n⚡ **T-Mobile 5G + 4G LTE** network\n📲 **eSIM** — instant activation available\n📶 Wi-Fi Calling — included free\n✅ **Month-to-month** — no contract, cancel anytime\n\n**No credit check. No hidden fees. No activation fees.**\n\nPerfect for: light users, backup lines, seniors, or first-timers. At just $15/mo it's unbeatable value. Want to get started?";
+    if (ctx.includes('core') || ctx.includes('$25') || ctx.includes('$30')) return "Full details on **Zoiko Core** ⚡\n\n📊 **5GB** premium high-speed data\n📡 **Mobile Hotspot** included\n📞 **2,000 minutes** talk\n💬 **20,000 texts**\n🌍 **Free calls to 100+ countries**\n🇨🇦🇲🇽 **Free Canada & Mexico roaming**\n⚡ **T-Mobile 5G + 4G LTE** nationwide\n📲 **eSIM** — instant activation\n📶 **Wi-Fi Calling** free on all plans\n🌟 **Priority customer support**\n\n**Prepaid: $25/mo** (month-to-month)\n**Postpaid: $30/mo** (12 or 24-month contract)\n**No credit check. No hidden fees.**\n\nOur most popular everyday plan. Which type suits you — prepaid or postpaid?";
+    if (ctx.includes('max') || ctx.includes('$40') || ctx.includes('$45')) return "Full details on **Zoiko Max** 🎮\n\n📊 **20GB** premium high-speed data\n📡 **Mobile Hotspot** included\n📞 **Unlimited** talk\n💬 **Unlimited** texts\n🌍 **Free calls to 150+ countries**\n🇨🇦🇲🇽 **Free Canada & Mexico roaming**\n⚡ **T-Mobile 5G** — our fastest network\n📲 **eSIM** — instant digital activation\n📶 **Wi-Fi Calling** free\n⚠️ Note: Speeds may reduce after 20GB during network congestion\n\n**Prepaid: $40/mo | Postpaid: $45/mo**\n**No credit check. No hidden fees.**\n\nIdeal for streamers, gamers, remote workers. Is this the right fit for you?";
+    if (ctx.includes('family') || ctx.includes('20%') || ctx.includes('lines')) return "Here's everything about **Zoiko Family Plans** 👨‍👩‍👧\n\n💰 **20% OFF** automatically when you have **3 or more active lines**\n👥 **Up to 10 lines** on one account\n🔀 **Mix and match** — prepaid and postpaid on the same account\n👶 **Parental controls** included on all family lines\n🌍 **International calling** on every line (per plan)\n📄 **One bill** — simple consolidated monthly invoice\n🏠 **Friends welcome** — people from different households can join your family plan!\n💳 **Save up to $25/mo** on postpaid family plans\n\n**Example savings** with 4 lines on Core:\n- Without discount: $100/mo\n- With 20% family discount: **$80/mo** — save $20 every month!\n\nHow many lines do you need? I can calculate your exact savings!";
+    if (ctx.includes('byod') || ctx.includes('bring your own') || ctx.includes('imei')) return "Everything you need to know about **BYOD at Zoiko Mobile** 📱\n\n**Compatible devices:**\n✅ Most unlocked GSM phones\n✅ T-Mobile or AT&T unlocked devices\n✅ International (globally unlocked) phones\n✅ iPhone 6 and newer\n✅ Samsung Galaxy S6 and newer\n✅ Google Pixel (all models)\n✅ OnePlus, Motorola, Nokia, Sony — most models\n\n**5G phones** — get our fastest T-Mobile 5G speeds!\n\n**How to check your phone:**\n1. Visit **zoikomobile.com/byod-plans/**\n2. Enter your IMEI (dial *#06# on your phone)\n3. Instant compatibility result\n\n**Keep your number** — free port-in, done in hours!\n**No new phone needed** — just a new SIM or eSIM.\n\nWhat phone model do you have? I can check compatibility for you!";
+    if (ctx.includes('esim') || ctx.includes('digital')) return "Everything about **eSIM at Zoiko Mobile** 📲\n\n**What is eSIM?** — A digital SIM built into your phone. No physical card needed!\n\n**Benefits:**\n⚡ Instant activation — live in minutes\n✈️ Perfect for travel — switch networks easily\n🔒 More secure — can't be physically lost or stolen\n📱 Dual SIM support on many devices\n\n**Compatible devices:**\n✅ iPhone XS, XR, and all newer models\n✅ Samsung Galaxy S20 and newer\n✅ Google Pixel 3a and newer\n✅ iPad Pro, iPad Air (recent models)\n✅ Many recent Android flagships\n\n**How to activate eSIM:**\n🆕 New customers: Select 'eSIM' at checkout on zoikomobile.com\n📱 Existing customers: Visit account dashboard or dial **500** from your Zoiko phone\n\n**Wi-Fi Calling** is included free on all plans too!\n\nIs your device on the list? Want to get started?";
+    if (ctx.includes('support') || ctx.includes('800-988') || ctx.includes('contact')) return "Here's the **complete support guide** for Zoiko Mobile 🛠️\n\n**24/7 Support Channels:**\n📞 **Phone**: 800-988-8116 (always available)\n📧 **Email**: support@zoikomobile.com\n💬 **Live Chat**: zoikomobile.com\n📱 **Dial 500** from your Zoiko phone (fastest for account issues)\n\n**What I can help with right now:**\n✅ Plan questions and upgrades\n✅ SIM activation steps\n✅ eSIM setup\n✅ Billing questions\n✅ BYOD compatibility\n✅ Number porting\n✅ Family plan setup\n✅ Coverage questions\n✅ Device protection info\n\n**Callback service:** If you'd prefer we call you, just give me your name and phone number and I'll set it up right now. Our team calls within 24 hours.\n\nWhat specific issue are you dealing with today?";
+    if (ctx.includes('coverage') || ctx.includes('t-mobile') || ctx.includes('5g')) return "Full **network & coverage details** for Zoiko Mobile 🌐\n\n**Network**: T-Mobile Nationwide (one of the largest in the US)\n\n**Coverage types:**\n⚡ **5G** — available in thousands of US cities\n📶 **4G LTE** — nationwide fallback, everywhere 5G doesn't reach\n📞 **Wi-Fi Calling** — make calls over Wi-Fi when signal is weak, FREE on all plans\n\n**International:**\n🇨🇦🇲🇽 Free roaming in **Canada & Mexico** on select plans\n🌍 **200+ countries** supported for international service\n\n**Features:**\n✅ HD Voice calling\n✅ VoLTE (Voice over LTE)\n✅ Wi-Fi Calling (all plans, free)\n✅ Mobile Hotspot (included on all plans)\n\nWhat city or zip code are you in? I can confirm exact 5G availability for your area!";
+    if (ctx.includes('deal') || ctx.includes('promo') || ctx.includes('offer')) return "Here are **all current Zoiko Mobile promotions** 🎉\n\n🔥 **Family Saver** — 20% OFF with 3+ lines. Save up to $25/mo!\n🎁 **First Month 50% Off** — New customers on Core plan and above get half off month 1\n📲 **Free Number Port-In** — Transfer from any carrier, completely free\n⚡ **Zero Activation Fees** — No setup costs, ever. On any plan.\n🌍 **Free International Calling** — Included on all plans (70-200+ countries depending on plan)\n💳 **Device Financing** — Available on Infinity and Supreme Unlimited postpaid plans\n🔄 **AutoPay Discount** — Set up AutoPay and save an extra $5/mo\n\nThese deals apply automatically — no promo code needed. Which one interests you most?";
+    // Generic follow-up when no specific context
+    return "Of course! Happy to go deeper on that 😊 Here's what else you should know:\n\n**About Zoiko Mobile:**\n🏢 Founded in the US, headquartered in Austin, TX\n📍 Offices in 6 cities: Austin, Washington DC, Sacramento, Springfield, Dover, Orlando\n📞 24/7 support: 800-988-8116\n🌐 zoikomobile.com\n\n**What makes us different:**\n✅ No credit checks on any plan\n✅ No hidden fees — ever\n✅ No activation fees\n✅ Month-to-month prepaid options (no contract!)\n✅ T-Mobile 5G + 4G LTE nationwide\n✅ Free international calling on all plans\n✅ eSIM available — instant activation\n✅ Family discounts (20% off for 3+ lines)\n\nWhat would you like to know more about specifically?";
+  }
+
+  // ── PLAN DEEP DIVES ──
+  if (/infinity|infinite/i.test(t)) return "Great choice to ask about **Zoiko Infinity**! 🌟\n\nHere's what you get at **$55/mo (postpaid)**:\n\n🔥 **Data**: Truly unlimited with ZERO throttling — ever. Full speed 24/7, no asterisks.\n📡 **Hotspot**: Included at high speed\n📞 **Talk**: Unlimited minutes\n💬 **Texts**: Unlimited\n🌍 **International**: Free calls to 150+ countries\n🇨🇦🇲🇽 **Free roaming** in Canada & Mexico\n⚡ **T-Mobile 5G** nationwide\n📲 **eSIM** — instant digital activation\n🌟 **VIP priority support** — you go to the front of the queue\n💳 **Device financing** available\n\nAvailable as a **12 or 24-month postpaid contract** — no credit check required.\n\nWant to compare it with Supreme Unlimited, or are you ready to sign up?";
+  if (/supreme|truly unlimited/i.test(t)) return "The **Zoiko Supreme Unlimited** is our absolute best plan at **$65/mo**! 🚀\n\n📊 **35GB priority data** + truly unlimited after that\n📡 **20GB super-fast hotspot**\n📞 **3,000 minutes** talk\n💬 **35,000 texts**\n🌍 **200+ countries** — free international calls\n🇨🇦🇲🇽 Free Canada & Mexico roaming\n⚡ T-Mobile 5G nationwide\n🌟 **VIP priority support**\n💳 **Device financing** available\n✅ No credit check | No hidden fees | No throttling\n\nThis is the plan for people who want everything with zero compromise. Want the full breakdown or ready to sign up?";
+  if (/\bflex\b/i.test(t)) return "The **Zoiko Flex** is our smartest entry plan at just **$15/mo**! 💚\n\n📊 4GB data | 📡 1GB hotspot | 📞 1,500 min | 💬 10,000 texts\n🌍 Free calls to 70+ countries | eSIM available\n✅ No credit check | No contract | Cancel anytime\n\nPerfect for light users or anyone who wants to try Zoiko risk-free. Want the full plan details or to compare with Core?";
+  if (/\bmax\b/i.test(t)) return "The **Zoiko Max** is built for heavy users! 🎮\n\n📊 **20GB** high-speed data | Unlimited hotspot\n📞 Unlimited talk | 💬 Unlimited texts\n🌍 Free calls to **150+ countries**\n⚡ T-Mobile 5G | Free Canada & Mexico roaming\n\n**$40/mo prepaid** or **$45/mo postpaid** — no credit check!\n\nNote: speeds may reduce after 20GB during peak network congestion (Infinity has zero throttling if that concerns you). Want me to compare Max vs Infinity?";
+  if (/\bcore\b/i.test(t)) return "**Zoiko Core** is our most popular plan for a reason! ⚡\n\n📊 **5GB** data | 📡 Hotspot included\n📞 **2,000 min** | 💬 **20,000 texts**\n🌍 Free calls to **100+ countries**\n⚡ T-Mobile 5G | Priority customer support\n\n**Prepaid: $25/mo** | **Postpaid: $30/mo** — no credit check!\n\nThe sweet spot between value and features. Most of our customers land here! Shall I compare it with Max or Flex?";
+  if (/\blite\b/i.test(t)) return "**Zoiko Lite** is our lightest postpaid plan 📱\n\nPerfect for: occasional users, seniors, kids' lines, or backup phones.\n✅ Unlimited talk & text\n📊 Basic data allowance\n🌍 International calling included (50+ countries)\n✅ No credit check | No hidden fees\n📲 eSIM available\n\nWant to compare Lite with Flex to find the best fit?";
+
+  // ── GREETINGS ──
+  if (/^(hi|hello|hey|good (morning|afternoon|evening)|how are you|sup|yo|hiya|howdy|greetings)/i.test(t))
+    return ["Hey there! 👋 I'm Zoikon, your Zoiko Mobile assistant. Plans start at just $15/mo — no credit check needed! What can I help you with today?","Hello! Welcome to Zoiko Mobile 😊 I'm here to help with plans, eSIM, family discounts, international calling, and more. What's on your mind?","Hey! Great to hear from you 👋 Zoiko Mobile has plans from $15/mo with free international calling to 70-200+ countries. How can I help?"][Math.floor(Math.random()*3)];
+
+  // ── COMPANY INFO ──
+  if (/company|about zoiko|who are you|tell me about yoursel|background|founded|history|what is zoiko/i.test(t)) return "Zoiko Mobile is a US-based wireless carrier focused on making premium mobile service **affordable for everyone** 📱\n\n🏢 **HQ**: Austin, TX\n📍 **Offices**: Austin TX | Washington DC | Sacramento CA | Springfield IL | Dover DE | Orlando FL\n🌐 **Website**: zoikomobile.com\n📞 **Support**: 800-988-8116 (24/7)\n\n**What we stand for:**\n✅ No credit checks — everyone deserves great service\n✅ No hidden fees — what you see is what you pay\n✅ No activation fees — switch without penalty\n⚡ T-Mobile 5G + 4G LTE nationwide coverage\n🌍 Free international calling to 70-200+ countries (all plans!)\n\n**Plans from just $15/mo** — prepaid and postpaid options available.\n\nIs there a specific part of Zoiko Mobile you'd like to know more about?";
+
+  // ── WHAT CAN YOU DO ──
+  if (/what (can|do) you do|what are your capabilities|what can you help|how can you help|your features|capabilities/i.test(t)) return "I'm Zoikon — Zoiko Mobile's AI assistant with live tools! Here's what I can do for you 🤖\n\n📱 **Plan recommendations** — tell me your usage and I'll find your perfect plan\n⚖️ **Plan comparisons** — side-by-side any two plans\n💰 **Savings calculator** — I'll show you exactly how much you'll save vs your current carrier\n📲 **BYOD check** — tell me your phone model, I'll confirm compatibility instantly\n🗺️ **Find nearest office** — just tell me your city\n🎉 **Current deals & promos** — all active offers, always up to date\n📡 **Coverage check** — confirm 5G availability in your area\n🎧 **Callback requests** — connect you with a live agent\n🔌 **Activation guide** — step-by-step for SIM and eSIM\n\nI also have voice input (tap 🎤) and can read responses aloud! What would you like help with?";
+
+  // ── DEVICES ──
+  if (/device|phone|iphone|samsung|pixel|what phone|sell phone|buy phone/i.test(t)) return "Great question about devices! 📱\n\n**Zoiko Mobile works with your existing phone (BYOD):**\n✅ iPhone 6 and newer (iPhone XS+ for eSIM)\n✅ Samsung Galaxy S6 and newer (S20+ for eSIM)\n✅ Google Pixel (all models)\n✅ OnePlus 6 and newer\n✅ Motorola, Nokia, Sony — most unlocked models\n✅ Most internationally unlocked phones\n\n**To check your specific phone:**\n1. Visit **zoikomobile.com/byod-plans/**\n2. Enter your IMEI number (dial *#06# on your phone)\n3. Get instant compatibility results\n\n**Device Financing** is available on Infinity and Supreme Unlimited plans if you need a new device!\n\nWhat phone model do you have? I can tell you right away if it's compatible 😊";
+
+  // ── SIGNING UP ──
+  if (/sign up|get started|how to join|purchase|buy|order|subscribe|start|join/i.test(t)) return "Joining Zoiko Mobile is super easy! 🎉\n\n**Option 1 — Physical SIM:**\n1️⃣ Visit **zoikomobile.com**\n2️⃣ Choose your plan\n3️⃣ Enter your details\n4️⃣ SIM arrives by mail (1-3 days)\n5️⃣ Activate at **zoikomobile.com/how-to-activate-sim/**\n\n**Option 2 — eSIM (Instant!):**\n1️⃣ Visit **zoikomobile.com**\n2️⃣ Choose eSIM at checkout\n3️⃣ Scan the QR code\n4️⃣ You're live in minutes! ⚡\n\n**Keeping your number?** Select 'Keep My Number' during checkout — free port-in, done in a few hours!\n\n**No credit check. No activation fees. Cancel anytime on prepaid.**\n\nWhich plan are you considering?";
+
+  // ── ACTIVATION ──
+  if (/activat|set up sim|new sim|how to use/i.test(t)) return "Activating your SIM is quick and easy! ✅\n\n**Steps:**\n1️⃣ Go to **zoikomobile.com/how-to-activate-sim/**\n2️⃣ Enter your SIM number (printed on the SIM card)\n3️⃣ Select your plan\n4️⃣ Enter your personal details\n5️⃣ Complete payment\n6️⃣ Your line goes live instantly! 🎉\n\n**eSIM activation (faster):**\n1️⃣ Go to zoikomobile.com → choose eSIM at checkout\n2️⃣ Receive QR code by email\n3️⃣ Scan in your phone's Settings → Cellular → Add eSIM\n4️⃣ Done in minutes! ⚡\n\n**Transfer your existing number:** Select 'Keep My Number' — takes a few hours (max 24h).\n\n📞 Need help? Call 800-988-8116 anytime, 24/7.";
+
+  // ── BYOD ──
+  if (/byod|bring.*(own|my) phone|my (own )?device/i.test(t)) return "**Bring Your Own Device to Zoiko Mobile!** 📱\n\n✅ Most unlocked GSM phones work\n✅ T-Mobile or AT&T unlocked\n✅ Internationally unlocked phones\n✅ 5G phones get our fastest T-Mobile 5G speeds!\n\n**How to check:**\n1️⃣ Dial ***#06#** on your phone to get your IMEI\n2️⃣ Visit **zoikomobile.com/byod-plans/**\n3️⃣ Enter your IMEI for instant compatibility check\n\n**Keep your number** — port-in is 100% free!\n\nWhat phone do you have? I can confirm compatibility right now 😊";
+
+  // ── eSIM ──
+  if (/esim/i.test(t)) return "eSIM is available on **all Zoiko Mobile plans**! 📲\n\n**What is eSIM?** A digital SIM built into your phone — no physical card!\n\n**Benefits:**\n⚡ Instant activation (live in minutes)\n✈️ Perfect for international travel\n🔒 More secure — can't be lost or stolen\n📱 Keep your old SIM active while adding Zoiko\n\n**Compatible phones:**\n✅ iPhone XS / XR and all newer models\n✅ Samsung Galaxy S20 and newer\n✅ Google Pixel 3a and newer\n✅ Many recent Android flagship devices\n\n**New customers**: Select eSIM at checkout\n**Existing customers**: Account dashboard or dial **500** from your Zoiko phone\n\nDo you have a compatible device? Want to activate right now?";
+
+  // ── FAMILY ──
+  if (/family|multiple line|group|children|kids|husband|wife|parent/i.test(t)) return "Zoiko Family Plans are a fantastic deal! 👨‍👩‍👧\n\n💰 **20% OFF** with 3 or more active lines\n👥 Up to **10 lines** on one account\n🔀 **Mix prepaid & postpaid** on the same account\n👶 **Parental controls** — free on all family lines\n🌍 **International calling** on every line\n📄 **One simple bill** each month\n🏠 Friends from **different households** can join!\n\n**Sample savings** (Zoiko Core, 4 lines):\n- Individual pricing: $100/mo\n- Family discount (20% off): **$80/mo** 🎉\n\nHow many lines do you need? I'll calculate your exact monthly savings!";
+
+  // ── INTERNATIONAL ──
+  if (/international|call abroad|overseas|which countr|india|philippines|pakistan|mexico|canada/i.test(t)) return "Zoiko Mobile's international calling is unbeatable value! 🌍\n\n**Free calls included by plan:**\n💚 **Zoiko Flex** — 70+ countries free\n⚡ **Zoiko Core** — 100+ countries free\n🎮 **Zoiko Max** — 150+ countries free\n🌟 **Zoiko Infinity** — 150+ countries free\n🚀 **Zoiko Supreme** — **200+ countries** free!\n\n**Popular countries included:** USA, UK, India, Philippines, Pakistan, Bangladesh, Mexico, Canada, Australia, Germany, France, Italy, Spain, Brazil, and many more!\n\n🇨🇦🇲🇽 **Free roaming** in Canada & Mexico on select plans\n📶 **Wi-Fi Calling** — included free on all plans (great for weak signal areas)\n\nWhich country are you most interested in calling? I can confirm it's covered!";
+
+  // ── NUMBER PORTING ──
+  if (/port|transfer.*number|keep.*number|switch/i.test(t)) return "Switching your number to Zoiko Mobile is completely **free and hassle-free**! 📲\n\n**How it works:**\n1️⃣ Select 'Keep My Number' during activation at zoikomobile.com\n2️⃣ Have your current carrier's account number and PIN ready\n3️⃣ Keep your old SIM active until transfer completes\n4️⃣ Transfer usually completes in **a few hours** (maximum 24 hours)\n5️⃣ You'll get a confirmation once it's done! 🎉\n\n**Works from any carrier:** AT&T, Verizon, T-Mobile, Mint, Cricket, Metro, and more.\n\n**Cost**: Completely free — Zoiko never charges port-in fees.\n\nReady to start the process?";
+
+  // ── BILLING ──
+  if (/bill|payment|pay|autopay|invoice|charge|cost/i.test(t)) return "Billing at Zoiko Mobile is simple and transparent! 💳\n\n**Payment methods accepted:**\n💳 Credit cards (Visa, Mastercard, Amex)\n💳 Debit cards\n🏦 Bank transfer / ACH\n💰 PayPal\n🔄 **AutoPay** — save $5/mo and never miss a payment!\n\n**Billing features:**\n📧 Digital invoices emailed monthly\n📱 Manage billing via app or zoikomobile.com\n📊 Usage tracking in real-time\n\n**Prepaid**: Pay upfront each month, no surprise charges\n**Postpaid**: Bill arrives after usage, pay by due date\n\n📞 Billing questions? Call **800-988-8116** (24/7)\n📧 Or email **support@zoikomobile.com**\n\nIs there a specific billing question I can help with?";
+
+  // ── COVERAGE ──
+  if (/coverage|5g|network|signal|speed|area/i.test(t)) return "Zoiko Mobile runs on **T-Mobile's nationwide network** — one of the largest and fastest in the US! 🚀\n\n**Coverage tiers:**\n⚡ **5G** — thousands of US cities and expanding fast\n📶 **4G LTE** — nationwide coverage everywhere\n📞 **Wi-Fi Calling** — free on all plans, great for buildings with weak signal\n\n**Speeds:**\n🔥 5G: Up to 1Gbps download in ideal conditions\n📊 LTE: Typically 30-100Mbps\n\n**International:**\n🌍 Coverage in **200+ countries** worldwide\n🇨🇦🇲🇽 Free roaming in **Canada & Mexico** (select plans)\n\n**Check your area:** Visit **zoikomobile.com** and use the coverage map.\n\nWhat city or zip code are you in? I can tell you more about coverage in your exact location!";
+
+  // ── SUPPORT ──
+  if (/support|help|contact|human|agent|speak to|talk to/i.test(t)) return "Zoiko Mobile support is available **24/7** — we never sleep! 🙋\n\n**Contact options:**\n📞 **Phone**: 800-988-8116 (call anytime)\n📧 **Email**: support@zoikomobile.com\n💬 **Live Chat**: zoikomobile.com\n📱 **Dial 500** from your Zoiko phone (fastest for account issues)\n\n**Or I can help you right now with:**\n✅ Plan info and upgrades\n✅ SIM/eSIM activation\n✅ Billing questions\n✅ Technical troubleshooting\n✅ Number porting\n✅ BYOD compatibility\n✅ Scheduling a callback\n\nWould you like me to set up a **callback request** so an agent calls you? Just share your name and number and I'll arrange it now!";
+
+  // ── DEALS ──
+  if (/deal|promo|discount|offer|promotion|sale/i.test(t)) return "Here are all **current Zoiko Mobile promotions**! 🎉\n\n🔥 **Family Saver** — 20% OFF when you add 3+ lines (up to $25/mo savings)\n🎁 **First Month 50% Off** — new customers on Core plan or above\n📲 **Free Port-In** — transfer from any carrier at zero cost\n⚡ **Zero Activation Fees** — no setup charges, ever\n🌍 **Free International Calling** — included on every plan (70-200+ countries)\n💳 **Device Financing** — available on Infinity & Supreme Unlimited\n🔄 **AutoPay Discount** — save an extra $5/mo when you set up autopay\n\nNo promo codes needed — all deals apply automatically at checkout!\n\nWhich promotion interests you most? I can walk you through signing up!";
+
+  // ── TOP-UP ──
+  if (/top.?up|topup|add.?on|extra data|more data/i.test(t)) return "**Zoiko Top-Up Plans** give you on-demand credit whenever you need it! 🔋\n\n✅ Add extra data, minutes, or texts anytime\n✅ 100% contract-free — buy only what you need\n✅ Activates **instantly** after purchase\n✅ No account needed — available to any Zoiko customer\n⚠️ Balance expires at the end of your current billing cycle\n⚠️ Domestic US use only (talk and text)\n\n**How to top up:**\nVisit **zoikomobile.com** → My Account → Top-Up\n\nDo you need a data top-up right now, or are you looking for a plan upgrade?";
+
+  // ── DEVICE PROTECTION ──
+  if (/protect|insurance|damage|theft|lost|broken|cracked/i.test(t)) return "Zoiko Mobile **Device Protection** has you covered! 🛡️\n\n**What's covered:**\n✅ Accidental damage (cracked screens, liquid damage)\n✅ Theft\n✅ Loss\n✅ Mechanical failure\n\n**Features:**\n💰 Affordable monthly add-on — no big upfront cost\n🔧 Flexible, customizable plans\n⚡ Fast replacement or repair process\n\n**How to add:**\nVisit **zoikomobile.com/device-protection/** to see options and pricing.\n\nIs your current device the one you want to protect, or are you asking for a new device you're considering?";
+
+  // ── PLANS OVERVIEW ──
+  if (/plan|price|cost|how much|cheap|option|which plan|what plan|all plan/i.test(t)) return "Here's a full overview of **all Zoiko Mobile plans** 📱\n\n**PREPAID (month-to-month, no contract):**\n💚 **Flex** — $15/mo | 4GB | 70+ countries\n⚡ **Core** — $25/mo | 5GB | 100+ countries\n🎮 **Max** — $40/mo | 20GB | 150+ countries\n📲 **BYOD Starter** — $15/mo | 4GB | bring your own phone\n\n**POSTPAID (12 or 24-month, no credit check):**\n📱 **Lite** — $20/mo | Basic data | 50+ countries\n⚡ **Core** — $30/mo | 5GB | 100+ countries\n🎮 **Max** — $45/mo | 20GB | 150+ countries\n🌟 **Infinity** — $55/mo | Unlimited (ZERO throttle) | 150+ countries\n🚀 **Supreme Unlimited** — $65/mo | 35GB priority + truly unlimited | 200+ countries\n\n**All plans include:** No credit check | No hidden fees | eSIM | Wi-Fi Calling | T-Mobile 5G\n\nTell me about your usage and I'll recommend the perfect plan for you! 😊";
+
+  // ── FRUSTRATED ──
+  if (/(frustrated|angry|terrible|worst|bad service|useless|doesn.t work|not happy)/i.test(t)) return "I'm genuinely sorry to hear that — your frustration is 100% valid and I want to make this right for you right now 💙\n\nCan you tell me exactly what's happening? The more detail you share, the faster I can solve it — or I can connect you directly with a specialist who can fix things immediately.\n\nYou deserve great service, and I'm going to make sure that's exactly what you get. What's going on?";
+
+  // ── SMART DEFAULT — never generic again ──
+  return "That's a great question! Let me help you out 😊\n\nAt **Zoiko Mobile**, here's what I can tell you:\n\n📱 **Plans from $15/mo** — no credit check, no hidden fees\n🌍 **Free international calling** to 70-200+ countries\n⚡ **T-Mobile 5G** nationwide coverage\n📲 **eSIM** — instant digital activation on all plans\n👨‍👩‍👧 **Family discounts** — 20% off with 3+ lines\n🔌 **Activation** — live in minutes at zoikomobile.com\n📞 **24/7 support** — 800-988-8116\n\nCould you tell me a bit more about what you're looking for? For example — how much data you use, how many lines you need, or which countries you call? I'll point you to the perfect plan! 🎯";
+}
+
+// ══════════════════════════════════════════════
+//  SUGGESTED FOLLOW-UPS
+// ══════════════════════════════════════════════
+function getSuggestions(reply) {
+  const r=reply.toLowerCase();
+  if(r.includes('what\'s on your mind')||r.includes('how can i help')||r.includes('what can i help')) return ['View all plans','Tell me about eSIM','Family discounts'];
+  if(r.includes('flex')||r.includes('$15')) return ['Compare Flex vs Core','Tell me about eSIM','How do I sign up?'];
+  if(r.includes('family')||r.includes('20%')||r.includes('lines')) return ['How many lines can I add?','Mix prepaid and postpaid?','Calculate my savings'];
+  if(r.includes('international')||r.includes('countr')) return ['Is India included?','What about Philippines?','Do I pay extra?'];
+  if(r.includes('activate')||r.includes('sim')) return ['Do you have eSIM?','How long does it take?','Can I keep my number?'];
+  if(r.includes('byod')||r.includes('device')||r.includes('compatible')) return ['Check my iPhone compatibility','How do I transfer my number?','Which plans support BYOD?'];
+  if(r.includes('deal')||r.includes('promo')) return ['Tell me about family savings','What is eSIM?','Compare Core vs Max'];
+  if(r.includes('infinity')||r.includes('zero throttl')) return ['Compare Infinity vs Supreme','How do I sign up?','Tell me about device financing'];
+  if(r.includes('supreme')) return ['Compare Supreme vs Infinity','How do I sign up?','Tell me about VIP support'];
+  if(r.includes('coverage')||r.includes('5g')||r.includes('network')) return ['Check coverage in my city','What is Wi-Fi Calling?','Which plan has best speeds?'];
+  if(r.includes('billing')||r.includes('payment')||r.includes('autopay')) return ['Set up AutoPay','View my invoice','Change my plan'];
+  return [];
+}
+
+// ══════════════════════════════════════════════
+//  SATISFACTION CARD
+// ══════════════════════════════════════════════
+function makeSatCard() {
+  const card=document.createElement('div');
+  card.className='sat-card';
+  card.innerHTML='<div class="sat-title">How am I doing? Rate this conversation:</div><div class="sat-stars" id="stars"><span class="star" data-v="1">⭐</span><span class="star" data-v="2">⭐</span><span class="star" data-v="3">⭐</span><span class="star" data-v="4">⭐</span><span class="star" data-v="5">⭐</span></div>';
+  card.querySelectorAll('.star').forEach((s,i)=>{
+    s.onclick=()=>{
+      card.querySelectorAll('.star').forEach((x,j)=>x.classList.toggle('sel',j<=i));
+      card.innerHTML+='<div class="sat-thanks">'+(i>=3?'Thank you so much! 🌟 So glad I could help!':'Thanks for your honesty. I keep improving every day!')+'</div>';
+      toast(i>=3?'⭐ Thanks for the rating!':'💙 Thanks — your feedback helps!');
+    };
+  });
+  return card;
+}
+
+// ══════════════════════════════════════════════
+//  ESCALATION (regular)
+// ══════════════════════════════════════════════
+function addEscalate() {
+  const card=document.createElement('div'); card.className='esc-card';
+  card.innerHTML='<div class="esc-title">🎧 Connect to a Live Agent</div><div class="esc-form"><input id="escName" placeholder="Your full name" maxlength="60"/><input id="escPhone" placeholder="Your phone number" maxlength="20"/><input id="escIssue" placeholder="Brief description of your issue" maxlength="200"/><button class="esc-submit" onclick="submitEsc()">📨 Request Callback</button></div>';
+  msgs.appendChild(card); msgs.scrollTop=msgs.scrollHeight;
+}
+
+// ══════════════════════════════════════════════
+//  ESCALATION (pre-filled by create_callback_request tool)
+// ══════════════════════════════════════════════
+function addEscalateWithData(name, phone, issue, ref) {
+  const card=document.createElement('div'); card.className='esc-card';
+  card.innerHTML='<div class="esc-title" style="color:var(--teal)">✅ Callback Request Created!</div><div style="font-size:12.5px;color:var(--muted);margin-top:6px">Hi <strong style="color:var(--text)">'+(name||'there')+'</strong>! A Zoiko Mobile agent will call <strong style="color:var(--text)">'+(phone||'you')+'</strong> within <strong style="color:var(--text)">24 hours</strong>.<br/><br/>Issue: <em style="color:var(--text)">'+(issue||'-')+'</em><br/><br/>Reference: <strong style="color:var(--teal)">'+(ref||'ZKN-000000')+'</strong><br/>📧 Confirmation sent to support@zoikomobile.com</div>';
+  msgs.appendChild(card); msgs.scrollTop=msgs.scrollHeight;
+  toast('✅ Callback requested! We\'ll reach you within 24 hours.');
+}
+
+function submitEsc() {
+  const name=(document.getElementById('escName')||{}).value||'';
+  const phone=(document.getElementById('escPhone')||{}).value||'';
+  const issue=(document.getElementById('escIssue')||{}).value||'';
+  if(!name.trim()||!phone.trim()){ toast('Please fill in your name and phone number.'); return; }
+  const ref='ZKN-'+Date.now().toString().slice(-6);
+  document.querySelector('.esc-card').innerHTML='<div class="esc-title" style="color:var(--teal)">✅ Request Submitted!</div><div style="font-size:12.5px;color:var(--muted);margin-top:6px">Hi <strong style="color:var(--text)">'+name+'</strong>! A Zoiko Mobile agent will call <strong style="color:var(--text)">'+phone+'</strong> within <strong style="color:var(--text)">24 hours</strong>.<br/><br/>Reference: <strong style="color:var(--teal)">'+ref+'</strong><br/>📧 Confirmation sent to support@zoikomobile.com</div>';
+  toast("✅ Callback requested! We'll reach you within 24 hours.");
+}
+
+// ══════════════════════════════════════════════
+//  HISTORY SAVE & VIEW
+// ══════════════════════════════════════════════
+function saveHistory(user, bot, tools) {
+  chatHistory.unshift({ date:new Date().toLocaleString(), user, bot, tools:tools||[] });
+  chatHistory=chatHistory.slice(0,20);
+  try{ localStorage.setItem('zoikon_history',JSON.stringify(chatHistory)); }catch(e){}
+}
+
+histBtn.addEventListener('click',function(){
+  if(!chatHistory.length){ toast('No chat history yet.'); return; }
+  const existing=document.querySelector('.hist-modal-ov');
+  if(existing) existing.remove();
+  const ov=document.createElement('div'); ov.className='hist-modal-ov';
+  const items=chatHistory.map(h=>{
+    const toolsHtml = h.tools&&h.tools.length ? '<div style="font-size:10px;color:var(--teal);margin-top:4px">🔧 Tools: '+h.tools.join(', ')+'</div>' : '';
+    return '<details class="hist-item"><summary>'+h.date+'</summary><p style="margin:6px 0 2px;font-size:12.5px"><strong style="color:var(--teal)">You:</strong> '+h.user+'</p><p style="font-size:12.5px;color:var(--muted)"><strong style="color:var(--text)">Zoikon:</strong> '+h.bot.slice(0,200)+(h.bot.length>200?'..':'')+'</p>'+toolsHtml+'</details>';
+  }).join('');
+  ov.innerHTML='<div class="hist-modal-box"><div class="hist-modal-hdr"><span style="font-family:var(--font-h);font-weight:700;font-size:15px;color:var(--teal)">🕐 Chat History</span><button onclick="this.closest(\'.hist-modal-ov\').remove()" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1">✕</button></div><div class="hist-modal-body">'+items+'</div></div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click',e=>{ if(e.target===ov) ov.remove(); });
+});
+
+// ══════════════════════════════════════════════
+//  TEXT-TO-SPEECH
+// ══════════════════════════════════════════════
+function speak(text,btn){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const clean=text.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1')
+    .replace(/[🤖📱🌍✅🔌👤🎤📞📧🏢🚀✈️🎉⚠️🌟⚡🎮👨‍👩‍👧🇨🇦🇲🇽😊🙋👋💙💳📅🔄⭐🔋🎬📶📡🎧📨🔑📋👍👎💰🏠📲🛡️🔥🎉📊💰📍🗺️🌐⚖️]/gu,'')
+    .replace(/<br\/>/g,'. ').replace(/<[^>]+>/g,'');
+  const u=new SpeechSynthesisUtterance(clean);
+  u.lang='en-US'; u.rate=0.92; u.pitch=1.05; u.volume=1;
+  const voices=window.speechSynthesis.getVoices();
+  const v=voices.find(v=>['Samantha','Google US English','Microsoft Aria Online (Natural) - English (United States)','Microsoft Jenny Online (Natural) - English (United States)'].indexOf(v.name)>=0)
+    ||voices.find(v=>v.lang==='en-US'&&!v.localService)||voices.find(v=>v.lang==='en-US')||voices[0];
+  if(v) u.voice=v;
+  vbarWrap.classList.add('on'); vlabel.textContent='Speaking...';
+  u.onend=function(){ vbarWrap.classList.remove('on'); if(btn){btn.innerHTML='🔊 Listen';btn.classList.remove('on');} };
+  if(btn){ btn.innerHTML='⏹ Stop'; btn.classList.add('on'); btn.onclick=function(){ window.speechSynthesis.cancel(); btn.innerHTML='🔊 Listen'; btn.classList.remove('on'); vbarWrap.classList.remove('on'); }; }
+  window.speechSynthesis.speak(u);
+}
+if('speechSynthesis' in window){ window.speechSynthesis.onvoiceschanged=function(){ window.speechSynthesis.getVoices(); }; }
+
+muteBtn.addEventListener('click',function(){
+  autoSpeak=!autoSpeak;
+  muteBtn.textContent=autoSpeak?'🔊':'🔇';
+  muteBtn.classList.toggle('active',autoSpeak);
+  if(!autoSpeak) window.speechSynthesis.cancel();
+  toast(autoSpeak?'🔊 Auto-speak on':'🔇 Auto-speak off');
+});
+
+// ══════════════════════════════════════════════
+//  SPEECH-TO-TEXT
+// ══════════════════════════════════════════════
+var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(SR){
+  recognition=new SR();
+  recognition.continuous=false; recognition.interimResults=true; recognition.lang='en-US';
+  recognition.onstart=function(){ listening=true; micBtn.classList.add('mic-on'); vbarWrap.classList.add('on'); vlabel.textContent='Listening...'; };
+  recognition.onresult=function(e){ txt.value=Array.from(e.results).map(r=>r[0].transcript).join(''); txt.style.height='auto'; txt.style.height=Math.min(txt.scrollHeight,100)+'px'; };
+  recognition.onend=function(){ listening=false; micBtn.classList.remove('mic-on'); vbarWrap.classList.remove('on'); if(txt.value.trim()) send(); };
+  recognition.onerror=function(e){ listening=false; micBtn.classList.remove('mic-on'); vbarWrap.classList.remove('on'); if(e.error==='network') toast('⚠️ Voice needs internet.'); else if(e.error!=='no-speech') toast('🎤 Mic error: '+e.error); };
+}
+micBtn.addEventListener('click',async function(){
+  if(!SR){ toast('❌ Voice not supported. Use Chrome or Edge.'); return; }
+  if(listening){ recognition.stop(); return; }
+  try{
+    const s=await navigator.mediaDevices.getUserMedia({audio:true});
+    s.getTracks().forEach(t=>t.stop());
+    window.speechSynthesis.cancel(); recognition.start();
+  }catch(err){
+    if(err.name==='NotAllowedError') showPermModal();
+    else if(err.name==='NotFoundError') toast('❌ No microphone detected.');
+    else toast('❌ '+err.message);
+  }
+});
+
+// ══════════════════════════════════════════════
+//  CLEAR CHAT
+// ══════════════════════════════════════════════
+clearBtn.addEventListener('click',function(){
+  chatMsgs=[]; msgCount=0; sessionStart=Date.now();
+  window.speechSynthesis.cancel();
+  hideToolBar();
+  msgs.innerHTML='<div class="welcome" id="welcome"><div class="wlogo"><img src="'+LOGO+'" alt="Zoiko"/></div><div class="wsub">New conversation started — How can I help?</div></div><div class="chips" id="chips"><div class="chip" onclick="quick(\'📱 View all plans\')">📱 View Plans</div><div class="chip" onclick="quick(\'How do I activate my SIM?\')">🔌 Activate SIM</div><div class="chip" onclick="quick(\'Tell me about family plans\')">👨‍👩‍👧 Family Plans</div><div class="chip" onclick="quick(\'Which countries can I call free?\')">🌍 Intl Calling</div><div class="chip" onclick="quick(\'I need help with my account\')">🛠️ Support</div><div class="chip" onclick="quick(\'What current deals do you have?\')">🎉 Deals</div></div>';
+});
+
+// ══════════════════════════════════════════════
+//  UTILITIES
+// ══════════════════════════════════════════════
+function toast(msg){
+  const existing=document.querySelector('.toast'); if(existing) existing.remove();
+  const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{ t.style.animation='tOut .3s ease forwards'; setTimeout(()=>t.remove(),300); },3200);
+}
+function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+function showPermModal(){
+  const ua=navigator.userAgent;
+  const steps=ua.includes('Edg')?['Click 🔒 in address bar','Permissions → Microphone → Allow','Reload page']:
+    ua.includes('Firefox')?['Click 🔒 → Connection Secure → More Info','Permissions → remove Microphone block','Reload page']:
+    ['Click 🔒 lock icon in address bar','Microphone → Allow','Reload page'];
+  const ov=document.createElement('div'); ov.className='perm-ov';
+  ov.innerHTML='<div class="perm-box"><div class="perm-ico">🎤</div><div class="perm-ttl">Microphone Blocked</div><div class="perm-desc">Enable microphone access in your browser:</div><div class="perm-steps">'+steps.map((s,i)=>'<div class="pstep"><div class="pnum">'+(i+1)+'</div><div>'+s+'</div></div>').join('')+'</div><div class="pbtns"><button class="pbtn sec" onclick="this.closest(\'.perm-ov\').remove()">Dismiss</button><button class="pbtn pri" onclick="location.reload()">🔄 Reload</button></div></div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click',e=>{ if(e.target===ov) ov.remove(); });
+}
+
+function checkMicPerm(){
+  if(!navigator.permissions) return;
+  navigator.permissions.query({name:'microphone'}).then(s=>{
+    if(s.state==='denied'){ micBtn.style.opacity='.5'; micBtn.style.color='var(--red)'; micBtn.title='Mic blocked — click for fix'; }
+    s.onchange=function(){ if(s.state==='granted'){ micBtn.style.opacity='1'; micBtn.style.color=''; } };
+  }).catch(()=>{});
+}
+checkMicPerm();
+
+// ══════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════
+window.addEventListener('load',function(){
+  const hasKey=API_KEY&&API_KEY!=='YOUR_API_KEY_HERE';
+  setTimeout(function(){
+    const g=hasKey
+      ?"Hey there! 👋 Welcome to Zoiko Mobile! I'm Zoikon, your AI-powered assistant with live tools. I can look up real plan details, calculate your savings, check device compatibility, find offices near you, and much more! Plans start at just $15/mo with no credit check. What can I help you with today? 😊"
+      :"Hey there! 👋 Welcome to Zoiko Mobile! I'm Zoikon, your AI assistant. Plans from $15/mo, free international calls, no credit check. Ask me anything about plans, SIM activation, eSIM, family discounts, and more. What's on your mind?";
+    streamMsg(g);
+  },700);
+});
+</script>
+</body>
+</html>
