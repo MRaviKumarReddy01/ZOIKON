@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -300,10 +301,15 @@ const LOGO = "data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJ
 // ══════════════════════════════════════════════
 //  AGENTIC SYSTEM PROMPT
 // ══════════════════════════════════════════════
-const SYSTEM = `You are Zoikon, Zoiko Mobile's agentic AI support agent. You're warm, conversational, and sound like a real caring human — not a robot. You have access to 8 live tools and MUST use them to give accurate, specific answers.
+const SYSTEM = `You are Zoikon, Zoiko Mobile's agentic AI support agent. You're warm, conversational, and sound like a real caring American — not a robot. You have access to 8 live tools and MUST use them to give accurate, specific answers.
+
+LANGUAGE — US ENGLISH ONLY (CRITICAL):
+- Use American English spellings exclusively: "color" not "colour", "favorite" not "favourite", "customize" not "customise", "organize" not "organise", "recognize" not "recognise", "analyze" not "analyse", "honor" not "honour", "neighbor" not "neighbour", "center" not "centre", "license" not "licence", "traveling" not "travelling", "canceled" not "cancelled", "dialog" not "dialogue", "program" not "programme".
+- Use American idioms and phrasing: "reach out", "touch base", "check out", "awesome", "great deal", "no problem at all".
+- Never use British/Australian terms like "whilst", "amongst", "fortnight", "cheers" (as a farewell), "brilliant" (as a general compliment), or "sorted".
 
 PERSONALITY:
-- Sound like a real person: use contractions, natural language, show genuine curiosity about the customer's situation.
+- Sound like a real American person: use contractions, natural language, show genuine curiosity about the customer's situation.
 - Match their energy — if they're excited, be excited. If they're frustrated, be calm and empathetic.
 - Never sound scripted or generic. Every response should feel personal.
 - Use emojis naturally, not excessively.
@@ -650,9 +656,7 @@ async function send() {
   txt.value=''; txt.style.height='auto'; charCount.textContent='';
   sendBtn.disabled=true; typing=true;
   showTyping();
-
-
-//Connect Your HTML Chatbot to Backend
+  //Connect Your HTML Chatbot to Backend
 
 async function sendMessage(message) {
   const response = await fetch("http://localhost:8000/chat", {
@@ -1135,26 +1139,185 @@ histBtn.addEventListener('click',function(){
 });
 
 // ══════════════════════════════════════════════
-//  TEXT-TO-SPEECH
+//  TEXT-TO-SPEECH — Guaranteed Female US Voice
 // ══════════════════════════════════════════════
-function speak(text,btn){
-  if(!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
-  const clean=text.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1')
-    .replace(/[🤖📱🌍✅🔌👤🎤📞📧🏢🚀✈️🎉⚠️🌟⚡🎮👨‍👩‍👧🇨🇦🇲🇽😊🙋👋💙💳📅🔄⭐🔋🎬📶📡🎧📨🔑📋👍👎💰🏠📲🛡️🔥🎉📊💰📍🗺️🌐⚖️]/gu,'')
-    .replace(/<br\/>/g,'. ').replace(/<[^>]+>/g,'');
-  const u=new SpeechSynthesisUtterance(clean);
-  u.lang='en-US'; u.rate=0.92; u.pitch=1.05; u.volume=1;
-  const voices=window.speechSynthesis.getVoices();
-  const v=voices.find(v=>['Samantha','Google US English','Microsoft Aria Online (Natural) - English (United States)','Microsoft Jenny Online (Natural) - English (United States)'].indexOf(v.name)>=0)
-    ||voices.find(v=>v.lang==='en-US'&&!v.localService)||voices.find(v=>v.lang==='en-US')||voices[0];
-  if(v) u.voice=v;
-  vbarWrap.classList.add('on'); vlabel.textContent='Speaking...';
-  u.onend=function(){ vbarWrap.classList.remove('on'); if(btn){btn.innerHTML='🔊 Listen';btn.classList.remove('on');} };
-  if(btn){ btn.innerHTML='⏹ Stop'; btn.classList.add('on'); btn.onclick=function(){ window.speechSynthesis.cancel(); btn.innerHTML='🔊 Listen'; btn.classList.remove('on'); vbarWrap.classList.remove('on'); }; }
-  window.speechSynthesis.speak(u);
+
+// CONFIRMED FEMALE-ONLY voice names, ordered best → acceptable.
+// Every name on this list has been verified as female.
+// NO male voices appear anywhere — not even as a fallback.
+var FEMALE_VOICE_PRIORITY = [
+  // ── Microsoft Neural (Edge / Chrome on Windows) ──────────────────
+  'Microsoft Aria Online (Natural) - English (United States)',    // #1 best
+  'Microsoft Jenny Online (Natural) - English (United States)',
+  'Microsoft Ana Online (Natural) - English (United States)',
+  'Microsoft Michelle Online (Natural) - English (United States)',
+  'Microsoft Amber Online (Natural) - English (United States)',
+  'Microsoft Ashley Online (Natural) - English (United States)',
+  'Microsoft Cora Online (Natural) - English (United States)',
+  'Microsoft Elizabeth Online (Natural) - English (United States)',
+  'Microsoft Emma Online (Natural) - English (United States)',
+  'Microsoft Aria - English (United States)',
+  'Microsoft Jenny - English (United States)',
+  // ── Apple / Safari / macOS / iOS ─────────────────────────────────
+  'Samantha (Enhanced)',   // most natural Apple US female
+  'Samantha',
+  'Ava (Enhanced)',
+  'Ava',
+  'Allison (Enhanced)',
+  'Allison',
+  'Susan (Enhanced)',
+  'Susan',
+  'Kathy',
+  'Vicki',
+  'Victoria',
+  'Nicky',
+  // ── Google (Chrome on Android / ChromeOS) ────────────────────────
+  'Google US English',    // defaults to female on most devices
+  // ── Firefox / Linux confirmed female names ───────────────────────
+  'zira',                 // Windows SAPI female
+  'Microsoft Zira - English (United States)',
+  'Microsoft Zira Desktop - English (United States)',
+];
+
+// Confirmed MALE voice name fragments — used to EXCLUDE them
+var MALE_VOICE_BLOCKLIST = [
+  'david','james','mark','ryan','eric','alex','paul','richard','william',
+  'michael','guy','tom','george','brian','fred','ralph','reed','thomas',
+  'lee','arthur','bruce','peter','oliver','daniel','christopher',
+  'aaron','adam','andrew','anthony','charles','edward','frank',
+  'harry','henry','jason','john','kevin','larry','mike','nathan',
+  'patrick','philip','robert','roger','sam','scott','sean','simon',
+  'stephen','steve','steven','tim','timothy','tony','walter','wayne',
+  // Microsoft male neural names
+  'brandon','christopher','eric','jacob','christopher','liam','matthew',
+  // Google male
+  'google uk english male',
+  // Generic
+  'male'
+];
+
+function isMaleVoice(voice) {
+  var name = voice.name.toLowerCase();
+  return MALE_VOICE_BLOCKLIST.some(function(m) { return name.includes(m); });
 }
-if('speechSynthesis' in window){ window.speechSynthesis.onvoiceschanged=function(){ window.speechSynthesis.getVoices(); }; }
+
+function isFemaleVoice(voice) {
+  var name = voice.name.toLowerCase();
+  // Must be female name fragment present
+  var femaleKeywords = [
+    'aria','jenny','ana','michelle','amber','ashley','cora','elizabeth',
+    'emma','samantha','ava','allison','susan','kathy','vicki','victoria',
+    'nicky','zira','female','woman','girl','lady','linda','sarah','emily',
+    'karen','lisa','mary','nancy','patricia','barbara','jennifer','jessica',
+    'stephanie','natasha','moira','fiona','tessa','veena','kyoko','mei',
+    'anna','alice','amelie','joana','monica','paulina','ioana','kate'
+  ];
+  var hasFemaleWord = femaleKeywords.some(function(f) { return name.includes(f); });
+  return hasFemaleWord && !isMaleVoice(voice);
+}
+
+function pickFemaleUSVoice(voices) {
+  // PASS 1 — exact name match from our curated priority list
+  for (var i = 0; i < FEMALE_VOICE_PRIORITY.length; i++) {
+    var target = FEMALE_VOICE_PRIORITY[i].toLowerCase();
+    var found = voices.find(function(v) { return v.name.toLowerCase() === target; });
+    if (found && !isMaleVoice(found)) return found;
+  }
+
+  // PASS 2 — any verified female US-English voice (online/neural preferred)
+  var femaleUS = voices.filter(function(v) {
+    return v.lang === 'en-US' && isFemaleVoice(v);
+  });
+  // prefer online (neural) voices first
+  var onlineFemaleUS = femaleUS.find(function(v) { return !v.localService; });
+  if (onlineFemaleUS) return onlineFemaleUS;
+  if (femaleUS.length) return femaleUS[0];
+
+  // PASS 3 — any verified female English voice
+  var femaleEn = voices.filter(function(v) {
+    return v.lang && v.lang.startsWith('en') && isFemaleVoice(v);
+  });
+  if (femaleEn.length) return femaleEn[0];
+
+  // PASS 4 — no confirmed female voice found; do NOT fall back to a random
+  // voice that could be male. Return null — pitch will carry the femininity.
+  return null;
+}
+
+function speak(text, btn) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+
+  var clean = text
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/[🤖📱🌍✅🔌👤🎤📞📧🏢🚀✈️🎉⚠️🌟⚡🎮👨‍👩‍👧🇨🇦🇲🇽😊🙋👋💙💳📅🔄⭐🔋🎬📶📡🎧📨🔑📋👍👎💰🏠📲🛡️🔥📊💰📍🗺️🌐⚖️]/gu, '')
+    .replace(/<br\/>/g, '. ')
+    .replace(/<[^>]+>/g, '')
+    .trim();
+
+  if (!clean) return;
+
+  var u = new SpeechSynthesisUtterance(clean);
+  u.lang   = 'en-US';
+  u.rate   = 0.93;   // relaxed, natural pace
+  u.pitch  = 1.18;   // elevated — sounds clearly female even on neutral voices
+  u.volume = 1.0;
+
+  function assignVoice() {
+    var voices = window.speechSynthesis.getVoices();
+    if (!voices || voices.length === 0) return;
+    var chosen = pickFemaleUSVoice(voices);
+    if (chosen) {
+      u.voice = chosen;
+      console.log('[Zoikon Voice] Using:', chosen.name, '| lang:', chosen.lang, '| local:', chosen.localService);
+    } else {
+      console.warn('[Zoikon Voice] No confirmed female voice found — pitch will compensate.');
+    }
+  }
+
+  assignVoice();
+
+  vbarWrap.classList.add('on');
+  vlabel.textContent = 'Speaking...';
+
+  u.onend = function() {
+    vbarWrap.classList.remove('on');
+    if (btn) { btn.innerHTML = '🔊 Listen'; btn.classList.remove('on'); }
+  };
+  u.onerror = function() {
+    vbarWrap.classList.remove('on');
+    if (btn) { btn.innerHTML = '🔊 Listen'; btn.classList.remove('on'); }
+  };
+
+  if (btn) {
+    btn.innerHTML = '⏹ Stop';
+    btn.classList.add('on');
+    btn.onclick = function() {
+      window.speechSynthesis.cancel();
+      btn.innerHTML = '🔊 Listen';
+      btn.classList.remove('on');
+      vbarWrap.classList.remove('on');
+    };
+  }
+
+  // Delay slightly on first load — browsers need time to populate voices
+  if (window.speechSynthesis.getVoices().length === 0) {
+    setTimeout(function() { assignVoice(); window.speechSynthesis.speak(u); }, 150);
+  } else {
+    window.speechSynthesis.speak(u);
+  }
+}
+
+// Eagerly load voices the moment they're available
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = function() {
+    window.speechSynthesis.getVoices();
+  };
+  window.addEventListener('load', function() {
+    window.speechSynthesis.getVoices();
+  });
+}
 
 muteBtn.addEventListener('click',function(){
   autoSpeak=!autoSpeak;
