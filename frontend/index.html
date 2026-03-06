@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1117,9 +1116,26 @@ function smartReply(text) {
   }
 
   // ════════════════════════════════════════════════════════════════════
-  // 4. CHEAPEST PLAN
+  // 4. CHEAPEST PLAN - WITH CATEGORY VARIANTS
   // ════════════════════════════════════════════════════════════════════
-  if (/cheapest|most\s*affordable|lowest\s*price|budget|basic\s*plan|starter\s*plan|cheap\s*plan|under\s*\$20|least\s*expensive|minimum\s*plan|best\s*deal\b/i.test(t)) {
+  
+  // Cheapest BUSINESS plan
+  if (/cheapest.*business|business.*cheapest|lowest.*business/i.test(t)) {
+    return {text:"The **cheapest business plan is Business Starter at $35/mo**! 💼", cards:[makeInfoCard('💼','Business Starter — $35/mo',[{label:'Price',val:'$35.00/month',org:true},{label:'Data',val:'15GB Premium',org:true},{label:'Hotspot',val:'10GB'},{label:'Countries',val:'200+'},{label:'Account Manager',val:'✓ Included'}]),makeLinksBar([{url:'https://zoikomobile.com/business-deals',label:'View Business Starter'}]),makeActionBar([{label:'💼 Get Starter',action:'Tell me about Business Starter plan',type:'primary'},{label:'📈 See All Business Plans',action:'Tell me about business plans'}])]};
+  }
+
+  // Cheapest POSTPAID plan  
+  if (/cheapest.*postpaid|postpaid.*cheapest|lowest.*postpaid/i.test(t)) {
+    return {text:"The **cheapest postpaid plan is Zoiko Lite at $15/mo**! 🔵", cards:[makeInfoCard('🔵','Zoiko Lite — $15/mo',[{label:'Price',val:'$15.00/month',org:true},{label:'Data',val:'5GB Premium',org:true},{label:'Hotspot',val:'2GB'},{label:'Countries',val:'200+'},{label:'Texts',val:'15,000/month'}]),makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-lite/',label:'Get Zoiko Lite'}]),makeActionBar([{label:'🔵 Get Lite',action:'Tell me about Zoiko Lite plan',type:'primary'},{label:'📲 All Postpaid',action:'Show me all postpaid plans'}])]};
+  }
+
+  // Cheapest TRAVEL pass
+  if (/cheapest.*travel|travel.*cheapest|lowest.*travel/i.test(t)) {
+    return {text:"The **cheapest travel pass is Daily Adventure at $7.50/day**! 🌅", cards:[makeInfoCard('🌅','Daily Adventure — $7.50/day',[{label:'Price',val:'$7.50/24hrs',org:true},{label:'Data',val:'500MB'},{label:'Coverage',val:'200+ countries'},{label:'Valid',val:'24 hours'}]),makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'Buy Daily Adventure'}]),makeActionBar([{label:'🌅 Get Daily Pass',action:'__callback__',type:'primary'},{label:'✈️ All Travel Passes',action:'Tell me about travel passes'}])]};
+  }
+
+  // Default cheapest plan
+  if (/cheapest|most\s*affordable|lowest\s*price|budget|basic\s*plan|starter\s*plan|cheap\s*plan|under\s*\$20|least\s*expensive|minimum\s*plan|best\s*deal\b/i.test(t) && !/business|postpaid|travel/i.test(t)) {
     return {text:"Our **cheapest plan is Zoiko Flex at just $13/mo** — here's everything included! 💚", cards:[
       makeInfoCard('💚','Zoiko Flex — $13/mo (CHEAPEST PLAN)',[
         {label:'Monthly price',  val:'$13.00 — our lowest plan ever', org:true},
@@ -1131,7 +1147,7 @@ function smartReply(text) {
         {label:'Contract',       val:'None — cancel anytime',         org:true},
         {label:'Credit check',   val:'Not required',                  org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Zoiko Flex — $13/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-flex/',label:'Get Zoiko Flex — $13/mo'}]),
       makeActionBar([{label:'⚖️ Compare with Essentials', action:'Compare Zoiko Flex and Essentials', type:'primary'},{label:'📲 Sign up now', action:'How do I sign up for Zoiko?'}])
     ]};
   }
@@ -1300,6 +1316,23 @@ function smartReply(text) {
   // ════════════════════════════════════════════════════════════════════
   // 8. BUSINESS PLANS
   // ════════════════════════════════════════════════════════════════════
+  
+  // Business Starter specific
+  if (/business\s*starter|starter.*\$35|starter.*business/i.test(t) && !/business\s*plan\s*list|all\s*business/i.test(t)) {
+    return {text:"**Business Starter — $35/mo** — Perfect for small teams! 💼", cards:[makeInfoCard('💼','Business Starter — $35/mo',[{label:'Monthly Price',val:'$35.00',org:true},{label:'Data',val:'15GB Premium',org:true},{label:'Hotspot',val:'10GB'},{label:'International',val:'200+ countries'},{label:'Account Manager',val:'Dedicated support ✓'},{label:'Device Financing',val:'Available'}]),makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-business-starter/',label:'Get Business Starter'}]),makeActionBar([{label:'💼 Purchase',action:'__callback__',type:'primary'},{label:'📈 See Advanced Plan',action:'Tell me about Business Advanced plan'}])]};
+  }
+
+  // Business Advanced specific
+  if (/business\s*advanced|advanced.*\$67|advanced.*business|67.*business/i.test(t) && !/all\s*business/i.test(t)) {
+    return {text:"**Business Advanced — $67/mo** — Best for growing teams! 📈", cards:[makeInfoCard('📈','Business Advanced — $67/mo',[{label:'Monthly Price',val:'$67.00',org:true},{label:'Data',val:'35GB Premium',org:true},{label:'Hotspot',val:'20GB'},{label:'International',val:'200+ countries'},{label:'BYOD Support',val:'Bring your phone ✓'},{label:'Device Financing',val:'Full options available'}]),makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-business-advanced/',label:'Get Business Advanced'}]),makeActionBar([{label:'📈 Purchase',action:'__callback__',type:'primary'},{label:'🚀 See Infinite Plan',action:'Tell me about Business Infinite plan'}])]};
+  }
+
+  // Business Infinite specific
+  if (/business\s*infinite|infinite.*\$74|infinite.*business|74.*business/i.test(t)) {
+    return {text:"**Business Infinite — $74/mo** — Ultimate business solution! 🚀", cards:[makeInfoCard('🚀','Business Infinite — $74/mo',[{label:'Monthly Price',val:'$74.00',org:true},{label:'Data',val:'Unlimited (30GB priority)',org:true},{label:'Hotspot',val:'30GB'},{label:'International',val:'200+ countries'},{label:'Zoiko Protect+',val:'Included ✓'},{label:'24/7 Support',val:'Premium business support'}]),makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-business-infinite/',label:'Get Business Infinite'}]),makeActionBar([{label:'🚀 Purchase',action:'__callback__',type:'primary'},{label:'⚖️ Compare Plans',action:'Compare business plans'}])]};
+  }
+
+  // General business plans overview
   if (/business|business\s*plan|business\s*deal|company\s*plan|enterprise|corporate/i.test(t) && !/protect|insurance/i.test(t)) {
     return {text:"Zoiko has **3 Business Plans** built for teams and enterprises — no credit check! 💼", cards:[
       makePlanCards([
@@ -1308,7 +1341,7 @@ function smartReply(text) {
         {name:'Business Infinite', price:74, data:'Truly Unlimited',  perks:['30GB hotspot','24/7 support','Zoiko Protect+'],    badge:'ULTIMATE BUSINESS'}
       ]),
       makeLinksBar([{url:'https://zoikomobile.com/business-deals',label:'View All Business Plans'},{url:'https://zoikomobile.com/contact-us',label:'Talk to Business Sales'}]),
-      makeActionBar([{label:'📈 Best for teams: $67',action:'Tell me about Business Advanced plan',type:'primary'},{label:'🚀 Ultimate: $74',action:'Tell me about Business Infinite plan'},{label:'🎧 Talk to sales',action:'__callback__'}])
+      makeActionBar([{label:'💼 Starter $35',action:'Tell me about Business Starter plan',type:'primary'},{label:'📈 Advanced $67',action:'Tell me about Business Advanced plan'},{label:'🚀 Infinite $74',action:'Tell me about Business Infinite plan'}])
     ]};
   }
 
@@ -1337,12 +1370,12 @@ function smartReply(text) {
   // How to purchase top-up (SPECIFIC - comes first)
   if (/how\s*(do\s*)?i\s*purchase|buy.*top.?up|purchase.*top.?up|get.*top.?up|add.*data.*purchase/i.test(t)) {
     return {text:"Getting a top-up is super quick! ⚡", cards:[
-      makeStepCard('HOW TO BUY TOP-UP DATA',[
+      makeStepCard('HOW TO BUY TOP-UP',[
         {label:'Log in to your Zoiko account',                sub:'https://zoikomobile.com/'},
-        {label:'Go to \"Add Top-Up\" or \"Buy Data\"',       sub:'You\'ll see available data packages'},
-        {label:'Select your top-up amount',                  sub:'$5 → $50, all delivered instantly'},
+        {label:'Go to \"Add Top-Up\" or \"Buy Data\"',       sub:'Choose Zoiko Top-up ($6.50) or Top-up+ ($9.99)'},
+        {label:'Select your top-up plan',                  sub:'Get data, minutes, and texts for 30 days'},
         {label:'Complete payment',                           sub:'We accept all major cards & digital wallets'},
-        {label:'Done! Data active in seconds',               sub:'Start using immediately — no waiting'}
+        {label:'Done! Service active immediately',           sub:'Use right away — no waiting'}
       ]),
       makeLinksBar([{url:'https://zoikomobile.com/top-up-plan',label:'Buy Top-Up Now'},{url:'https://zoikomobile.com/all-plans',label:'View Plans'}]),
       makeActionBar([{label:'💳 Buy top-up now', action:'__callback__', type:'primary'},{label:'💡 Auto-renew?', action:'Tell me about auto-renew for top-ups'}])
@@ -1369,16 +1402,12 @@ function smartReply(text) {
   // GENERAL TOP-UP PLANS (comes after specific handlers)
   if (/top.?up|add.*data|recharge|data.*boost|boost.*data|buy.*data|extra.*data|more.*data|data.*plan/i.test(t) && !/travel|roaming|pass|how\s*purchase|auto.renew/i.test(t)) {
     return {text:"Need extra data? Zoiko's **top-up plans** let you add data instantly! 📲", cards:[
-      makeInfoCard('📊','Zoiko Top-Up Data Plans',[
-        {label:'Quick Top-Up',      val:'$5 · 500MB · Valid 7 days',                org:true},
-        {label:'Data Boost',        val:'$10 · 2GB · Valid 14 days',               org:true},
-        {label:'Premium Boost',     val:'$20 · 5GB · Valid 30 days',               org:true},
-        {label:'Ultra Boost',       val:'$35 · 15GB · Valid 60 days',              org:true},
-        {label:'Mega Boost',        val:'$50 · 30GB · Valid 90 days',              org:true}
+      makeInfoCard('📊','Zoiko Top-Up Plans',[
+        {label:'Zoiko Top-up',        val:'$6.50 · 1GB Data · 500 Minutes · 1000 Texts · 30 Days', org:true},
+        {label:'Zoiko Top-up+',       val:'$9.99 · 1.2GB Data · 750 Minutes · 1500 Texts · 30 Days', org:true}
       ]),
       makeNotif('success','⚡','Top-ups activate instantly — use them on any Zoiko plan!'),
-      makeNotif('info','💡','Auto-renew available — we can keep your data topped up automatically!'),
-      makeLinksBar([{url:'https://zoikomobile.com/top-up-plan',label:'Buy Top-Up Online'},{url:'https://zoikomobile.com/all-plans',label:'View All Plans'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/top-up-plan',label:'Buy Top-Up Online'}]),
       makeActionBar([{label:'💳 Buy Top-Up Now', action:'How do I purchase a top-up?', type:'primary'},{label:'📲 Auto-Renew Info', action:'Tell me about auto-renew for top-ups'}])
     ]};
   }
@@ -1697,7 +1726,7 @@ function smartReply(text) {
         {label:'5+ lines', val:'25% off per line → Save $50+/month',    org:true}
       ]),
       makeNotif('success','🎉','Example: 4 lines of Zoiko Core saves you $30/month! That\'s $360/year!'),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'View Family Plans'},{url:'https://zoikomobile.com/family-savings',label:'Family Savings Details'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/family-plans',label:'View Family Plans'},{url:'https://zoikomobile.com/family-plans',label:'Family Savings Details'}]),
       makeActionBar([{label:'👨‍👩‍👧 Get family plan', action:'How do family plans work?', type:'primary'},{label:'💼 Business rates', action:'Tell me about business plans'}])
     ]};
   }
@@ -1760,7 +1789,7 @@ function smartReply(text) {
         {label:'International',val:'70+ countries free',org:true},{label:'Free SIM',val:'Included',org:true},
         {label:'Contract',val:'None — cancel anytime',org:true},{label:'Credit check',val:'Not required',org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Zoiko Flex — $13/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-flex/',label:'Get Zoiko Flex — $13/mo'}]),
       makeActionBar([{label:'⚖️ Compare with Essentials', action:'Compare Zoiko Flex and Essentials', type:'primary'},{label:'📲 Sign up', action:'How do I sign up for Zoiko?'}])
     ]};
   }
@@ -1773,7 +1802,7 @@ function smartReply(text) {
         {label:'International',val:'100+ countries free',org:true},{label:'Priority Support',val:'✓ Included',org:true},
         {label:'Contract',val:'None — cancel anytime',org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Essentials — $20/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-essential/',label:'Get Essentials — $20/mo'}]),
       makeActionBar([{label:'⚖️ Compare with Unlimited One', action:'Compare Essentials and Unlimited One', type:'primary'},{label:'📲 Sign up', action:'How do I sign up for Zoiko?'}])
     ]};
   }
@@ -1785,7 +1814,7 @@ function smartReply(text) {
         {label:'Hotspot',val:'6GB'},{label:'International',val:'150+ countries free',org:true},
         {label:'Roaming',val:'Canada & Mexico — free!',org:true},{label:'Contract',val:'None',org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Unlimited One — $30/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-unlimited-one/',label:'Get Unlimited One — $30/mo'}]),
       makeActionBar([{label:'⚖️ Compare with Unlimited Plus', action:'Compare Unlimited One and Unlimited Plus', type:'primary'}])
     ]};
   }
@@ -1797,7 +1826,7 @@ function smartReply(text) {
         {label:'Hotspot',val:'12GB',org:true},{label:'International',val:'200+ countries free',org:true},
         {label:'Financing',val:'Device financing options available',org:true},{label:'Contract',val:'None',org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Unlimited Plus — $45/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-unlimited-plus/',label:'Get Unlimited Plus — $45/mo'}]),
       makeActionBar([{label:'🏆 Compare with Premium', action:'Compare Unlimited Plus and Premium Unlimited', type:'primary'}])
     ]};
   }
@@ -1810,7 +1839,7 @@ function smartReply(text) {
         {label:'VIP Support',val:'✓ Priority support included',org:true},{label:'Roaming',val:'Canada & Mexico — free!',org:true},
         {label:'Contract',val:'None — cancel anytime',org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Premium Unlimited — $55/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-premium-unlimited/',label:'Get Premium Unlimited — $55/mo'}]),
       makeActionBar([{label:'🌟 Compare with Zoiko Infinity', action:'Compare Premium Unlimited and Zoiko Infinity', type:'primary'}])
     ]};
   }
@@ -1822,7 +1851,7 @@ function smartReply(text) {
         {label:'Hotspot',val:'2GB'},{label:'Texts',val:'15,000'},{label:'International',val:'200+ countries free',org:true},
         {label:'Contract',val:'12 or 24-month option'},{label:'Credit check',val:'Not required',org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Zoiko Lite — $15/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-lite/',label:'Get Zoiko Lite — $15/mo'}]),
       makeActionBar([{label:'⚡ Compare with Core', action:'Compare Zoiko Lite and Zoiko Core', type:'primary'}])
     ]};
   }
@@ -1834,7 +1863,7 @@ function smartReply(text) {
         {label:'Hotspot',val:'4GB'},{label:'Texts',val:'20,000'},{label:'International',val:'200+ countries free',org:true},
         {label:'Contract',val:'12 or 24-month option'},{label:'Credit check',val:'Not required',org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Zoiko Core — $25/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-core/',label:'Get Zoiko Core — $25/mo'}]),
       makeActionBar([{label:'⚖️ Compare with Max', action:'Compare Zoiko Core and Zoiko Max', type:'primary'}])
     ]};
   }
@@ -1846,7 +1875,7 @@ function smartReply(text) {
         {label:'Hotspot',val:'10GB'},{label:'Texts',val:'30,000'},{label:'International',val:'200+ countries free',org:true},
         {label:'Contract',val:'12 or 24-month option'},{label:'Credit check',val:'Not required'}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Zoiko Max — $50/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-max/',label:'Get Zoiko Max — $50/mo'}]),
       makeActionBar([{label:'🌟 Compare with Infinity', action:'Compare Zoiko Max and Zoiko Infinity', type:'primary'}])
     ]};
   }
@@ -1858,7 +1887,7 @@ function smartReply(text) {
         {label:'Throttle',val:'Never 🔥',org:true},{label:'Hotspot',val:'15GB'},{label:'International',val:'200+ countries',org:true},
         {label:'Roaming',val:'Canada & Mexico free',org:true},{label:'Device Financing',val:'Available',org:true},{label:'Credit check',val:'Not required'}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Zoiko Infinity — $65/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-infinity/',label:'Get Zoiko Infinity — $65/mo'}]),
       makeActionBar([{label:'🚀 Compare with Supreme', action:'Compare Zoiko Infinity and Supreme Unlimited', type:'primary'}])
     ]};
   }
@@ -1871,7 +1900,7 @@ function smartReply(text) {
         {label:'International',val:'200+ countries 🏆',org:true},{label:'VIP Perks',val:'Full VIP + Priority Network',org:true},
         {label:'Roaming',val:'Canada & Mexico free',org:true},{label:'Financing',val:'Max device financing',org:true},{label:'Credit check',val:'Not required'}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Supreme Unlimited — $72/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-supreme-unlimited/',label:'Get Supreme Unlimited — $72/mo'}]),
       makeActionBar([{label:'👑 See VIP perks', action:'Tell me about VIP perks', type:'primary'},{label:'⚖️ Compare with Infinity', action:'Compare Zoiko Infinity and Supreme Unlimited'}])
     ]};
   }
@@ -2048,7 +2077,7 @@ function smartReply(text) {
         {label:'Messaging',          val:'Free unlimited between plan members', org:true},
         {label:'Parental controls',  val:'Free on all family lines'}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'View Family Plans Online'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/family-plans',label:'View Family Plans Online'}]),
       makeActionBar([{label:'💰 Calculate my savings', action:'Calculate savings for 4 lines', type:'primary'}])
     ]};
   }
@@ -2651,3 +2680,4 @@ window.addEventListener('load',()=>{
 </script>
 </body>
 </html>
+
