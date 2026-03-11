@@ -24,14 +24,6 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      # ── 4. Enable required GCP APIs ──────────────────────────────────────────
-      - name: Enable GCP APIs
-        run: |
-          gcloud services enable artifactregistry.googleapis.com \
-            run.googleapis.com \
-            --project=${{ secrets.GCP_PROJECT_ID }} \
-            --quiet
-
       # ── 5. Create Artifact Registry repository (safe if already exists) ───────
       - name: Create Artifact Registry repository
         run: |
