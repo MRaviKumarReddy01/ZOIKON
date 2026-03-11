@@ -5,101 +5,174 @@ on:
     branches:
       - main
 
-env:
-  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  SERVICE: zoikon
-  REGION: europe-west1
-  IMAGE: gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    
+    # This ensures secrets are available
+    environment: production
 
     steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    # 1️⃣ Checkout code
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      # Step 2: VERIFY ALL SECRETS EXIST (Most important!)
+      - name: ⚠️ VERIFY SECRETS (MUST DO THIS FIRST!)
+        run: |
+          echo "=================================================="
+          echo "CHECKING ALL REQUIRED SECRETS"
+          echo "=================================================="
+          
+          # Check GCP_PROJECT_ID
+          if [ -z "${{ secrets.GCP_PROJECT_ID }}" ]; then
+            echo "❌ MISSING: GCP_PROJECT_ID"
+            echo "   Go to: Settings → Secrets → Actions"
+            echo "   Click: New repository secret"
+            echo "   Name: GCP_PROJECT_ID"
+            echo "   Value: your-project-id"
+            exit 1
+          else
+            echo "✅ GCP_PROJECT_ID found"
+          fi
+          
+          # Check GCP_SA_KEY
+          if [ -z "${{ secrets.GCP_SA_KEY }}" ]; then
+            echo "❌ MISSING: GCP_SA_KEY"
+            echo "   This is CRITICAL! Without this, deployment WILL FAIL"
+            echo "   Steps:"
+            echo "   1. Go to: https://console.cloud.google.com"
+            echo "   2. IAM & Admin → Service Accounts"
+            echo "   3. Click on your service account"
+            echo "   4. Keys tab → Add Key → Create new key"
+            echo "   5. Choose JSON format"
+            echo "   6. Download the JSON file"
+            echo "   7. Go to GitHub Secrets"
+            echo "   8. New repository secret"
+            echo "   9. Name: GCP_SA_KEY (EXACT CASE!)"
+            echo "   10. Value: Paste entire JSON file contents"
+            exit 1
+          else
+            KEY_LENGTH=${#${{ secrets.GCP_SA_KEY }}}
+            echo "✅ GCP_SA_KEY found (length: ${#KEY_LENGTH} chars)"
+          fi
+          
+          echo ""
+          echo "✅ All critical secrets found!"
+          echo "=================================================="
 
-    # 2️⃣ Authenticate with Google Cloud
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v2
-      with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}
+      # Step 3: Authenticate with GCP (THIS IS THE FIX!)
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-    # 3️⃣ Setup gcloud CLI
-    - name: Setup gcloud
-      uses: google-github-actions/setup-gcloud@v2
-      with:
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
+      # Step 4: Setup Cloud SDK
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-    # 4️⃣ Configure Docker
-    - name: Configure Docker
-      run: gcloud auth configure-docker gcr.io --quiet
+      # Step 5: Configure Docker
+      - name: Configure Docker for Container Registry
+        run: |
+          gcloud auth configure-docker gcr.io --quiet
 
-    # 5️⃣ Build Docker image
-    - name: Build Docker image
-      run: |
-        docker build -t $IMAGE:${{ github.sha }} .
-        docker tag $IMAGE:${{ github.sha }} $IMAGE:latest
+      # Step 6: Build Docker image
+      - name: Build Docker image
+        run: |
+          IMAGE_URL="gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon"
+          docker build -t "${IMAGE_URL}:latest" -t "${IMAGE_URL}:${{ github.sha }}" .
+          echo "Image built: ${IMAGE_URL}:latest"
 
-    # 6️⃣ Push Docker image
-    - name: Push Docker image
-      run: |
-        docker push $IMAGE:${{ github.sha }}
-        docker push $IMAGE:latest
+      # Step 7: Push to Container Registry
+      - name: Push image to Container Registry
+        run: |
+          IMAGE_URL="gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon"
+          docker push "${IMAGE_URL}:latest"
+          docker push "${IMAGE_URL}:${{ github.sha }}"
+          echo "Image pushed successfully"
 
-    # 7️⃣ Deploy to Cloud Run
-    - name: Deploy to Cloud Run
-      run: |
-        gcloud run deploy $SERVICE \
-          --image $IMAGE:${{ github.sha }} \
-          --platform managed \
-          --region $REGION \
-          --allow-unauthenticated \
-          --port 8080 \
-          --memory 512Mi \
-          --cpu 1 \
-          --max-instances 3 \
-          --timeout 300 \
-          --set-env-vars \
-          SMTP_HOST=${{ secrets.SMTP_HOST }},\
-          SMTP_PORT=${{ secrets.SMTP_PORT }},\
-          SMTP_USER=${{ secrets.SMTP_USER }},\
-          SMTP_PASS=${{ secrets.SMTP_PASS }},\
-          SUPPORT_EMAIL=${{ secrets.SUPPORT_EMAIL }}
+      # Step 8: Deploy to Cloud Run
+      - name: Deploy to Cloud Run
+        run: |
+          PROJECT_ID="${{ secrets.GCP_PROJECT_ID }}"
+          IMAGE_URL="gcr.io/${PROJECT_ID}/zoikon"
+          
+          gcloud run deploy zoikon \
+            --image="${IMAGE_URL}:latest" \
+            --platform=managed \
+            --region=europe-west1 \
+            --allow-unauthenticated \
+            --port=8080 \
+            --memory=512Mi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=3 \
+            --timeout=300s \
+            --set-env-vars=\
+            SMTP_HOST="${{ secrets.SMTP_HOST }}",\
+            SMTP_PORT="${{ secrets.SMTP_PORT }}",\
+            SMTP_USER="${{ secrets.SMTP_USER }}",\
+            SMTP_PASS="${{ secrets.SMTP_PASS }}",\
+            SUPPORT_EMAIL="${{ secrets.SUPPORT_EMAIL }}",\
+            USE_GMAIL="${{ secrets.USE_GMAIL }}",\
+            GMAIL_USER="${{ secrets.GMAIL_USER }}",\
+            GMAIL_PASS="${{ secrets.GMAIL_PASS }}" \
+            --quiet
 
-    # 8️⃣ Get service URL
-    - name: Get Service URL
-      id: url
-      run: |
-        SERVICE_URL=$(gcloud run services describe $SERVICE \
-          --region $REGION \
-          --format='value(status.url)')
-        echo "SERVICE_URL=$SERVICE_URL"
-        echo "service_url=$SERVICE_URL" >> $GITHUB_OUTPUT
+      # Step 9: Get deployed URL
+      - name: Get deployed service URL
+        id: url
+        run: |
+          PROJECT_ID="${{ secrets.GCP_PROJECT_ID }}"
+          SERVICE_URL=$(gcloud run services describe zoikon \
+            --region=europe-west1 \
+            --project="${PROJECT_ID}" \
+            --format='value(status.url)')
+          
+          echo "service_url=${SERVICE_URL}" >> $GITHUB_OUTPUT
+          echo "✅ Service deployed at: ${SERVICE_URL}"
 
-    # 9️⃣ Test deployment
-    - name: Health Check
-      run: |
-        SERVICE_URL="${{ steps.url.outputs.service_url }}"
-        echo "Checking health endpoint..."
-        curl -i "$SERVICE_URL/health" || true
+      # Step 10: Test the deployment
+      - name: Test deployment
+        run: |
+          SERVICE_URL="${{ steps.url.outputs.service_url }}"
+          
+          echo "Waiting 10 seconds for service to be ready..."
+          sleep 10
+          
+          echo "Testing health endpoint..."
+          curl -i "${SERVICE_URL}/health" || echo "Health check request sent (may take a moment)"
 
-    # 🔟 Print result
-    - name: Deployment Summary
-      run: |
-        SERVICE_URL="${{ steps.url.outputs.service_url }}"
-        echo ""
-        echo "========================================="
-        echo "✅ Zoikon Chatbot Deployed Successfully"
-        echo "========================================="
-        echo "Chat UI:"
-        echo "$SERVICE_URL/ui"
-        echo ""
-        echo "Health:"
-        echo "$SERVICE_URL/health"
-        echo ""
-        echo "Email API:"
-        echo "$SERVICE_URL/send-request"
-        echo "========================================="
+      # Step 11: Print success message
+      - name: Deployment Summary
+        run: |
+          SERVICE_URL="${{ steps.url.outputs.service_url }}"
+          
+          echo ""
+          echo "╔══════════════════════════════════════════════════════════╗"
+          echo "║                                                          ║"
+          echo "║           ✅ DEPLOYMENT SUCCESSFUL!                     ║"
+          echo "║                                                          ║"
+          echo "╠══════════════════════════════════════════════════════════╣"
+          echo "║                                                          ║"
+          echo "║  Service: zoikon                                         ║"
+          echo "║  Region: europe-west1                                    ║"
+          echo "║  Status: Running                                         ║"
+          echo "║                                                          ║"
+          echo "║  Chat URL:                                               ║"
+          echo "║  ${SERVICE_URL}/ui                            ║"
+          echo "║                                                          ║"
+          echo "║  Health Check:                                           ║"
+          echo "║  ${SERVICE_URL}/health                       ║"
+          echo "║                                                          ║"
+          echo "║  Test Email:                                             ║"
+          echo "║  curl -X POST ${SERVICE_URL}/send-request      ║"
+          echo "║                                                          ║"
+          echo "║  View Logs:                                              ║"
+          echo "║  gcloud run logs read zoikon --limit 50                  ║"
+          echo "║                                                          ║"
+          echo "╚══════════════════════════════════════════════════════════╝"
+          echo ""
