@@ -7,6 +7,7 @@ import json, smtplib, re, time, os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
+from datetime import datetime
 
 app = FastAPI()
 
@@ -18,22 +19,39 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── EMAIL CONFIG - FROM ENVIRONMENT VARIABLES ─────────────────────────────────
-SMTP_HOST     = os.getenv("SMTP_HOST", "smtpout.secureserver.net")
-SMTP_PORT     = int(os.getenv("SMTP_PORT", "465"))
-SMTP_USER     = os.getenv("SMTP_USER", "support@zoikogroup.com")
-SMTP_PASS     = os.getenv("SMTP_PASS", "")
-SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL", "support@zoikomobile.com")
+# ── EMAIL CONFIG - HARDCODED (NO .ENV FILE NEEDED) ───────────────────────────
+SMTP_HOST     = "smtpout.secureserver.net"
+SMTP_PORT     = 465
+SMTP_USER     = "support@zoikogroup.com"
+SMTP_PASS     = "NoxxMC26070%!LGM"
+SUPPORT_EMAIL = "support@zoikomobile.com"
 
-# ✅ NEW: Gmail as fallback (more reliable on GCP)
-USE_GMAIL = os.getenv("USE_GMAIL", "false").lower() == "true"
-GMAIL_USER = os.getenv("GMAIL_USER", "")
-GMAIL_PASS = os.getenv("GMAIL_PASS", "")
+print(f"\n📧 EMAIL CONFIGURATION (HARDCODED):")
+print(f"   SMTP Host: {SMTP_HOST}")
+print(f"   SMTP Port: {SMTP_PORT}")
+print(f"   From Email: {SMTP_USER}")
+print(f"   Support Email: {SUPPORT_EMAIL}")
 
-# ── STATIC FRONTEND ───────────────────────────────────────────────────────────
-BASE_DIR      = Path(__file__).resolve().parent.parent
-frontend_path = BASE_DIR / "frontend"
-print("✅ Frontend path:", frontend_path)
+# ── STATIC FRONTEND - MULTIPLE PATH STRATEGIES ─────────────────────────────────
+possible_paths = [
+    Path(__file__).resolve().parent.parent / "frontend",
+    Path(__file__).resolve().parent / "frontend",
+    Path("frontend"),
+    Path("../frontend"),
+]
+
+frontend_path = None
+for path in possible_paths:
+    if path.exists() and (path / "index.html").exists():
+        frontend_path = path
+        print(f"✅ Frontend found at: {frontend_path}")
+        break
+
+if not frontend_path:
+    print(f"⚠️  Frontend not found. Checked:")
+    for path in possible_paths:
+        print(f"   - {path}")
+    frontend_path = possible_paths[0]
 
 # ── MODELS ────────────────────────────────────────────────────────────────────
 class CallbackRequest(BaseModel):
@@ -47,50 +65,54 @@ class Message(BaseModel):
 
 # ── HELPERS ───────────────────────────────────────────────────────────────────
 def gen_ref_id():
+    """Generate reference ID from timestamp"""
     return "ZKN-" + str(int(time.time() * 1000))[-6:]
 
 def valid_email(e: str) -> bool:
+    """Validate email format"""
     return bool(re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", e))
 
 def valid_phone(p: str) -> bool:
+    """Validate phone number (10-15 digits)"""
     digits = re.sub(r"\D", "", p)
     return 10 <= len(digits) <= 15
 
 def escape_html(s: str) -> str:
+    """Escape HTML special characters"""
     return (s.replace("&","&amp;").replace("<","&lt;")
              .replace(">","&gt;").replace('"',"&quot;").replace("'","&#039;"))
 
 def send_email(to_addr: str, subject: str, html_body: str):
     """
-    ✅ Enhanced email sending with fallback
-    - Primary: Use configured SMTP (GoDaddy/custom)
-    - Fallback: Use Gmail (more reliable on GCP)
+    ✅ SMTP ONLY - Send email via company SMTP
+    Hardcoded credentials - simple and direct
     """
+    print(f"\n📧 Sending email to: {to_addr}")
+    print(f"   Subject: {subject}")
+    print(f"   Via: {SMTP_HOST}:{SMTP_PORT}")
+    
     try:
-        if USE_GMAIL and GMAIL_USER and GMAIL_PASS:
-            print(f"📧 Sending via Gmail to {to_addr}")
-            msg = MIMEMultipart("alternative")
-            msg["Subject"] = subject
-            msg["From"]    = GMAIL_USER
-            msg["To"]      = to_addr
-            msg.attach(MIMEText(html_body, "html"))
-            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-                server.login(GMAIL_USER, GMAIL_PASS)
-                server.sendmail(GMAIL_USER, to_addr, msg.as_string())
-            print(f"✅ Email sent via Gmail")
-        else:
-            print(f"📧 Sending via {SMTP_HOST} to {to_addr}")
-            msg = MIMEMultipart("alternative")
-            msg["Subject"] = subject
-            msg["From"]    = SMTP_USER
-            msg["To"]      = to_addr
-            msg.attach(MIMEText(html_body, "html"))
-            with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT) as server:
-                server.login(SMTP_USER, SMTP_PASS)
-                server.sendmail(SMTP_USER, to_addr, msg.as_string())
-            print(f"✅ Email sent via {SMTP_HOST}")
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"]    = SMTP_USER
+        msg["To"]      = to_addr
+        msg.attach(MIMEText(html_body, "html"))
+        
+        print(f"   Connecting to SMTP server...")
+        with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=10) as server:
+            print(f"   Connected! Logging in...")
+            server.login(SMTP_USER, SMTP_PASS)
+            print(f"   Logged in! Sending email...")
+            server.sendmail(SMTP_USER, to_addr, msg.as_string())
+            print(f"   ✅ Email sent successfully to {to_addr}")
+    except smtplib.SMTPAuthenticationError as e:
+        print(f"❌ SMTP Authentication Error: {str(e)}")
+        raise
+    except smtplib.SMTPException as e:
+        print(f"❌ SMTP Error: {str(e)}")
+        raise
     except Exception as e:
-        print(f"❌ Email error: {str(e)}")
+        print(f"❌ Error: {str(e)}")
         raise
 
 # ── /send-request ─────────────────────────────────────────────────────────────
@@ -111,7 +133,9 @@ async def send_request(data: CallbackRequest):
     if not data.issue.strip():
         return JSONResponse({"success": False, "message": "Please describe how we can help"})
 
+    # ── Prepare data ──────────────────────────────────────────────────────────
     ref_id      = gen_ref_id()
+    timestamp   = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     clean_name  = escape_html(data.name.strip())
     clean_email = data.email.strip()
     clean_phone = data.phone.strip()
@@ -119,78 +143,249 @@ async def send_request(data: CallbackRequest):
     first_name  = clean_name.split()[0]
 
     # ── Email to support team ─────────────────────────────────────────────────
-    support_html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8">
-    <style>
-      body{{font-family:'Segoe UI',Arial,sans-serif;color:#333;line-height:1.6}}
-      .container{{max-width:600px;margin:0 auto;padding:20px}}
-      .header{{background:linear-gradient(135deg,#CC0000,#880000);color:white;padding:25px;border-radius:8px 8px 0 0;text-align:center}}
-      .content{{background:#f9f9f9;padding:25px;border:1px solid #ddd;border-top:none}}
-      .label{{font-weight:700;color:#CC0000;margin-bottom:8px;font-size:12px;text-transform:uppercase;letter-spacing:.5px}}
-      .value{{color:#333;padding:12px;background:white;border-left:4px solid #CC0000;border-radius:2px;margin-bottom:20px}}
-      .footer{{background:#f0f0f0;padding:20px;text-align:center;font-size:12px;color:#666;border-top:1px solid #ddd}}
-      .ref{{color:#CC0000;font-weight:bold}}
-    </style></head><body>
-    <div class="container">
-      <div class="header"><h2>🎧 New Callback Request — {ref_id}</h2></div>
-      <div class="content">
-        <div class="label">👤 Customer Name</div>
-        <div class="value">{clean_name}</div>
-        <div class="label">📧 Email</div>
-        <div class="value"><a href="mailto:{clean_email}" style="color:#CC0000">{clean_email}</a></div>
-        <div class="label">📱 Phone</div>
-        <div class="value"><a href="tel:{re.sub(r'\\D','',clean_phone)}" style="color:#CC0000">{clean_phone}</a></div>
-        <div class="label">❓ Request Details</div>
-        <div class="value" style="white-space:pre-wrap">{clean_issue}</div>
+    support_html = f"""<!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        * {{ margin: 0; padding: 0; }}
+        body {{ font-family: 'Segoe UI', Arial, sans-serif; color: #333; line-height: 1.6; }}
+        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+        .header {{ 
+          background: linear-gradient(135deg, #CC0000, #880000); 
+          color: white; 
+          padding: 25px; 
+          border-radius: 8px 8px 0 0; 
+          text-align: center;
+        }}
+        .header h2 {{ margin: 0; font-size: 24px; }}
+        .content {{ 
+          background: #f9f9f9; 
+          padding: 25px; 
+          border: 1px solid #ddd;
+          border-top: none;
+        }}
+        .field {{ margin-bottom: 20px; }}
+        .label {{ 
+          font-weight: 700; 
+          color: #CC0000; 
+          margin-bottom: 8px;
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }}
+        .value {{ 
+          color: #333; 
+          padding: 12px; 
+          background: white; 
+          border-left: 4px solid #CC0000;
+          border-radius: 2px;
+        }}
+        .footer {{ 
+          background: #f0f0f0; 
+          padding: 20px; 
+          text-align: center; 
+          font-size: 12px; 
+          color: #666;
+          border-top: 1px solid #ddd;
+        }}
+        .ref-id {{ color: #CC0000; font-weight: bold; font-size: 14px; }}
+        .timestamp {{ color: #999; font-size: 11px; margin-top: 10px; }}
+        a {{ color: #CC0000; text-decoration: none; }}
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h2>🎧 New Callback Request</h2>
+        </div>
+        
+        <div class="content">
+          <div class="field">
+            <div class="label">👤 Customer Name</div>
+            <div class="value">{clean_name}</div>
+          </div>
+          
+          <div class="field">
+            <div class="label">📧 Email Address</div>
+            <div class="value"><a href="mailto:{clean_email}">{clean_email}</a></div>
+          </div>
+          
+          <div class="field">
+            <div class="label">📱 Phone Number</div>
+            <div class="value"><a href="tel:{re.sub(r'\\D','',clean_phone)}">{clean_phone}</a></div>
+          </div>
+          
+          <div class="field">
+            <div class="label">❓ Request Details</div>
+            <div class="value" style="white-space: pre-wrap;">{clean_issue}</div>
+          </div>
+        </div>
+        
+        <div class="footer">
+          <p><span class="ref-id">Reference: {ref_id}</span></p>
+          <p class="timestamp">Received: {timestamp}</p>
+          <p style="margin-top: 10px;">© 2026 Zoiko Mobile Support</p>
+        </div>
       </div>
-      <div class="footer">Reference: <span class="ref">{ref_id}</span> · Zoiko Mobile Support</div>
-    </div></body></html>"""
+    </body>
+    </html>"""
 
     # ── Confirmation email to customer ────────────────────────────────────────
-    user_html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8">
-    <style>
-      body{{font-family:'Segoe UI',Arial,sans-serif;color:#333;line-height:1.6}}
-      .container{{max-width:600px;margin:0 auto;padding:20px}}
-      .header{{background:linear-gradient(135deg,#CC0000,#880000);color:white;padding:40px 25px;border-radius:8px 8px 0 0;text-align:center}}
-      .content{{background:white;padding:30px;border:1px solid #ddd;border-top:none}}
-      .ref-box{{background:#fff8e1;border:2px solid #CC0000;padding:15px;border-radius:5px;margin:20px 0;text-align:center}}
-      .ref-id{{font-size:20px;color:#CC0000;font-weight:bold;font-family:'Courier New',monospace;display:block;margin:10px 0}}
-      .info-box{{background:#fff0f0;border-left:4px solid #CC0000;padding:15px;margin:20px 0}}
-      .contact-item{{margin:10px 0;padding:8px 0;border-bottom:1px solid #eee}}
-      .contact-item:last-child{{border-bottom:none}}
-      a{{color:#CC0000;text-decoration:none}}
-      .footer{{background:#f9f9f9;padding:25px;text-align:center;font-size:12px;color:#666;border-top:1px solid #ddd}}
-    </style></head><body>
-    <div class="container">
-      <div class="header">
-        <div style="font-size:48px;margin-bottom:15px">✅</div>
-        <h2>Request Received!</h2>
+    user_html = f"""<!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        * {{ margin: 0; padding: 0; }}
+        body {{ font-family: 'Segoe UI', Arial, sans-serif; color: #333; line-height: 1.6; }}
+        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+        .header {{ 
+          background: linear-gradient(135deg, #CC0000, #880000); 
+          color: white; 
+          padding: 40px 25px;
+          border-radius: 8px 8px 0 0; 
+          text-align: center;
+        }}
+        .checkmark {{ 
+          font-size: 48px; 
+          margin-bottom: 15px;
+          display: block;
+        }}
+        .header h2 {{ margin: 0; font-size: 26px; }}
+        .content {{ 
+          background: white; 
+          padding: 30px; 
+          border: 1px solid #ddd;
+          border-top: none;
+        }}
+        .content p {{ margin: 15px 0; }}
+        .info-box {{ 
+          background: #fff0f0; 
+          border-left: 4px solid #CC0000; 
+          padding: 15px; 
+          margin: 20px 0;
+          border-radius: 2px;
+        }}
+        .ref-box {{ 
+          background: #fff8e1; 
+          border: 2px solid #CC0000; 
+          padding: 15px; 
+          border-radius: 5px; 
+          margin: 20px 0; 
+          text-align: center;
+        }}
+        .ref-id {{ 
+          font-size: 20px; 
+          color: #CC0000; 
+          font-weight: bold;
+          display: block;
+          margin: 10px 0;
+          font-family: 'Courier New', monospace;
+        }}
+        .quick-contact {{ 
+          background: #f5f5f5; 
+          padding: 20px; 
+          border-radius: 5px;
+          margin: 20px 0;
+        }}
+        .contact-item {{ 
+          margin: 10px 0; 
+          padding: 8px 0;
+          border-bottom: 1px solid #e0e0e0;
+        }}
+        .contact-item:last-child {{ border-bottom: none; }}
+        .contact-label {{ 
+          color: #CC0000; 
+          font-weight: bold;
+        }}
+        a {{ color: #CC0000; text-decoration: none; }}
+        a:hover {{ text-decoration: underline; }}
+        .footer {{ 
+          background: #f9f9f9; 
+          padding: 25px; 
+          text-align: center; 
+          font-size: 12px; 
+          color: #666;
+          border-top: 1px solid #ddd;
+        }}
+        .footer-text {{ margin: 5px 0; }}
+        .highlight {{ color: #CC0000; font-weight: bold; }}
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <span class="checkmark">✅</span>
+          <h2>Request Received!</h2>
+        </div>
+        
+        <div class="content">
+          <p style="font-size: 16px;">Hi <span class="highlight">{first_name}</span>,</p>
+          
+          <p>Thank you for reaching out to Zoiko Mobile! We've received your callback request and our support team will contact you within <strong>24 hours</strong>.</p>
+          
+          <div class="info-box">
+            <strong style="display: block; margin-bottom: 8px;">📞 We'll call you at:</strong>
+            <span style="font-size: 16px; color: #CC0000; font-weight: bold;">{clean_phone}</span>
+          </div>
+          
+          <div class="ref-box">
+            <strong style="font-size: 12px; color: #999;">YOUR REFERENCE ID</strong>
+            <div class="ref-id">{ref_id}</div>
+            <span style="font-size: 11px; color: #666;">Keep this for your records</span>
+          </div>
+          
+          <h3 style="color: #333; margin: 25px 0 15px 0; font-size: 16px;">Can't wait? Quick contact options:</h3>
+          
+          <div class="quick-contact">
+            <div class="contact-item">
+              <span class="contact-label">📞 Call 24/7:</span>
+              <a href="tel:+18009888116">800-988-8116</a>
+            </div>
+            <div class="contact-item">
+              <span class="contact-label">🌐 Visit us:</span>
+              <a href="https://zoikomobile.com">zoikomobile.com</a>
+            </div>
+            <div class="contact-item">
+              <span class="contact-label">💬 Live Chat:</span>
+              Available on our website (business hours)
+            </div>
+            <div class="contact-item">
+              <span class="contact-label">📧 Email:</span>
+              <a href="mailto:support@zoikomobile.com">support@zoikomobile.com</a>
+            </div>
+          </div>
+          
+          <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+            Thanks for choosing Zoiko Mobile! 💚
+          </p>
+        </div>
+        
+        <div class="footer">
+          <p class="footer-text">© 2026 Zoiko Mobile. All rights reserved.</p>
+          <p class="footer-text" style="font-size: 10px; color: #999;">
+            <em>Your information is secure and will never be shared with third parties.</em>
+          </p>
+        </div>
       </div>
-      <div class="content">
-        <p style="font-size:16px">Hi <strong style="color:#CC0000">{first_name}</strong>,</p>
-        <p style="margin:15px 0">Thank you for reaching out to Zoiko Mobile! Our support team will contact you within <strong>24 hours</strong>.</p>
-        <div class="info-box">
-          <strong>📞 We'll call you at:</strong><br>
-          <span style="font-size:16px;color:#CC0000;font-weight:bold">{clean_phone}</span>
-        </div>
-        <div class="ref-box">
-          <strong style="font-size:12px;color:#999">YOUR REFERENCE ID</strong>
-          <div class="ref-id">{ref_id}</div>
-          <span style="font-size:11px;color:#666">Keep this for your records</span>
-        </div>
-        <h3 style="color:#333;margin:25px 0 15px">Can't wait? Contact us directly:</h3>
-        <div style="background:#f5f5f5;padding:20px;border-radius:5px">
-          <div class="contact-item"><strong style="color:#CC0000">📞 Call 24/7:</strong> <a href="tel:+18009888116">800-988-8116</a></div>
-          <div class="contact-item"><strong style="color:#CC0000">🌐 Website:</strong> <a href="https://zoikomobile.com">zoikomobile.com</a></div>
-          <div class="contact-item"><strong style="color:#CC0000">📧 Email:</strong> <a href="mailto:support@zoikomobile.com">support@zoikomobile.com</a></div>
-        </div>
-        <p style="margin-top:30px;padding-top:20px;border-top:1px solid #eee">Thanks for choosing Zoiko Mobile! 🎉</p>
-      </div>
-      <div class="footer">© 2026 Zoiko Mobile. All rights reserved.</div>
-    </div></body></html>"""
+    </body>
+    </html>"""
 
     try:
+        print(f"\n{'='*70}")
+        print(f"CALLBACK REQUEST - {ref_id}")
+        print(f"{'='*70}")
+        print(f"From: {clean_name} ({clean_email})")
+        print(f"Phone: {clean_phone}")
+        print(f"Issue: {clean_issue[:50]}...")
+        print(f"{'='*70}\n")
+        
         send_email(SUPPORT_EMAIL, f"🎧 New Callback Request — {clean_name} ({ref_id})", support_html)
         send_email(clean_email,  f"✅ We Received Your Request — Zoiko Mobile ({ref_id})", user_html)
+        
+        print(f"\n✅ Both emails sent successfully!\n")
+        
         return JSONResponse({
             "success": True,
             "message": "Request submitted successfully",
@@ -199,10 +394,13 @@ async def send_request(data: CallbackRequest):
             "phone":   clean_phone
         })
     except Exception as e:
-        print(f"❌ Email error: {e}")
+        print(f"\n❌ FAILED TO SEND EMAIL")
+        print(f"Error: {str(e)}")
+        print(f"Type: {type(e).__name__}\n")
+        
         return JSONResponse({
             "success": False,
-            "message": "Error sending email. Please try again or call 800-988-8116.",
+            "message": f"Error: {str(e)}. Please try again or call 800-988-8116.",
             "error":   str(e)
         }, status_code=500)
 
@@ -211,9 +409,12 @@ async def send_request(data: CallbackRequest):
 async def health():
     return {
         "status":  "✅ Server is healthy",
+        "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "service": "Zoiko Mobile Chatbot Backend",
         "version": "2.0",
-        "email_configured": bool(SMTP_PASS or (USE_GMAIL and GMAIL_PASS))
+        "email_configured": True,
+        "smtp_host": SMTP_HOST,
+        "smtp_user": SMTP_USER
     }
 
 # ── Knowledge base chat ───────────────────────────────────────────────────────
@@ -234,15 +435,28 @@ def chat(msg: Message):
             return {"response": v}
     return {"response": "I don't know yet."}
 
-# ── Serve frontend LAST (catch-all) ──────────────────────────────────────────
-if frontend_path.exists():
+# ── Serve frontend ─────────────────────────────────────────────────────────────
+if frontend_path.exists() and (frontend_path / "index.html").exists():
     app.mount("/ui", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
+    print(f"✅ Frontend mounted at /ui from {frontend_path}\n")
+else:
+    print(f"⚠️  WARNING: Frontend folder or index.html not found!\n")
 
 # ── Startup message ───────────────────────────────────────────────────────────
-print("=" * 80)
-print("✅ Zoikon Chatbot Backend Started")
-print("=" * 80)
-print(f"Email Service: {'Gmail' if USE_GMAIL else 'Custom SMTP'}")
-print(f"SMTP Host: {SMTP_HOST if not USE_GMAIL else 'smtp.gmail.com'}")
-print(f"Support Email: {SUPPORT_EMAIL}")
-print("=" * 80)
+print("\n╔════════════════════════════════════════════════════════════╗")
+print("║  🎧 ZOIKO MOBILE CHATBOT BACKEND                           ║")
+print("║  CREDENTIALS HARDCODED - NO .ENV FILE NEEDED               ║")
+print("╠════════════════════════════════════════════════════════════╣")
+print("║  ✅ Status: Running                                        ║")
+print("║  📧 Email Service: SMTP (Hardcoded Credentials)            ║")
+print(f"║  SMTP Host: {SMTP_HOST}")
+print(f"║  From Email: {SMTP_USER}")
+print("║  🎯 Ready: YES                                             ║")
+print("╠════════════════════════════════════════════════════════════╣")
+print("║  API ENDPOINTS:                                            ║")
+print("║  POST   /send-request       (Callback requests)            ║")
+print("║  GET    /health             (Health check)                 ║")
+print("║  POST   /chat               (Chatbot responses)            ║")
+print("║  GET    /ui                 (Frontend interface)           ║")
+print("╚════════════════════════════════════════════════════════════╝\n")
+print("✅ All systems ready!\n")

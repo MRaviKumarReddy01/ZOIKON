@@ -536,8 +536,8 @@ const LOGO = "data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJ
 // ── ADD THIS RIGHT AT THE TOP OF YOUR <script> TAG ──────────────
 const BACKEND = window.location.hostname === 'localhost' ||
                 window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:5000'
-  : 'https://zoikon-722985113446.europe-west1.run.app';
+  ? 'http://localhost:8000'
+  : 'https://zoikon-7229b5113446.europe-west1.run.app';
 const SYSTEM = `You are Zoikon, Zoiko Mobile's friendly AI support agent. You sound like a real, warm, knowledgeable American woman — conversational, helpful, never robotic.
 
 CRITICAL RULES — NEVER VIOLATE:
@@ -1958,19 +1958,19 @@ function smartReply(text) {
     ]};
   }
 
-  // USPS Employee Discount handler
+  // United States Postal Service Employee Discount handler
   if (/usps|postal|mail\s*carrier|postal\s*service|employee\s*discount/i.test(t)) {
-    return {text:"USPS employees get special Zoiko discounts! 📬", cards:[
-      makeInfoCard('📬','USPS Employee Discount Program',[
+    return {text:"United States Postal Service employees get special Zoiko discounts! 📬", cards:[
+      makeInfoCard('📬','United States Postal Service Employee Discount Program',[
         {label:'Discount',      val:'20% off monthly plans',           org:true},
-        {label:'Who qualifies', val:'Active USPS employees',           org:true},
-        {label:'How to claim',  val:'Verify via USPS email at signup', org:true},
+        {label:'Who qualifies', val:'Active United States Postal Service employees',           org:true},
+        {label:'How to claim',  val:'Verify via United States Postal Service email at signup', org:true},
         {label:'On what plans', val:'All prepaid and postpaid plans',  org:true},
         {label:'Stacks with',   val:'Family plans & auto-pay bonus',   org:true},
         {label:'Example',       val:'Zoiko Core $25 → only $20/month'}
       ]),
       makeNotif('success','🎉','Combine with 20% family discount for even more savings!'),
-      makeLinksBar([{url:'https://zoikomobile.com/business-deals',label:'Employee Discounts'},{url:'https://zoikomobile.com/all-plans',label:'See Plans'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/postal-service-workers',label:'Employee Discounts'},{url:'https://zoikomobile.com/all-plans',label:'See Plans'}]),
       makeActionBar([{label:'✅ Sign up for discount', action:'__callback__', type:'primary'},{label:'💰 Family savings', action:'Calculate my family savings'}])
     ]};
   }
@@ -2341,14 +2341,14 @@ function smartReply(text) {
     return {text:"Here are all **active Zoiko promotions**! 🎉", cards:[
       makeInfoCard('🎉','Current Deals & Promotions',[
         {label:'👨‍👩‍👧 Family Plan',  val:'20% off with 3+ lines — auto-applied',     org:true},
-        {label:'📬 USPS Employees', val:'Lifetime 20% off BYOD + nominate 5 friends',org:true},
+        {label:'📬 United States Postal Service Employees', val:'Lifetime 20% off BYOD + nominate 5 friends',org:true},
         {label:'🎁 MOMSGIFT40',     val:'45% off top-up plans (May 2025)',            org:true},
         {label:'📱 BESTMOM20',      val:'25% off refurbished phones (May 2025)',      org:true},
         {label:'📲 Free Port-In',   val:'Transfer from any carrier — $0',            org:true},
         {label:'⚡ No Activation Fees',val:'On any plan, ever',                       org:true}
       ]),
       makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Shop All Deals'},{url:'https://zoikomobile.com/business-deals',label:'Business Deals'}]),
-      makeActionBar([{label:'📬 USPS discount', action:'Tell me about the USPS employee discount', type:'primary'},{label:'👨‍👩‍👧 Family savings', action:'Calculate my family savings'}])
+      makeActionBar([{label:'📬 United States Postal Service discount', action:'Tell me about the United States Postal Service employee discount', type:'primary'},{label:'👨‍👩‍👧 Family savings', action:'Calculate my family savings'}])
     ]};
   }
 
@@ -2422,20 +2422,20 @@ function smartReply(text) {
   }
 
   if (/usps|postal\s*worker|postal\s*service|postal\s*discount/i.test(t)) {
-    return {text:"Zoiko offers an exclusive **lifetime 20% discount** for all USPS employees! 📬", cards:[
-      makeInfoCard('📬','USPS Employee Discount',[
+    return {text:"Zoiko offers an exclusive **lifetime 20% discount** for all United States Postal Service employees! 📬", cards:[
+      makeInfoCard('📬','United States Postal Service Employee Discount',[
         {label:'Discount',         val:'20% OFF — lifetime, permanently',         org:true},
         {label:'Applies to',       val:'All BYOD plans',                          org:true},
         {label:'Nomination benefit',val:'Nominate up to 5 friends/family for same discount!', org:true},
-        {label:'Required',         val:'USPS work email + government-issued USPS Work ID'}
+        {label:'Required',         val:'United States Postal Service work email + government-issued United States Postal Service Work ID'}
       ]),
-      makeStepCard('HOW TO CLAIM YOUR USPS DISCOUNT',[
+      makeStepCard('HOW TO CLAIM YOUR United States Postal Service DISCOUNT',[
         {label:'Choose any BYOD plan',               sub:''},
-        {label:'Register with your USPS work email', sub:'Official .usps.gov or .usps.com email'},
-        {label:'Upload your USPS Work ID',           sub:'Government-issued ID required'},
+        {label:'Register with your United States Postal Service work email', sub:'Official .usps.gov or .usps.com email'},
+        {label:'Upload your United States Postal Service Work ID',           sub:'Government-issued ID required'},
         {label:'Discount activates once verified',   sub:'Then nominate up to 5 friends/family 🎉'}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'View BYOD Plans'},{url:'https://zoikomobile.com/contact-us',label:'Verify My USPS Status'}])
+      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'View BYOD Plans'},{url:'https://zoikomobile.com/contact-us',label:'Verify My United States Postal Service Status'}])
     ]};
   }
 
@@ -2691,7 +2691,74 @@ function smartReply(text) {
       makeActionBar([{label:'🎧 Request callback', action:'__callback__', type:'primary'}])
     ]};
   }
-  const hasZoikoKw = /plan|sim|esim|data|call|text|phone|network|coverage|pay|bill|port|number|byod|family|international|activat|device|signal|5g|4g|deal|promo|support|agent|help|zoiko|mobile|hotspot|roam|countr|wifi|cancel|contract|postpaid|prepaid|unlimited|protect|office|price|cost|save|switch|bring|unlock|compatible|speed|carrier|account|callback|business|invoice|overcharg|travel|balance|password|email|update|login/i.test(t);
+  // ════════════════════════════════════════════════════════════════════
+  // CALLBACK / REQUEST A CALL
+  // ════════════════════════════════════════════════════════════════════
+  if (/call\s*back|callback|request.*call|speak.*agent|talk.*agent|live.*agent|human.*agent|agent.*human|call.*me|reach.*me|contact.*me|get.*call|want.*call|need.*call|schedule.*call/i.test(t)) {
+    return {text:"I'll connect you with a Zoiko agent right away! 🎧 Fill in your details below and we'll call you back within 24 hours.", cards:[
+      makeNotif('info','📞','A real Zoiko agent will call you personally — usually within a few hours!'),
+      makeActionBar([{label:'🎧 Request Callback Now', action:'__callback__', type:'primary'},{label:'📞 Call us directly', action:'What is the Zoiko support number?'}])
+    ]};
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // COLLEGE / STUDENT PLANS
+  // ════════════════════════════════════════════════════════════════════
+  if (/colleg|student|university|campus|school|grad|undergrad|dorm|semester/i.test(t)) {
+    return {text:"Zoiko has special **College Student Plans** — affordable wireless built for students! 🎓", cards:[
+      makeInfoCard('🎓','College Student Plan Benefits',[
+        {label:'Who qualifies',     val:'Current college/university students',              org:true},
+        {label:'How to verify',    val:'Verify with your .edu email at signup',            org:true},
+        {label:'Plans available',  val:'All Zoiko prepaid & postpaid plans',               org:true},
+        {label:'Best for students',val:'Zoiko Flex $15 or Core $25 — most popular',       org:true},
+        {label:'No credit check',  val:'Perfect for first-time phone plan holders',       org:true},
+        {label:'eSIM',             val:'Activate instantly on your laptop or phone',      org:true}
+      ]),
+      makeNotif('success','🎉','No contracts, no hidden fees — perfect for students on a budget!'),
+      makeNotif('info','💡','Stack with family plan discount if your parents are on Zoiko too — save even more!'),
+      makeLinksBar([{url:'https://zoikomobile.com/college-student',label:'🎓 View College Student Plans'},{url:'https://zoikomobile.com/all-plans',label:'Compare All Plans'}]),
+      makeActionBar([{label:'📱 See student plans', action:'Show me all plans', type:'primary'},{label:'🎧 Ask a question', action:'__callback__'}])
+    ]};
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // MILITARY / VETERANS
+  // ════════════════════════════════════════════════════════════════════
+  if (/militar|veteran|vet\b|army|navy|air\s*force|marine|coast\s*guard|national\s*guard|active\s*duty|service\s*member|armed\s*forces/i.test(t)) {
+    return {text:"Thank you for your service! 🇺🇸 Zoiko offers a **lifetime military discount** for veterans and active duty members.", cards:[
+      makeInfoCard('🇺🇸','Military & Veteran Discount',[
+        {label:'Discount amount',   val:'20% OFF — for life, every month',                 org:true},
+        {label:'Who qualifies',    val:'Active duty, veterans, retired military',          org:true},
+        {label:'How to claim',     val:'Verify with military ID or DD-214 at signup',     org:true},
+        {label:'Applies to',       val:'All BYOD plans — bring your own device',          org:true},
+        {label:'Family benefit',   val:'Nominate up to 5 family/friends for 15% lifetime',org:true},
+        {label:'Stack with',       val:'Family plan discount for even more savings',      org:true}
+      ]),
+      makeNotif('success','🎖️','The 20% military discount is LIFETIME — it never expires, never reduces!'),
+      makeNotif('teal','👨‍👩‍👧','Nominate up to 5 friends or family members — they get 15% off for life too!'),
+      makeLinksBar([{url:'https://zoikomobile.com/military-veterans',label:'🇺🇸 Military & Veteran Plans'},{url:'https://zoikomobile.com/all-plans',label:'View All Plans'}]),
+      makeActionBar([{label:'🇺🇸 Claim my discount', action:'__callback__', type:'primary'},{label:'📱 View BYOD plans', action:'I want to bring my own phone'}])
+    ]};
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // ANIMAL CHARITIES
+  // ════════════════════════════════════════════════════════════════════
+  if (/animal|charity|charities|donate|donation|pet|rescue|shelter|wildlife|nonprofit|non.profit/i.test(t)) {
+    return {text:"Zoiko Mobile gives back! 🐾 We support **animal charities** through our community program.", cards:[
+      makeInfoCard('🐾','Zoiko Animal Charity Program',[
+        {label:'What it is',       val:'Zoiko donates a portion of revenue to animal charities', org:true},
+        {label:'Who benefits',     val:'Animal rescue shelters & wildlife organizations',        org:true},
+        {label:'How you help',     val:'Every Zoiko plan you buy supports the cause',           org:true},
+        {label:'Program details',  val:'Visit zoikomobile.com/animal-charities for full info', org:true}
+      ]),
+      makeNotif('success','🐾','Your Zoiko subscription helps animals in need — feel good about your mobile plan!'),
+      makeLinksBar([{url:'https://zoikomobile.com/animal-charities',label:'🐾 Learn About Our Animal Charities'},{url:'https://zoikomobile.com/all-plans',label:'Get a Plan & Give Back'}]),
+      makeActionBar([{label:'🐾 Learn more', action:'Show me all plans', type:'primary'},{label:'🎧 Ask a question', action:'__callback__'}])
+    ]};
+  }
+
+  const hasZoikoKw = /plan|sim|esim|data|call|text|phone|network|coverage|pay|bill|port|number|byod|family|international|activat|device|signal|5g|4g|deal|promo|support|agent|help|zoiko|mobile|hotspot|roam|countr|wifi|cancel|contract|postpaid|prepaid|unlimited|protect|office|price|cost|save|switch|bring|unlock|compatible|speed|carrier|account|callback|business|invoice|overcharg|travel|balance|password|email|update|login|militar|veteran|colleg|student|animal|charit|callback|call\s*back/i.test(t);
 
   if (!hasZoikoKw) {
     // Completely off-topic — friendly redirect
