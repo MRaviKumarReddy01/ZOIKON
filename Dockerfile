@@ -16,7 +16,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # ── Copy application files ────────────────────────────────────────────────────
 COPY backend/app.py .
 COPY frontend/ ./frontend/
-COPY data/ ./data/ 2>/dev/null || true
+
+# ── Create data dir and copy contents if they exist ───────────────────────────
+RUN mkdir -p ./data
+COPY data/ ./data/
 
 # ── Cloud Run expects port 8080 ───────────────────────────────────────────────
 EXPOSE 8080
