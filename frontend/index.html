@@ -533,7 +533,11 @@ body{font-family:var(--font-b);background:var(--dark);color:var(--text);height:1
 const API_KEY = 'YOUR_API_KEY_HERE';
 
 const LOGO = "data:image/png;base64,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";
-
+// ── ADD THIS RIGHT AT THE TOP OF YOUR <script> TAG ──────────────
+const BACKEND = window.location.hostname === 'localhost' ||
+                window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:5000'
+  : 'https://zoikon-722985113446.europe-west1.run.app';
 const SYSTEM = `You are Zoikon, Zoiko Mobile's friendly AI support agent. You sound like a real, warm, knowledgeable American woman — conversational, helpful, never robotic.
 
 CRITICAL RULES — NEVER VIOLATE:
@@ -2856,7 +2860,10 @@ function submitEsc(){
   document.querySelector('.esc-card').innerHTML=`<div class="esc-title" style="color:var(--org)">⏳ Sending request...</div><div style="font-size:12px;color:var(--muted2);margin-top:8px">Please wait while we process your request...</div>`;
   
   // Send to server.js
-  fetch('http://localhost:5000/send-request', {
+
+
+// Then your fetch becomes:
+fetch(`${BACKEND}/send-request`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
