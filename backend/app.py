@@ -134,13 +134,14 @@ async def send_request(data: CallbackRequest):
         return JSONResponse({"success": False, "message": "Please describe how we can help"})
 
     # ── Prepare data ──────────────────────────────────────────────────────────
-    ref_id      = gen_ref_id()
-    timestamp   = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    clean_name  = escape_html(data.name.strip())
-    clean_email = data.email.strip()
-    clean_phone = data.phone.strip()
-    clean_issue = escape_html(data.issue.strip()).replace("\n", "<br>")
-    first_name  = clean_name.split()[0]
+    ref_id       = gen_ref_id()
+    timestamp    = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    clean_name   = escape_html(data.name.strip())
+    clean_email  = data.email.strip()
+    clean_phone  = data.phone.strip()
+    phone_digits = re.sub(r'\D', '', clean_phone)   # pre-extracted (no backslash in f-string)
+    clean_issue  = escape_html(data.issue.strip()).replace("\n", "<br>")
+    first_name   = clean_name.split()[0]
 
     # ── Email to support team ─────────────────────────────────────────────────
     support_html = f"""<!DOCTYPE html>
@@ -213,7 +214,7 @@ async def send_request(data: CallbackRequest):
           
           <div class="field">
             <div class="label">📱 Phone Number</div>
-            <div class="value"><a href="tel:{re.sub(r'\\D','',clean_phone)}">{clean_phone}</a></div>
+            <div class="value"><a href="tel:{phone_digits}">{clean_phone}</a></div>
           </div>
           
           <div class="field">
