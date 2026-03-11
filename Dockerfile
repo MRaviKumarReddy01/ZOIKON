@@ -1,5 +1,5 @@
 # ── Base: Python 3.10 slim ────────────────────────────────────────────────────
-FROM python:3.10
+FROM python:3.10-slim
 
 # ── Install dependencies ──────────────────────────────────────────────────────
 RUN apt-get update && apt-get install -y \
