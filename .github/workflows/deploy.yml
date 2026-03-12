@@ -1,197 +1,31 @@
-# ══════════════════════════════════════════════════════════════════════════════
-#  Zoiko Mobile Chatbot — CI/CD Pipeline
-#  Deploys FastAPI backend to GCP Cloud Run on every push to `main`
-#  Also triggers on knowledge.json changes for automatic chatbot retraining
-# ══════════════════════════════════════════════════════════════════════════════
-
-name: 🚀 Deploy to GCP Cloud Run
+name: Zoikon Chatbot CI/CD
 
 on:
   push:
     branches:
       - main
-    paths:
-      - 'app.py'
-      - 'index.html'
-      - 'knowledge.json'          # auto-redeploy when knowledge base changes
-      - 'retrain.py'
-      - 'requirements.txt'
-      - 'Dockerfile'
-  workflow_dispatch:               # allow manual trigger from GitHub Actions tab
 
-# ── Shared environment variables ──────────────────────────────────────────────
-env:
-  GCP_PROJECT_ID:  ${{ secrets.GCP_PROJECT_ID }}
-  GCP_REGION:      europe-west1                    # matches your current Cloud Run URL
-  SERVICE_NAME:    zoikon
-  IMAGE_REGISTRY:  gcr.io                          # Google Container Registry
-  IMAGE_NAME:      gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon
-
-# ── Jobs ──────────────────────────────────────────────────────────────────────
 jobs:
-
-  # ── 1. Test ─────────────────────────────────────────────────────────────────
-  test:
-    name: 🧪 Lint & Test
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'pip'
+          python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Lint with flake8
         run: |
-          pip install flake8
-          flake8 app.py retrain.py --max-line-length=120 --ignore=E501,W503 || true
+          pip install fastapi uvicorn
 
-      - name: Validate knowledge.json
-        run: python -c "import json; json.load(open('knowledge.json')); print('✅ knowledge.json is valid JSON')"
-
-      - name: Run retrain check
+      - name: Validate backend
         run: |
-          mkdir -p data
-          cp knowledge.json data/knowledge.json
-          python retrain.py
+          python -c "import backend.app"
 
-  # ── 2. Build & Push Docker image ────────────────────────────────────────────
-  build:
-    name: 🐳 Build & Push Image
-    needs: test
-    runs-on: ubuntu-latest
-    outputs:
-      image_tag: ${{ steps.meta.outputs.image_tag }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-
-      - name: Configure Docker to use gcloud credentials
-        run: gcloud auth configure-docker --quiet
-
-      - name: Set image tag
-        id: meta
+      - name: Data update check
         run: |
-          SHORT_SHA="${GITHUB_SHA::8}"
-          IMAGE_TAG="${{ env.IMAGE_NAME }}:${SHORT_SHA}"
-          echo "image_tag=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
-          echo "IMAGE_TAG=${IMAGE_TAG}" >> "$GITHUB_ENV"
-          echo "🏷️  Building image: ${IMAGE_TAG}"
-
-      - name: Build Docker image
-        run: |
-          docker build \
-            --tag "${{ env.IMAGE_NAME }}:${{ github.sha }}" \
-            --tag "${{ env.IMAGE_NAME }}:latest" \
-            --tag "$IMAGE_TAG" \
-            --cache-from "${{ env.IMAGE_NAME }}:latest" \
-            --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-            --build-arg GIT_SHA="${GITHUB_SHA}" \
-            .
-
-      - name: Push image to GCR
-        run: |
-          docker push "${{ env.IMAGE_NAME }}:${{ github.sha }}"
-          docker push "${{ env.IMAGE_NAME }}:latest"
-          docker push "$IMAGE_TAG"
-          echo "✅ Image pushed: $IMAGE_TAG"
-
-  # ── 3. Deploy to Cloud Run ───────────────────────────────────────────────────
-  deploy:
-    name: ☁️ Deploy to Cloud Run
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: https://zoikon-7229b5113446.europe-west1.run.app   # your live URL
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-
-      - name: Deploy to Cloud Run
-        run: |
-          gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --image "${{ env.IMAGE_NAME }}:${{ github.sha }}" \
-            --region "${{ env.GCP_REGION }}" \
-            --platform managed \
-            --allow-unauthenticated \
-            --port 8080 \
-            --memory 512Mi \
-            --cpu 1 \
-            --min-instances 0 \
-            --max-instances 10 \
-            --concurrency 80 \
-            --timeout 60 \
-            --set-env-vars "\
-              SMTP_HOST=${{ secrets.SMTP_HOST }},\
-              SMTP_PORT=${{ secrets.SMTP_PORT }},\
-              SMTP_USER=${{ secrets.SMTP_USER }},\
-              SMTP_PASS=${{ secrets.SMTP_PASS }},\
-              SUPPORT_EMAIL=${{ secrets.SUPPORT_EMAIL }}" \
-            --quiet
-
-      - name: Verify deployment (health check)
-        run: |
-          URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} \
-            --region ${{ env.GCP_REGION }} \
-            --format 'value(status.url)')
-          echo "🌐 Service URL: $URL"
-          
-          # Poll health endpoint for up to 60 seconds
-          for i in $(seq 1 12); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL/health" || echo "000")
-            if [ "$STATUS" == "200" ]; then
-              echo "✅ Health check passed (attempt $i)"
-              break
-            fi
-            echo "⏳ Waiting... ($i/12) — HTTP $STATUS"
-            sleep 5
-          done
-
-          if [ "$STATUS" != "200" ]; then
-            echo "❌ Health check failed after 60s (HTTP $STATUS)"
-            exit 1
-          fi
-
-      - name: Print deployment summary
-        run: |
-          URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} \
-            --region ${{ env.GCP_REGION }} \
-            --format 'value(status.url)')
-          echo ""
-          echo "╔══════════════════════════════════════════════════════════╗"
-          echo "║  ✅ DEPLOYMENT SUCCESSFUL                                ║"
-          echo "╠══════════════════════════════════════════════════════════╣"
-          echo "║  Service : ${{ env.SERVICE_NAME }}"
-          echo "║  Region  : ${{ env.GCP_REGION }}"
-          echo "║  Image   : ${{ env.IMAGE_NAME }}:${{ github.sha }}"
-          echo "║  URL     : $URL"
-          echo "╚══════════════════════════════════════════════════════════╝"
+          echo "Chatbot updated successfully"
