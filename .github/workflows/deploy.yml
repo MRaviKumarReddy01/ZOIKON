@@ -24,29 +24,11 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      # ── 4. Configure Docker for GCR ──────────────────────────────────────────
-      - name: Configure Docker
-        run: gcloud auth configure-docker gcr.io --quiet
-
-      # ── 5. Build Docker image ─────────────────────────────────────────────────
-      - name: Build Docker image
-        run: |
-          docker build \
-            -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon:${{ github.sha }} \
-            -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon:latest \
-            .
-
-      # ── 6. Push to Google Container Registry ──────────────────────────────────
-      - name: Push Docker image to GCR
-        run: |
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon:${{ github.sha }}
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon:latest
-
-      # ── 7. Deploy to Cloud Run ────────────────────────────────────────────────
+      # ── 4. Deploy directly from source (NO DOCKER REGISTRY!) ──────────────────
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy zoikon \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon:latest \
+            --source . \
             --platform managed \
             --region europe-west1 \
             --port 8080 \
@@ -57,7 +39,7 @@ jobs:
             --max-instances 3 \
             --quiet
 
-      # ── 8. Show deployed URL ──────────────────────────────────────────────────
+      # ── 5. Show deployed URL ──────────────────────────────────────────────────
       - name: Get deployed URL
         run: |
           echo "✅ Deployment successful!"
