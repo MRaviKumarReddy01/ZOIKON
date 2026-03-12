@@ -1,175 +1,62 @@
-# ══════════════════════════════════════════════════════════════════════════════
-#  Zoiko Mobile Chatbot — CI/CD Pipeline
-#  Folder structure:
-#    backend/app.py
-#    backend/retrain.py
-#    backend/requirements.txt
-#    data/knowledge.json
-#    frontend/index.html
-#    Dockerfile
-# ══════════════════════════════════════════════════════════════════════════════
+#!/bin/bash
+# ══════════════════════════════════════════════════════════════
+#  Run this in GCP Cloud Shell to fix the permissions error
+#  "artifactregistry.repositories.uploadArtifacts denied"
+# ══════════════════════════════════════════════════════════════
 
-name: Zoikon Chatbot CI/CD
+# ── STEP 1: Set your project ID ───────────────────────────────
+PROJECT_ID=$(gcloud config get-value project)
+echo "Project: $PROJECT_ID"
 
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'backend/**'
-      - 'frontend/**'
-      - 'data/knowledge.json'      # auto-redeploy on knowledge base changes
-      - 'requirements.txt'
-      - 'Dockerfile'
-  workflow_dispatch:
+# ── STEP 2: Find the service account being used ───────────────
+SA_EMAIL="github-cicd@${PROJECT_ID}.iam.gserviceaccount.com"
+echo "Service Account: $SA_EMAIL"
 
-env:
-  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  GCP_REGION:     europe-west1
-  SERVICE_NAME:   zoikon
-  IMAGE_NAME:     gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon
+# ── STEP 3: Enable required GCP APIs ─────────────────────────
+gcloud services enable artifactregistry.googleapis.com --project=$PROJECT_ID
+gcloud services enable containerregistry.googleapis.com --project=$PROJECT_ID
+gcloud services enable run.googleapis.com --project=$PROJECT_ID
+echo "✅ APIs enabled"
 
-jobs:
+# ── STEP 4: Grant ALL required roles ──────────────────────────
 
-  # ── 1. Validate code and knowledge base ─────────────────────────────────────
-  build:
-    name: Build & Test
-    runs-on: ubuntu-latest
+# For pushing to GCR (gcr.io)
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/storage.admin"
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+# For pushing to Artifact Registry (newer GCP)
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/artifactregistry.writer"
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+# For deploying to Cloud Run
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/run.admin"
 
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install fastapi uvicorn python-multipart pydantic
-          if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+# For acting as a service account during deploy
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/iam.serviceAccountUser"
 
-      - name: Ensure backend is a Python package
-        run: touch backend/__init__.py
+# For reading/writing container images
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/storage.objectAdmin"
 
-      - name: Validate knowledge.json
-        run: |
-          python -c "
-          import json
-          with open('data/knowledge.json') as f:
-              k = json.load(f)
-          print(f'✅ knowledge.json valid — {len(k)} entries')
-          "
+echo ""
+echo "✅ All roles granted to: $SA_EMAIL"
+echo ""
 
-      - name: Run retrain
-        run: |
-          python backend/retrain.py
-          echo "✅ Chatbot knowledge updated successfully"
+# ── STEP 5: Create/update GCR bucket permissions ──────────────
+# GCR stores images in a GCS bucket — SA needs access to it
+GCR_BUCKET="artifacts.${PROJECT_ID}.appspot.com"
+gsutil iam ch serviceAccount:${SA_EMAIL}:objectAdmin gs://${GCR_BUCKET} 2>/dev/null \
+  && echo "✅ GCR bucket permissions set" \
+  || echo "⚠️  GCR bucket not found yet — it will be created on first push"
 
-      - name: Validate backend imports
-        run: |
-          python -c "import sys; sys.path.insert(0, '.'); import backend.app; print('✅ backend.app imported OK')"
-
-  # ── 2. Build Docker image and push to GCR ───────────────────────────────────
-  docker:
-    name: Docker Build & Push
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-
-      - name: Configure Docker for GCR
-        run: gcloud auth configure-docker --quiet
-
-      - name: Ensure backend is a Python package
-        run: touch backend/__init__.py
-
-      - name: Build Docker image
-        run: |
-          docker build \
-            --tag "${{ env.IMAGE_NAME }}:${{ github.sha }}" \
-            --tag "${{ env.IMAGE_NAME }}:latest" \
-            .
-
-      - name: Push to Google Container Registry
-        run: |
-          docker push "${{ env.IMAGE_NAME }}:${{ github.sha }}"
-          docker push "${{ env.IMAGE_NAME }}:latest"
-          echo "✅ Image pushed: ${{ env.IMAGE_NAME }}:${{ github.sha }}"
-
-  # ── 3. Deploy to Cloud Run ───────────────────────────────────────────────────
-  deploy:
-    name: Deploy to Cloud Run
-    needs: docker
-    runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: https://zoikon-7229b5113446.europe-west1.run.app
-
-    steps:
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-
-      - name: Deploy to Cloud Run
-        run: |
-          gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --image "${{ env.IMAGE_NAME }}:${{ github.sha }}" \
-            --region "${{ env.GCP_REGION }}" \
-            --platform managed \
-            --allow-unauthenticated \
-            --port 8080 \
-            --memory 512Mi \
-            --cpu 1 \
-            --min-instances 0 \
-            --max-instances 10 \
-            --timeout 60 \
-            --set-env-vars "\
-              SMTP_HOST=${{ secrets.SMTP_HOST }},\
-              SMTP_PORT=${{ secrets.SMTP_PORT }},\
-              SMTP_USER=${{ secrets.SMTP_USER }},\
-              SMTP_PASS=${{ secrets.SMTP_PASS }},\
-              SUPPORT_EMAIL=${{ secrets.SUPPORT_EMAIL }}" \
-            --quiet
-
-      - name: Health check
-        run: |
-          URL="https://zoikon-7229b5113446.europe-west1.run.app"
-          for i in $(seq 1 12); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL/health" || echo "000")
-            if [ "$STATUS" == "200" ]; then
-              echo "✅ Health check passed (attempt $i)"
-              exit 0
-            fi
-            echo "Waiting... attempt $i/12 — HTTP $STATUS"
-            sleep 5
-          done
-          echo "❌ Health check failed after 60s"
-          exit 1
-
-      - name: Deployment summary
-        run: |
-          echo "✅ DEPLOYED: ${{ env.SERVICE_NAME }}"
-          echo "🌐 URL: https://zoikon-7229b5113446.europe-west1.run.app"
-          echo "🐳 Image: ${{ env.IMAGE_NAME }}:${{ github.sha }}"
+echo ""
+echo "══════════════════════════════════════════════"
+echo "  Done! Now re-run your GitHub Actions pipeline"
+echo "══════════════════════════════════════════════"
