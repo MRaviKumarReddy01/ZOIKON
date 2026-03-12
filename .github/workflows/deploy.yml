@@ -24,38 +24,29 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      # ── 5. Create Artifact Registry repository (safe if already exists) ───────
-      - name: Create Artifact Registry repository
-        run: |
-          gcloud artifacts repositories create zoikon \
-            --repository-format=docker \
-            --location=europe-west1 \
-            --project=${{ secrets.GCP_PROJECT_ID }} \
-            --quiet 2>/dev/null || echo "Repository already exists, continuing..."
-
-      # ── 6. Configure Docker for Artifact Registry ─────────────────────────────
+      # ── 4. Configure Docker for GCR ──────────────────────────────────────────
       - name: Configure Docker
-        run: gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
+        run: gcloud auth configure-docker gcr.io --quiet
 
-      # ── 7. Build Docker image ─────────────────────────────────────────────────
+      # ── 5. Build Docker image ─────────────────────────────────────────────────
       - name: Build Docker image
         run: |
           docker build \
-            -t europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/zoikon/zoikon:${{ github.sha }} \
-            -t europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/zoikon/zoikon:latest \
+            -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon:${{ github.sha }} \
+            -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon:latest \
             .
 
-      # ── 8. Push to Artifact Registry ──────────────────────────────────────────
-      - name: Push Docker image
+      # ── 6. Push to Google Container Registry ──────────────────────────────────
+      - name: Push Docker image to GCR
         run: |
-          docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/zoikon/zoikon:${{ github.sha }}
-          docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/zoikon/zoikon:latest
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon:${{ github.sha }}
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon:latest
 
-      # ── 9. Deploy to Cloud Run ────────────────────────────────────────────────
+      # ── 7. Deploy to Cloud Run ────────────────────────────────────────────────
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy zoikon \
-            --image europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/zoikon/zoikon:${{ github.sha }} \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon:latest \
             --platform managed \
             --region europe-west1 \
             --port 8080 \
@@ -64,15 +55,13 @@ jobs:
             --cpu 1 \
             --min-instances 0 \
             --max-instances 3 \
-            --project=${{ secrets.GCP_PROJECT_ID }} \
             --quiet
 
-      # ── 10. Show deployed URL ─────────────────────────────────────────────────
+      # ── 8. Show deployed URL ──────────────────────────────────────────────────
       - name: Get deployed URL
         run: |
           echo "✅ Deployment successful!"
           gcloud run services describe zoikon \
             --platform managed \
             --region europe-west1 \
-            --project=${{ secrets.GCP_PROJECT_ID }} \
             --format 'value(status.url)'
