@@ -874,7 +874,7 @@ async function send() {
   sendBtn.disabled=true; typing=true;
   showTyping();
 async function sendMessage(message) {
-  const response = await fetch("http://localhost:8000/chat", {
+  const response = await fetch(`${BACKEND}/chat`, {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({message})
@@ -882,15 +882,6 @@ async function sendMessage(message) {
 
   const data = await response.json();
   return data.response;
-}
-
-async function handleSend() {
-  const input = document.getElementById("userInput");
-  const userMessage = input.value;
-
-  const reply = await sendMessage(userMessage);
-
-  console.log("Bot:", reply);   // display in chat UI
 }
 
   // ── FALLBACK (no API key) ──
