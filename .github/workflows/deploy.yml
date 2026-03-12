@@ -1,7 +1,12 @@
 # ══════════════════════════════════════════════════════════════════════════════
 #  Zoiko Mobile Chatbot — CI/CD Pipeline
-#  Deploys to GCP Cloud Run on every push to main
-#  Auto-redeploys when knowledge.json changes (chatbot retraining)
+#  Folder structure:
+#    backend/app.py
+#    backend/retrain.py
+#    backend/requirements.txt
+#    data/knowledge.json
+#    frontend/index.html
+#    Dockerfile
 # ══════════════════════════════════════════════════════════════════════════════
 
 name: Zoikon Chatbot CI/CD
@@ -12,9 +17,8 @@ on:
       - main
     paths:
       - 'backend/**'
-      - 'index.html'
-      - 'knowledge.json'
-      - 'retrain.py'
+      - 'frontend/**'
+      - 'data/knowledge.json'      # auto-redeploy on knowledge base changes
       - 'requirements.txt'
       - 'Dockerfile'
   workflow_dispatch:
@@ -45,32 +49,29 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install fastapi uvicorn python-multipart pydantic
+          if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Ensure backend/__init__.py exists
+      - name: Ensure backend is a Python package
         run: touch backend/__init__.py
-
-      - name: Validate backend imports
-        run: |
-          mkdir -p data
-          cp knowledge.json data/knowledge.json
-          python -c "import sys; sys.path.insert(0, '.'); import backend.app; print('✅ backend.app imported successfully')"
 
       - name: Validate knowledge.json
         run: |
           python -c "
           import json
-          with open('knowledge.json') as f:
+          with open('data/knowledge.json') as f:
               k = json.load(f)
           print(f'✅ knowledge.json valid — {len(k)} entries')
           "
 
-      - name: Data update check
+      - name: Run retrain
         run: |
-          mkdir -p data
-          cp knowledge.json data/knowledge.json
-          python retrain.py
+          python backend/retrain.py
           echo "✅ Chatbot knowledge updated successfully"
+
+      - name: Validate backend imports
+        run: |
+          python -c "import sys; sys.path.insert(0, '.'); import backend.app; print('✅ backend.app imported OK')"
 
   # ── 2. Build Docker image and push to GCR ───────────────────────────────────
   docker:
@@ -95,7 +96,7 @@ jobs:
       - name: Configure Docker for GCR
         run: gcloud auth configure-docker --quiet
 
-      - name: Ensure backend/__init__.py exists
+      - name: Ensure backend is a Python package
         run: touch backend/__init__.py
 
       - name: Build Docker image
@@ -155,7 +156,6 @@ jobs:
       - name: Health check
         run: |
           URL="https://zoikon-7229b5113446.europe-west1.run.app"
-          echo "Checking $URL/health ..."
           for i in $(seq 1 12); do
             STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL/health" || echo "000")
             if [ "$STATUS" == "200" ]; then
@@ -165,7 +165,7 @@ jobs:
             echo "Waiting... attempt $i/12 — HTTP $STATUS"
             sleep 5
           done
-          echo "❌ Health check failed"
+          echo "❌ Health check failed after 60s"
           exit 1
 
       - name: Deployment summary
