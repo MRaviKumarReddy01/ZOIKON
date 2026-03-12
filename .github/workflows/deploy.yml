@@ -1,12 +1,35 @@
+# ══════════════════════════════════════════════════════════════════════════════
+#  Zoiko Mobile Chatbot — CI/CD Pipeline
+#  Deploys to GCP Cloud Run on every push to main
+#  Auto-redeploys when knowledge.json changes (chatbot retraining)
+# ══════════════════════════════════════════════════════════════════════════════
+
 name: Zoikon Chatbot CI/CD
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'backend/**'
+      - 'index.html'
+      - 'knowledge.json'
+      - 'retrain.py'
+      - 'requirements.txt'
+      - 'Dockerfile'
+  workflow_dispatch:
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_REGION:     europe-west1
+  SERVICE_NAME:   zoikon
+  IMAGE_NAME:     gcr.io/${{ secrets.GCP_PROJECT_ID }}/zoikon
 
 jobs:
+
+  # ── 1. Validate code and knowledge base ─────────────────────────────────────
   build:
+    name: Build & Test
     runs-on: ubuntu-latest
 
     steps:
@@ -20,12 +43,133 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install fastapi uvicorn
+          pip install --upgrade pip
+          pip install fastapi uvicorn python-multipart pydantic
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Validate backend
+      - name: Ensure backend/__init__.py exists
+        run: touch backend/__init__.py
+
+      - name: Validate backend imports
         run: |
-          python -c "import backend.app"
+          mkdir -p data
+          cp knowledge.json data/knowledge.json
+          python -c "import sys; sys.path.insert(0, '.'); import backend.app; print('✅ backend.app imported successfully')"
+
+      - name: Validate knowledge.json
+        run: |
+          python -c "
+          import json
+          with open('knowledge.json') as f:
+              k = json.load(f)
+          print(f'✅ knowledge.json valid — {len(k)} entries')
+          "
 
       - name: Data update check
         run: |
-          echo "Chatbot updated successfully"
+          mkdir -p data
+          cp knowledge.json data/knowledge.json
+          python retrain.py
+          echo "✅ Chatbot knowledge updated successfully"
+
+  # ── 2. Build Docker image and push to GCR ───────────────────────────────────
+  docker:
+    name: Docker Build & Push
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Configure Docker for GCR
+        run: gcloud auth configure-docker --quiet
+
+      - name: Ensure backend/__init__.py exists
+        run: touch backend/__init__.py
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --tag "${{ env.IMAGE_NAME }}:${{ github.sha }}" \
+            --tag "${{ env.IMAGE_NAME }}:latest" \
+            .
+
+      - name: Push to Google Container Registry
+        run: |
+          docker push "${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          docker push "${{ env.IMAGE_NAME }}:latest"
+          echo "✅ Image pushed: ${{ env.IMAGE_NAME }}:${{ github.sha }}"
+
+  # ── 3. Deploy to Cloud Run ───────────────────────────────────────────────────
+  deploy:
+    name: Deploy to Cloud Run
+    needs: docker
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://zoikon-7229b5113446.europe-west1.run.app
+
+    steps:
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --image "${{ env.IMAGE_NAME }}:${{ github.sha }}" \
+            --region "${{ env.GCP_REGION }}" \
+            --platform managed \
+            --allow-unauthenticated \
+            --port 8080 \
+            --memory 512Mi \
+            --cpu 1 \
+            --min-instances 0 \
+            --max-instances 10 \
+            --timeout 60 \
+            --set-env-vars "\
+              SMTP_HOST=${{ secrets.SMTP_HOST }},\
+              SMTP_PORT=${{ secrets.SMTP_PORT }},\
+              SMTP_USER=${{ secrets.SMTP_USER }},\
+              SMTP_PASS=${{ secrets.SMTP_PASS }},\
+              SUPPORT_EMAIL=${{ secrets.SUPPORT_EMAIL }}" \
+            --quiet
+
+      - name: Health check
+        run: |
+          URL="https://zoikon-7229b5113446.europe-west1.run.app"
+          echo "Checking $URL/health ..."
+          for i in $(seq 1 12); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL/health" || echo "000")
+            if [ "$STATUS" == "200" ]; then
+              echo "✅ Health check passed (attempt $i)"
+              exit 0
+            fi
+            echo "Waiting... attempt $i/12 — HTTP $STATUS"
+            sleep 5
+          done
+          echo "❌ Health check failed"
+          exit 1
+
+      - name: Deployment summary
+        run: |
+          echo "✅ DEPLOYED: ${{ env.SERVICE_NAME }}"
+          echo "🌐 URL: https://zoikon-7229b5113446.europe-west1.run.app"
+          echo "🐳 Image: ${{ env.IMAGE_NAME }}:${{ github.sha }}"
