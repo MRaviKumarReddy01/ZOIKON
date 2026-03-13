@@ -1,49 +1,62 @@
-name: Zoikon Chatbot CI/CD
+#!/bin/bash
+# ══════════════════════════════════════════════════════════════
+#  Run this in GCP Cloud Shell to fix the permissions error
+#  "artifactregistry.repositories.uploadArtifacts denied"
+# ══════════════════════════════════════════════════════════════
 
-on:
-  push:
-    branches:
-      - main
+# ── STEP 1: Set your project ID ───────────────────────────────
+PROJECT_ID=$(gcloud config get-value project)
+echo "Project: $PROJECT_ID"
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# ── STEP 2: Find the service account being used ───────────────
+SA_EMAIL="github-cicd@${PROJECT_ID}.iam.gserviceaccount.com"
+echo "Service Account: $SA_EMAIL"
 
-    steps:
-      # ── 1. Checkout ──────────────────────────────────────────────────────────
-      - name: Checkout repository
-        uses: actions/checkout@v4
+# ── STEP 3: Enable required GCP APIs ─────────────────────────
+gcloud services enable artifactregistry.googleapis.com --project=$PROJECT_ID
+gcloud services enable containerregistry.googleapis.com --project=$PROJECT_ID
+gcloud services enable run.googleapis.com --project=$PROJECT_ID
+echo "✅ APIs enabled"
 
-      # ── 2. Authenticate to Google Cloud ──────────────────────────────────────
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+# ── STEP 4: Grant ALL required roles ──────────────────────────
 
-      # ── 3. Set up gcloud CLI ─────────────────────────────────────────────────
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+# For pushing to GCR (gcr.io)
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/storage.admin"
 
-      # ── 4. Deploy directly from source (NO DOCKER REGISTRY!) ──────────────────
-      - name: Deploy to Cloud Run
-        run: |
-          gcloud run deploy zoikon \
-            --source . \
-            --platform managed \
-            --region europe-west1 \
-            --port 8080 \
-            --allow-unauthenticated \
-            --memory 512Mi \
-            --cpu 1 \
-            --min-instances 0 \
-            --max-instances 3 \
-            --quiet
+# For pushing to Artifact Registry (newer GCP)
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/artifactregistry.writer"
 
-      # ── 5. Show deployed URL ──────────────────────────────────────────────────
-      - name: Get deployed URL
-        run: |
-          echo "✅ Deployment successful!"
-          gcloud run services describe zoikon \
-            --platform managed \
-            --region europe-west1 \
-            --format 'value(status.url)'
+# For deploying to Cloud Run
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/run.admin"
+
+# For acting as a service account during deploy
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/iam.serviceAccountUser"
+
+# For reading/writing container images
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/storage.objectAdmin"
+
+echo ""
+echo "✅ All roles granted to: $SA_EMAIL"
+echo ""
+
+# ── STEP 5: Create/update GCR bucket permissions ──────────────
+# GCR stores images in a GCS bucket — SA needs access to it
+GCR_BUCKET="artifacts.${PROJECT_ID}.appspot.com"
+gsutil iam ch serviceAccount:${SA_EMAIL}:objectAdmin gs://${GCR_BUCKET} 2>/dev/null \
+  && echo "✅ GCR bucket permissions set" \
+  || echo "⚠️  GCR bucket not found yet — it will be created on first push"
+
+echo ""
+echo "══════════════════════════════════════════════"
+echo "  Done! Now re-run your GitHub Actions pipeline"
+echo "══════════════════════════════════════════════"

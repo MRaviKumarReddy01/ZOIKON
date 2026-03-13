@@ -19,14 +19,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── EMAIL CONFIG - HARDCODED (NO .ENV FILE NEEDED) ───────────────────────────
-SMTP_HOST     = "smtpout.secureserver.net"
-SMTP_PORT     = 465
-SMTP_USER     = "support@zoikogroup.com"
-SMTP_PASS     = "NoxxMC26070%!LGM"
-SUPPORT_EMAIL = "support@zoikomobile.com"
+# ── EMAIL CONFIG — env vars first, hardcoded fallback ─────────────────────────
+SMTP_HOST     = os.getenv("SMTP_HOST",     "smtpout.secureserver.net")
+SMTP_PORT     = int(os.getenv("SMTP_PORT", "465"))
+SMTP_USER     = os.getenv("SMTP_USER",     "support@zoikogroup.com")
+SMTP_PASS     = os.getenv("SMTP_PASS",     "NoxxMC26070%!LGM")
+SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL", "support@zoikogroup.com")
 
-print(f"\n📧 EMAIL CONFIGURATION (HARDCODED):")
+print(f"\n📧 EMAIL CONFIGURATION:")
 print(f"   SMTP Host: {SMTP_HOST}")
 print(f"   SMTP Port: {SMTP_PORT}")
 print(f"   From Email: {SMTP_USER}")
@@ -82,22 +82,24 @@ def escape_html(s: str) -> str:
     return (s.replace("&","&amp;").replace("<","&lt;")
              .replace(">","&gt;").replace('"',"&quot;").replace("'","&#039;"))
 
-def send_email(to_addr: str, subject: str, html_body: str):
+def send_email(to_addr: str, subject: str, html_body: str, reply_to: str = None):
     """
-    ✅ SMTP ONLY - Send email via company SMTP
-    Hardcoded credentials - simple and direct
+    Send email via company SMTP.
+    reply_to: optional Reply-To address (set to customer email on support emails)
     """
     print(f"\n📧 Sending email to: {to_addr}")
     print(f"   Subject: {subject}")
     print(f"   Via: {SMTP_HOST}:{SMTP_PORT}")
-    
+
     try:
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
         msg["From"]    = SMTP_USER
         msg["To"]      = to_addr
+        if reply_to:
+            msg["Reply-To"] = reply_to   # ← support can hit Reply to reach customer directly
         msg.attach(MIMEText(html_body, "html"))
-        
+
         print(f"   Connecting to SMTP server...")
         with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=10) as server:
             print(f"   Connected! Logging in...")
@@ -373,36 +375,69 @@ async def send_request(data: CallbackRequest):
     </body>
     </html>"""
 
+    print(f"\n{'='*70}")
+    print(f"CALLBACK REQUEST - {ref_id}")
+    print(f"{'='*70}")
+    print(f"From: {clean_name} ({clean_email})")
+    print(f"Phone: {clean_phone}")
+    print(f"Issue: {clean_issue[:50]}...")
+    print(f"{'='*70}\n")
+
+    support_sent = False
+    user_sent    = False
+    support_error = None
+    user_error    = None
+
+    # ── Email 1: notify support team ──────────────────────────────────────────
+    # Each email has its own try/except so one failure NEVER blocks the other
     try:
-        print(f"\n{'='*70}")
-        print(f"CALLBACK REQUEST - {ref_id}")
-        print(f"{'='*70}")
-        print(f"From: {clean_name} ({clean_email})")
-        print(f"Phone: {clean_phone}")
-        print(f"Issue: {clean_issue[:50]}...")
-        print(f"{'='*70}\n")
-        
-        send_email(SUPPORT_EMAIL, f"🎧 New Callback Request — {clean_name} ({ref_id})", support_html)
-        send_email(clean_email,  f"✅ We Received Your Request — Zoiko Mobile ({ref_id})", user_html)
-        
-        print(f"\n✅ Both emails sent successfully!\n")
-        
-        return JSONResponse({
-            "success": True,
-            "message": "Request submitted successfully",
-            "refId":   ref_id,
-            "email":   clean_email,
-            "phone":   clean_phone
-        })
+        send_email(
+            SUPPORT_EMAIL,
+            f"🎧 New Callback Request — {clean_name} ({ref_id})",
+            support_html,
+            reply_to=clean_email     # support hits Reply → goes straight to customer
+        )
+        support_sent = True
+        print(f"✅ Support email sent to {SUPPORT_EMAIL}")
     except Exception as e:
-        print(f"\n❌ FAILED TO SEND EMAIL")
-        print(f"Error: {str(e)}")
-        print(f"Type: {type(e).__name__}\n")
-        
+        support_error = str(e)
+        print(f"❌ Support email FAILED: {support_error}")
+
+    # ── Email 2: confirmation to customer ─────────────────────────────────────
+    try:
+        send_email(
+            clean_email,
+            f"✅ We Received Your Request — Zoiko Mobile ({ref_id})",
+            user_html
+        )
+        user_sent = True
+        print(f"✅ User confirmation sent to {clean_email}")
+    except Exception as e:
+        user_error = str(e)
+        print(f"❌ User email FAILED: {user_error}")
+
+    # ── Response based on what succeeded ─────────────────────────────────────
+    print(f"\nEmail results — support: {support_sent} | user: {user_sent}\n")
+
+    if user_sent:
+        # User got their confirmation — report success even if support email had issues
+        if not support_sent:
+            print(f"⚠️  Support email failed but user confirmed. Error: {support_error}")
+        return JSONResponse({
+            "success":       True,
+            "message":       "Request submitted successfully",
+            "refId":         ref_id,
+            "email":         clean_email,
+            "phone":         clean_phone,
+            "support_notified": support_sent
+        })
+    else:
+        # Neither or only support email sent — return error to user
+        error_msg = user_error or support_error or "Unknown error"
         return JSONResponse({
             "success": False,
-            "message": f"Error: {str(e)}. Please try again or call 800-988-8116.",
-            "error":   str(e)
+            "message": f"Error sending confirmation: {error_msg}. Please call 800-988-8116.",
+            "error":   error_msg
         }, status_code=500)
 
 # ── /health ───────────────────────────────────────────────────────────────────

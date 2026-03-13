@@ -1,28 +1,44 @@
-# ── Base: Python 3.10 slim ────────────────────────────────────────────────────
+# ── Zoiko Mobile Chatbot — Dockerfile ─────────────────────────────────────────
+# Matches this exact folder structure:
+#   backend/app.py
+#   backend/retrain.py
+#   backend/requirements.txt   (or root requirements.txt)
+#   data/knowledge.json
+#   frontend/index.html
+# ──────────────────────────────────────────────────────────────────────────────
+
 FROM python:3.10-slim
 
-# ── Install dependencies ──────────────────────────────────────────────────────
-RUN apt-get update && apt-get install -y \
-    curl && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# ── Set working directory ─────────────────────────────────────────────────────
 WORKDIR /app
 
-# ── Copy requirements and install Python deps ─────────────────────────────────
-COPY backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# ── Install dependencies ───────────────────────────────────────────────────────
+# Supports requirements.txt in root OR in backend/ — whichever exists
+COPY backend/requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir --upgrade pip \
+ && pip install --no-cache-dir -r requirements.txt
 
-# ── Copy application files ────────────────────────────────────────────────────
-COPY backend/app.py .
-COPY frontend/ ./frontend/
+# ── Copy backend source ────────────────────────────────────────────────────────
+COPY backend/ backend/
 
-# ── Create data dir and copy contents if they exist ───────────────────────────
-RUN mkdir -p ./data
-COPY data/ ./data/
+# ── Ensure backend is a Python package ────────────────────────────────────────
+RUN touch backend/__init__.py
 
-# ── Cloud Run expects port 8080 ───────────────────────────────────────────────
+# ── Copy frontend (FastAPI serves it as static files) ─────────────────────────
+COPY frontend/ frontend/
+
+# ── Copy knowledge base (already lives in data/) ──────────────────────────────
+COPY data/ data/
+
+# ── Run retrain on every build to bake in latest knowledge ───────────────────
+RUN python backend/retrain.py
+
+# ── Cloud Run uses $PORT (default 8080) ───────────────────────────────────────
+ENV PORT=8080
 EXPOSE 8080
 
-# ── Run FastAPI application ───────────────────────────────────────────────────
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]
+# ── Start server ──────────────────────────────────────────────────────────────
+CMD exec uvicorn backend.app:app \
+      --host 0.0.0.0 \
+      --port ${PORT} \
+      --workers 1 \
+      --log-level info

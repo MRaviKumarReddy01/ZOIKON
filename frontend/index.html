@@ -510,7 +510,9 @@ body{font-family:var(--font-b);background:var(--dark);color:var(--text);height:1
     <div class="chip" onclick="quick('How do I activate my SIM?')">🔌 Activate</div>
     <div class="chip" onclick="quick('Tell me about family plans')">👨‍👩‍👧 Family</div>
     <div class="chip" onclick="quick('Which countries can I call free?')">🌍 Intl Calling</div>
-    <div class="chip" onclick="quick('What deals do you have?')">🎉 Deals</div>
+    <div class="chip" onclick="quick('Tell me about military and veterans lifetime deals')">🇺🇸 Military</div>
+    <div class="chip" onclick="quick('Tell me about the college student program')">🎓 Students</div>
+    <div class="chip" onclick="quick('Tell me about Zoiko device protection')">🛡️ Protection</div>
     <div class="chip" onclick="quick('I need support')">🎧 Help</div>
   </div>
 </div>
@@ -550,14 +552,26 @@ CRITICAL RULES — NEVER VIOLATE:
 
 MANDATORY URLs — always use these exact links:
 - Login:            https://zoikomobile.com/login
-- Business Plans:   https://zoikomobile.com/business-deals
+- Business Plans:   https://zoikomobile.com/business-postpaid-plans
 - Contact Us:       https://zoikomobile.com/contact-us
 - Customer Service: https://zoikomobile.com/customer-service
 - All Plans:        https://zoikomobile.com/all-plans
 - BYOD Check:       https://zoikomobile.com/byod-plans/
 - Activate SIM:     https://zoikomobile.com/how-to-activate-sim/
-- Help Center:      https://zoikomobile.com/customer-service
-- Website Home:     https://zoikomobile.com
+- Help Center:          https://zoikomobile.com/customer-service
+- Website Home:         https://zoikomobile.com
+- New Phones:           https://phones.zoikomobile.com
+- Refurbished Phones:   https://zoikomobile.com/product-category/refurbished
+- Device Protection:    https://zoikomobile.com/device-protection
+- Travel Plans:         https://zoikomobile.com/travel-plans
+- Roaming Rates:        https://zoikomobile.com/roamingrates
+- College Student:      https://zoikomobile.com/college-student
+- Military/Veterans:    https://zoikomobile.com/military-veterans
+- USPS Workers:         https://zoikomobile.com/postal-service-workers
+- Animal Charities:     https://zoikomobile.com/animal-charities
+- Become a Partner:     https://zoikomobile.com/become-partner
+- About Us:             https://zoikomobile.com/about
+- News & Press:         https://zoikomobile.com/news
 
 GUIDED CONVERSATION TREES:
 
@@ -580,10 +594,10 @@ When user says "forgot password":
 → Direct to: https://zoikomobile.com/login with reset instructions.
 
 When user says "travel" or "international":
-→ Use get_plan_details tool, then list countries by plan tier with exact prices.
+→ Direct to https://zoikomobile.com/travel-plans. All travel passes include unlimited 5G, free talk & text, Canada & Mexico roaming, mobile hotspot. Starting at $7.50/day in 200+ countries.
 
 When user says "business" or "business plan":
-→ Direct to https://zoikomobile.com/business-deals and use get_plan_details.
+→ Direct to https://zoikomobile.com/business-postpaid-plans and use get_plan_details.
 
 When escalation is needed:
 → Provide BOTH: https://zoikomobile.com/contact-us AND https://zoikomobile.com/customer-service
@@ -600,7 +614,55 @@ ZOIKO BASICS (for reference only — always verify with tools):
 - Network: T-Mobile 5G + 4G LTE nationwide
 - Support: 800-988-8116 | support@zoikomobile.com | 24/7
 - Website: https://zoikomobile.com
-\``;
+- Founded by Lennox McLeod. Name from ancient Greek: "Zoion" (living being/animal) + "Zoologikos" (pertaining to animals). Tagline: "Connecting Every Possibility." Known as "The Animal and Music Loving Network."
+
+COMMUNITY DISCOUNT PROGRAMS (all have 48-hour verification SLA — confirmation by email):
+- College Students: 20% off ANY plan. Proof: valid student ID or current enrollment verification. Annual status renewal may apply. Cannot combine with other promos. Register: https://zoikomobile.com/college-student-discount-form
+- Military & Veterans: 20% LIFETIME discount on any BYOD plan (prepaid or postpaid). Plus 15% lifetime for up to 5 nominated family/friends. Eligibility: active-duty, veterans, reservists. New customers only. Proof: valid military ID or official veteran status document. Register: https://zoikomobile.com/military-veterans-form
+- U.S. Postal Service Workers (USPS): 20% off ANY Zoiko Mobile plan for life. Nominate up to 5 family/friends for same 20% on their BYOD plans. Sign up with USPS work email + valid government-issued USPS work ID. CAN combine with other Zoiko promotions. New customers only. Register: https://zoikomobile.com/postal-service-workers-form
+- Animal Charity Workers: 20% off plans for employees of registered US animal welfare charities. Up to 5 family members same 20% discount. Proof required: BOTH a charity-issued ID badge AND an official employment letter on charity letterhead. 3-month discount grace if employment changes. Cannot combine with other promos. Up to 2% of Zoiko annual profits donated to animal welfare. Partnership: partnership@zoikomobile.com. Register: https://zoikomobile.com/animal-charity-worker-registration
+
+DEVICE PROTECTION (Zoiko Mobile Insurance, powered by AKKO):
+- Starting at $9.99/month per device
+- Covers: Cracked screens, accidental damage (drops), water/liquid damage (spills + submersion), theft (including car break-ins via forced entry), mechanical/electrical failures
+- Devices covered: Smartphones, tablets, laptops, smartwatches, home electronics (smart hubs, headphones)
+- Eligible: New phones purchased from Zoiko AND BYOD devices
+- Fast claims via AKKO's trusted service network
+- Enroll at checkout or via Zoiko account dashboard
+- More info: https://zoikomobile.com/device-protection
+
+TRAVEL PLANS (Zoiko Daily TravelPass — all include: unlimited data, free talk & text, Canada/Mexico roaming, mobile hotspot, free intl calls 200+ countries):
+- Daily Adventure Pass: $7.50 / 24 hours / 500MB high-speed + unlimited
+- Voyager Pass: $16.00 / 7 days / 2GB high-speed + unlimited
+- Zoiko Explorer Pass: $52.00 / 14 days / 15GB high-speed + unlimited
+- Global Connect: $65.00 / 1 day / 10GB high-speed + unlimited (frequent traveler plan)
+- Activate as eSIM add-on in 2 minutes. No hidden fees. 24/7 support.
+- Roaming rates: https://zoikomobile.com/roamingrates | Info: https://zoikomobile.com/travel-plans
+
+SMARTPHONES & DEVICES:
+- New phones at https://phones.zoikomobile.com — NUU F4L Flip ($59), BLU C5L MAX ($59), PCD P65 ($69), Nokia G10 ($79), Samsung Galaxy A03s ($109), Motorola G 5G 2022 ($119), Motorola G Play 2023 ($129), Motorola G Play 2024 ($129). All network-unlocked.
+- Refurbished certified phones at https://zoikomobile.com/product-category/refurbished — sale prices (all up to 40% off original):
+  International Plan $8.40 (orig $14.00) | iPhone SE 3 64GB $154.20 | iPhone 12 Mini $166.35 | iPhone 11 128GB $177.60 | iPhone 11 Pro $196.95 | iPhone 13 Mini $228.60 | Galaxy S22 $208.20 | Galaxy S22+ 5G $238.55 | Galaxy S23 FE $241.35 | iPhone 11 Pro Max $252.60 | iPhone 13 $276.00 | iPhone 13 Pro $330.60 | iPhone 12 Pro Max $337.80 | Galaxy S23+ $343.80 | Pixel 8 Pro $350.40 | iPhone 14 Pro 5G 128GB $323.40 | iPhone 13 Pro Max $420.15 | iPhone 15 128GB $411.60 | iPhone 14 Pro 1TB $507.00 | iPhone 14 Pro Max 512GB $574.80
+  All network-unlocked, eSIM-compatible, inspected & certified.
+- Accessories: https://zoikomobile.com/accessories
+
+EMAIL DIRECTORY:
+- General enquiries: info@zoikomobile.com
+- Technical support: support@zoikomobile.com
+- Partnership/business: partnership@zoikomobile.com
+
+PARTNERSHIP OPPORTUNITIES (https://zoikomobile.com/become-partner):
+- Types: Retail, Wholesale, Affiliate Program, Corporate Collaboration
+- Contact: partnership@zoikomobile.com | Apply: https://zoikomobile.com/become-partner-form
+- Also: Retailer (https://zoikomobile.com/become-retailer) | Affiliate (https://zoikomobile.com/become-affiliate)
+- HQ: 5900 Balcones Drive, Suite 100, Austin, TX 78731
+
+ABOUT ZOIKO (https://zoikomobile.com/about):
+- MVNO on T-Mobile network. Founder: Lennox McLeod (ex-Vodafone).
+- Name from ancient Greek: Zoion (living being/animal) + Zoologikos (pertaining to animals). Tagline: "Connecting Every Possibility."
+- "The Animal and Music Loving Network." Donates up to 2% of profits to animal welfare.
+- News & press: https://zoikomobile.com/news | Blog: https://zoikomobile.com/blog
+`;
 
 const TOOLS = [
   {
@@ -663,7 +725,7 @@ const PLANS = {
   "zoiko supreme unlimited":{ name:"Zoiko Supreme Unlimited",type:"postpaid", price:65, data:"35GB priority + truly unlimited", hotspot:"20GB", talk:"3,000 min", texts:"35,000", countries:"200+", esim:true, link:"https://zoikomobile.com/all-plans", perks:["35GB priority data","20GB super-fast hotspot","VIP support","Device financing","200+ countries"] },
   "byod starter":           { name:"BYOD Starter",           type:"prepaid",  price:15, data:"4GB", hotspot:"1GB", talk:"Unlimited", texts:"Unlimited", countries:"70+", esim:true, link:"https://zoikomobile.com/byod-plans/", perks:["Bring your own phone","Keep your number free","Check IMEI at zoikomobile.com/byod-plans/","Instant activation"] },
   "zoiko lite":             { name:"Zoiko Lite",             type:"postpaid", price:20, data:"Basic", hotspot:"Included", talk:"Unlimited", texts:"Unlimited", countries:"50+", esim:true, link:"https://zoikomobile.com/all-plans", perks:["Light use plan","No credit check","International calling","Great for backup lines"] },
-  "zoiko business":         { name:"Zoiko Business",         type:"postpaid", price:35, data:"Unlimited 5G", hotspot:"Included", talk:"Unlimited", texts:"Unlimited", countries:"100+", esim:true, link:"https://zoikomobile.com/business-deals", perks:["Unlimited 5G data","Dedicated business support","Multi-line management","Device financing","No credit check","Priority network access"] }
+  "zoiko business":         { name:"Zoiko Business",         type:"postpaid", price:35, data:"Unlimited 5G", hotspot:"Included", talk:"Unlimited", texts:"Unlimited", countries:"100+", esim:true, link:"https://zoikomobile.com/business-postpaid-plans", perks:["Unlimited 5G data","Dedicated business support","Multi-line management","Device financing","No credit check","Priority network access"] }
 };
 
 
@@ -710,19 +772,19 @@ function executeTool(name, input) {
         monthly_savings:saved, annual_savings:saved?+(saved*12).toFixed(0):null,
         note:lines>=3?`With ${lines} lines you get 20% off automatically — $${+(pp*0.2*lines).toFixed(2)}/mo savings!`:`Add ${3-lines} more line(s) to unlock the 20% family discount!`,
         signup_url:"https://zoikomobile.com/all-plans",
-        business_url:"https://zoikomobile.com/business-deals"
+        business_url:"https://zoikomobile.com/business-postpaid-plans"
       };
     }
 
     case 'find_nearest_office': {
       const loc = (input.location||'').toLowerCase();
       const offices = [
-        {city:"Austin",      state:"TX", address:"5900 Balcones Dr #24685", zip:"78731", phone:"800-988-8116"},
-        {city:"Washington",  state:"DC", address:"1717 N St NW Suite 1",    zip:"20036", phone:"800-988-8116"},
-        {city:"Sacramento",  state:"CA", address:"1401 21st St Suite R",    zip:"95811", phone:"800-988-8116"},
-        {city:"Springfield", state:"IL", address:"2501 Chatham Rd Suite R", zip:"62704", phone:"847-728-6872"},
-        {city:"Dover",       state:"DE", address:"8 The Green Suite A",     zip:"19901", phone:"302-899-7312"},
-        {city:"Orlando",     state:"FL", address:"12386 State Rd 535 #302", zip:"32836", phone:"800-988-8116"}
+        {city:"Austin",      state:"TX", address:"5900 Balcones Drive, #24685", zip:"78731", phone:"800-988-8116 | 800-477-1477", email:"info@zoikomobile.com"},
+        {city:"Washington",  state:"DC", address:"1717 N Street NW, Suite 1",   zip:"20036", phone:"800-988-8116 | 800-477-1477", email:"info@zoikomobile.com"},
+        {city:"Sacramento",  state:"CA", address:"1401 21st Street, Suite R",   zip:"95811", phone:"800-988-8116 | 800-477-1477", email:"info@zoikomobile.com"},
+        {city:"Springfield", state:"IL", address:"2501 Chatham Rd, Suite R",    zip:"62704", phone:"847-728-6872",                email:"info@zoikomobile.com"},
+        {city:"Dover",       state:"DE", address:"8 The Green, Suite A",        zip:"19901", phone:"302-899-7312",                email:"info@zoikomobile.com"},
+        {city:"Orlando",     state:"FL", address:"12386 State Road 535, #302",  zip:"32836", phone:"800-988-8116 | 800-477-1477", email:"info@zoikomobile.com"}
       ];
       const found = offices.find(o=>loc.includes(o.city.toLowerCase())||loc.includes(o.state.toLowerCase()));
       return { success:true, nearest:found||offices[0], all_offices:offices, found_match:!!found, contact_url:"https://zoikomobile.com/contact-us" };
@@ -873,25 +935,6 @@ async function send() {
   txt.value=''; txt.style.height='auto'; charCount.textContent='';
   sendBtn.disabled=true; typing=true;
   showTyping();
-async function sendMessage(message) {
-  const response = await fetch("http://localhost:8000/chat", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({message})
-  });
-
-  const data = await response.json();
-  return data.response;
-}
-
-async function handleSend() {
-  const input = document.getElementById("userInput");
-  const userMessage = input.value;
-
-  const reply = await sendMessage(userMessage);
-
-  console.log("Bot:", reply);   // display in chat UI
-}
 
   // ── FALLBACK (no API key) ──
   if (!API_KEY||API_KEY==='YOUR_API_KEY_HERE') {
@@ -1168,8 +1211,26 @@ function smartReply(text) {
     'unlimited': 'Tell me about your elite plans',
     'family': 'Tell me about family plans',
     'byod': 'Tell me about BYOD plans',
-    'student': 'Do you have student discounts',
-    'travel': 'Tell me about travel passes',
+    'student': 'Tell me about the college student program',
+    'college': 'Tell me about the college student program',
+    'travel': 'Tell me about travel plans',
+    
+    'military': 'Tell me about military and veterans lifetime deals',
+    'veteran': 'Tell me about military and veterans lifetime deals',
+    'veterans': 'Tell me about military and veterans lifetime deals',
+    'postal': 'Tell me about the USPS postal service worker program',
+    'usps': 'Tell me about the USPS postal service worker program',
+    'charity': 'Tell me about the animal charity worker program',
+    'animals': 'Tell me about Zoiko and animal charities',
+    'partner': 'Tell me about becoming a Zoiko partner',
+    'affiliate': 'Tell me about the Zoiko affiliate program',
+    'protect': 'Tell me about Zoiko device protection',
+    'protection': 'Tell me about Zoiko device protection',
+    'insurance': 'Tell me about Zoiko device protection',
+    'refurbished': 'Tell me about refurbished phones',
+    'refurb': 'Tell me about refurbished phones',
+    'about': 'Tell me about Zoiko Mobile',
+    'news': 'Tell me about Zoiko news',
     
     // FEATURES & SERVICES
     '5g': 'What is 5G coverage on Zoiko',
@@ -1313,6 +1374,7 @@ function smartReply(text) {
     return wrap;
   }
   // ── SHARED ESCALATION FOOTER ─────────────────────────────────────────
+ // ── SHARED ESCALATION FOOTER ─────────────────────────────────────────
   function escalationBar() {
     return makeLinksBar([
       {url:'https://zoikomobile.com/contact-us',      label:'Contact Us'},
@@ -1406,9 +1468,26 @@ function smartReply(text) {
   }
 
   // ════════════════════════════════════════════════════════════════════
-  // 4. CHEAPEST PLAN
+  // 4. CHEAPEST PLAN - WITH CATEGORY VARIANTS
   // ════════════════════════════════════════════════════════════════════
-  if (/cheapest|most\s*affordable|lowest\s*price|budget|basic\s*plan|starter\s*plan|cheap\s*plan|under\s*\$20|least\s*expensive|minimum\s*plan|best\s*deal\b/i.test(t)) {
+  
+  // Cheapest BUSINESS plan
+  if (/cheapest.*business|business.*cheapest|lowest.*business/i.test(t)) {
+    return {text:"The **cheapest business plan is Business Starter at $35/mo**! 💼", cards:[makeInfoCard('💼','Business Starter — $35/mo',[{label:'Price',val:'$35.00/month',org:true},{label:'Data',val:'15GB Premium',org:true},{label:'Hotspot',val:'10GB'},{label:'Countries',val:'200+'},{label:'Account Manager',val:'✓ Included'}]),makeLinksBar([{url:'https://zoikomobile.com/business-postpaid-plans',label:'View Business Starter'}]),makeActionBar([{label:'💼 Get Starter',action:'Tell me about Business Starter plan',type:'primary'},{label:'📈 See All Business Plans',action:'Tell me about business plans'}])]};
+  }
+
+  // Cheapest POSTPAID plan  
+  if (/cheapest.*postpaid|postpaid.*cheapest|lowest.*postpaid/i.test(t)) {
+    return {text:"The **cheapest postpaid plan is Zoiko Lite at $15/mo**! 🔵", cards:[makeInfoCard('🔵','Zoiko Lite — $15/mo',[{label:'Price',val:'$15.00/month',org:true},{label:'Data',val:'5GB Premium',org:true},{label:'Hotspot',val:'2GB'},{label:'Countries',val:'200+'},{label:'Texts',val:'15,000/month'}]),makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-lite/',label:'Get Zoiko Lite'}]),makeActionBar([{label:'🔵 Get Lite',action:'Tell me about Zoiko Lite plan',type:'primary'},{label:'📲 All Postpaid',action:'Show me all postpaid plans'}])]};
+  }
+
+  // Cheapest TRAVEL pass
+  if (/cheapest.*travel|travel.*cheapest|lowest.*travel/i.test(t)) {
+    return {text:"The **cheapest travel pass is Daily Adventure at $7.50/day**! 🌅", cards:[makeInfoCard('🌅','Daily Adventure — $7.50/day',[{label:'Price',val:'$7.50/24hrs',org:true},{label:'Data',val:'500MB'},{label:'Coverage',val:'200+ countries'},{label:'Valid',val:'24 hours'}]),makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'Buy Daily Adventure'}]),makeActionBar([{label:'🌅 Get Daily Pass',action:'__callback__',type:'primary'},{label:'✈️ All Travel Passes',action:'Tell me about travel passes'}])]};
+  }
+
+  // Default cheapest plan
+  if (/cheapest|most\s*affordable|lowest\s*price|budget|basic\s*plan|starter\s*plan|cheap\s*plan|under\s*\$20|least\s*expensive|minimum\s*plan|best\s*deal\b/i.test(t) && !/business|postpaid|travel/i.test(t)) {
     return {text:"Our **cheapest plan is Zoiko Flex at just $13/mo** — here's everything included! 💚", cards:[
       makeInfoCard('💚','Zoiko Flex — $13/mo (CHEAPEST PLAN)',[
         {label:'Monthly price',  val:'$13.00 — our lowest plan ever', org:true},
@@ -1420,7 +1499,7 @@ function smartReply(text) {
         {label:'Contract',       val:'None — cancel anytime',         org:true},
         {label:'Credit check',   val:'Not required',                  org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Zoiko Flex — $13/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-flex/',label:'Get Zoiko Flex — $13/mo'}]),
       makeActionBar([{label:'⚖️ Compare with Essentials', action:'Compare Zoiko Flex and Essentials', type:'primary'},{label:'📲 Sign up now', action:'How do I sign up for Zoiko?'}])
     ]};
   }
@@ -1589,6 +1668,23 @@ function smartReply(text) {
   // ════════════════════════════════════════════════════════════════════
   // 8. BUSINESS PLANS
   // ════════════════════════════════════════════════════════════════════
+  
+  // Business Starter specific
+  if (/business\s*starter|starter.*\$35|starter.*business/i.test(t) && !/business\s*plan\s*list|all\s*business/i.test(t)) {
+    return {text:"**Business Starter — $35/mo** — Perfect for small teams! 💼", cards:[makeInfoCard('💼','Business Starter — $35/mo',[{label:'Monthly Price',val:'$35.00',org:true},{label:'Data',val:'15GB Premium',org:true},{label:'Hotspot',val:'10GB'},{label:'International',val:'200+ countries'},{label:'Account Manager',val:'Dedicated support ✓'},{label:'Device Financing',val:'Available'}]),makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-business-starter/',label:'Get Business Starter'}]),makeActionBar([{label:'💼 Purchase',action:'__callback__',type:'primary'},{label:'📈 See Advanced Plan',action:'Tell me about Business Advanced plan'}])]};
+  }
+
+  // Business Advanced specific
+  if (/business\s*advanced|advanced.*\$67|advanced.*business|67.*business/i.test(t) && !/all\s*business/i.test(t)) {
+    return {text:"**Business Advanced — $67/mo** — Best for growing teams! 📈", cards:[makeInfoCard('📈','Business Advanced — $67/mo',[{label:'Monthly Price',val:'$67.00',org:true},{label:'Data',val:'35GB Premium',org:true},{label:'Hotspot',val:'20GB'},{label:'International',val:'200+ countries'},{label:'BYOD Support',val:'Bring your phone ✓'},{label:'Device Financing',val:'Full options available'}]),makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-business-advanced/',label:'Get Business Advanced'}]),makeActionBar([{label:'📈 Purchase',action:'__callback__',type:'primary'},{label:'🚀 See Infinite Plan',action:'Tell me about Business Infinite plan'}])]};
+  }
+
+  // Business Infinite specific
+  if (/business\s*infinite|infinite.*\$74|infinite.*business|74.*business/i.test(t)) {
+    return {text:"**Business Infinite — $74/mo** — Ultimate business solution! 🚀", cards:[makeInfoCard('🚀','Business Infinite — $74/mo',[{label:'Monthly Price',val:'$74.00',org:true},{label:'Data',val:'Unlimited (30GB priority)',org:true},{label:'Hotspot',val:'30GB'},{label:'International',val:'200+ countries'},{label:'Zoiko Protect+',val:'Included ✓'},{label:'24/7 Support',val:'Premium business support'}]),makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-business-infinite/',label:'Get Business Infinite'}]),makeActionBar([{label:'🚀 Purchase',action:'__callback__',type:'primary'},{label:'⚖️ Compare Plans',action:'Compare business plans'}])]};
+  }
+
+  // General business plans overview
   if (/business|business\s*plan|business\s*deal|company\s*plan|enterprise|corporate/i.test(t) && !/protect|insurance/i.test(t)) {
     return {text:"Zoiko has **3 Business Plans** built for teams and enterprises — no credit check! 💼", cards:[
       makePlanCards([
@@ -1596,8 +1692,8 @@ function smartReply(text) {
         {name:'Business Advanced', price:67, data:'35GB Premium',     perks:['200+ countries','20GB hotspot','BYOD/Financing'],   badge:'BEST FOR TEAMS'},
         {name:'Business Infinite', price:74, data:'Truly Unlimited',  perks:['30GB hotspot','24/7 support','Zoiko Protect+'],    badge:'ULTIMATE BUSINESS'}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/business-deals',label:'View All Business Plans'},{url:'https://zoikomobile.com/contact-us',label:'Talk to Business Sales'}]),
-      makeActionBar([{label:'📈 Best for teams: $67',action:'Tell me about Business Advanced plan',type:'primary'},{label:'🚀 Ultimate: $74',action:'Tell me about Business Infinite plan'},{label:'🎧 Talk to sales',action:'__callback__'}])
+      makeLinksBar([{url:'https://zoikomobile.com/business-postpaid-plans',label:'View All Business Plans'},{url:'https://zoikomobile.com/contact-us',label:'Talk to Business Sales'}]),
+      makeActionBar([{label:'💼 Starter $35',action:'Tell me about Business Starter plan',type:'primary'},{label:'📈 Advanced $67',action:'Tell me about Business Advanced plan'},{label:'🚀 Infinite $74',action:'Tell me about Business Infinite plan'}])
     ]};
   }
 
@@ -1606,16 +1702,17 @@ function smartReply(text) {
   // ════════════════════════════════════════════════════════════════════
   if (/travel.*pass|roaming.*pass|international.*pass|global\s*connect|traveling|going.*abroad|travel.*plan|travel.*detail/i.test(t) && !/daily\s*adventure|voyager|explorer|adventure\s*pass/i.test(t)) {
     return {text:"Zoiko has **4 travel passes** for when you're heading outside North America! ✈️", cards:[
-      makeInfoCard('✈️','Travel & Roaming Passes',[
-        {label:'🌅 Daily Adventure Pass', val:'$7.50/day · 500MB · 24 hours',                         org:true},
-        {label:'🗺️ Voyager Pass',         val:'$16 · 2GB · 7 days',                                  org:true},
-        {label:'🧭 Daily Explorer Pass',  val:'$52 · 15GB · 14 days',                                 org:true},
-        {label:'🌍 Global Connect',       val:'$65 · 10GB · 24hr (price varies by country)',          org:true}
+      makeInfoCard('✈️','Zoiko Travel Passes — All Prices & Features',[
+        {label:'🌅 Daily Adventure Pass', val:'$7.50 · 500MB + Unlimited · 24 hours · Free intl calls 200+ countries', org:true},
+        {label:'🗺️ Voyager Pass',         val:'$16 · 2GB + Unlimited · 7 days · Free intl calls 200+ countries',      org:true},
+        {label:'🧭 Zoiko Explorer Pass',  val:'$52 · 15GB + Unlimited · 14 days · Free intl calls 200+ countries',    org:true},
+        {label:'🌍 Global Connect',       val:'$65 · 10GB high-speed + Unlimited · 1 day · Frequent traveler plan',   org:true},
+        {label:'All passes include',      val:'Free talk & text · Canada & Mexico roaming · Mobile hotspot',          org:true}
       ]),
-      makeNotif('info','💡','Already on Unlimited One ($30) or above? You get FREE Canada & Mexico roaming — no pass needed!'),
+      makeNotif('info','💡','All passes include FREE international calls to 200+ countries and mobile hotspot access!'),
       makeNotif('teal','📶','Wi-Fi Calling is free on ALL plans — call home over hotel Wi-Fi at zero extra cost!'),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'View Travel Passes Online'},{url:'https://zoikomobile.com/contact-us',label:'Ask About Your Destination'}]),
-      makeActionBar([{label:'🌅 Daily $7.50', action:'Tell me about the Daily Adventure Pass'},{label:'🗺️ 7-day $16', action:'Tell me about the Voyager Pass'},{label:'🧭 14-day $52', action:'Tell me about the Explorer Pass'}])
+      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'View Travel Plans'},{url:'https://zoikomobile.com/roamingrates',label:'Rates by Country'}]),
+      makeActionBar([{label:'🌅 Daily $7.50', action:'Tell me about the Daily Adventure Pass'},{label:'🗺️ 7-day $16', action:'Tell me about the Voyager Pass'},{label:'🧭 14-day $52', action:'Tell me about the Zoiko Explorer Pass'}])
     ]};
   }
 
@@ -1626,12 +1723,12 @@ function smartReply(text) {
   // How to purchase top-up (SPECIFIC - comes first)
   if (/how\s*(do\s*)?i\s*purchase|buy.*top.?up|purchase.*top.?up|get.*top.?up|add.*data.*purchase/i.test(t)) {
     return {text:"Getting a top-up is super quick! ⚡", cards:[
-      makeStepCard('HOW TO BUY TOP-UP DATA',[
+      makeStepCard('HOW TO BUY TOP-UP',[
         {label:'Log in to your Zoiko account',                sub:'https://zoikomobile.com/'},
-        {label:'Go to \"Add Top-Up\" or \"Buy Data\"',       sub:'You\'ll see available data packages'},
-        {label:'Select your top-up amount',                  sub:'$5 → $50, all delivered instantly'},
+        {label:'Go to \"Add Top-Up\" or \"Buy Data\"',       sub:'Choose Zoiko Top-up ($6.50) or Top-up+ ($9.99)'},
+        {label:'Select your top-up plan',                  sub:'Get data, minutes, and texts for 30 days'},
         {label:'Complete payment',                           sub:'We accept all major cards & digital wallets'},
-        {label:'Done! Data active in seconds',               sub:'Start using immediately — no waiting'}
+        {label:'Done! Service active immediately',           sub:'Use right away — no waiting'}
       ]),
       makeLinksBar([{url:'https://zoikomobile.com/top-up-plan',label:'Buy Top-Up Now'},{url:'https://zoikomobile.com/all-plans',label:'View Plans'}]),
       makeActionBar([{label:'💳 Buy top-up now', action:'__callback__', type:'primary'},{label:'💡 Auto-renew?', action:'Tell me about auto-renew for top-ups'}])
@@ -1658,16 +1755,12 @@ function smartReply(text) {
   // GENERAL TOP-UP PLANS (comes after specific handlers)
   if (/top.?up|add.*data|recharge|data.*boost|boost.*data|buy.*data|extra.*data|more.*data|data.*plan/i.test(t) && !/travel|roaming|pass|how\s*purchase|auto.renew/i.test(t)) {
     return {text:"Need extra data? Zoiko's **top-up plans** let you add data instantly! 📲", cards:[
-      makeInfoCard('📊','Zoiko Top-Up Data Plans',[
-        {label:'Quick Top-Up',      val:'$5 · 500MB · Valid 7 days',                org:true},
-        {label:'Data Boost',        val:'$10 · 2GB · Valid 14 days',               org:true},
-        {label:'Premium Boost',     val:'$20 · 5GB · Valid 30 days',               org:true},
-        {label:'Ultra Boost',       val:'$35 · 15GB · Valid 60 days',              org:true},
-        {label:'Mega Boost',        val:'$50 · 30GB · Valid 90 days',              org:true}
+      makeInfoCard('📊','Zoiko Top-Up Plans',[
+        {label:'Zoiko Top-up',        val:'$6.50 · 1GB Data · 500 Minutes · 1000 Texts · 30 Days', org:true},
+        {label:'Zoiko Top-up+',       val:'$9.99 · 1.2GB Data · 750 Minutes · 1500 Texts · 30 Days', org:true}
       ]),
       makeNotif('success','⚡','Top-ups activate instantly — use them on any Zoiko plan!'),
-      makeNotif('info','💡','Auto-renew available — we can keep your data topped up automatically!'),
-      makeLinksBar([{url:'https://zoikomobile.com/top-up-plan',label:'Buy Top-Up Online'},{url:'https://zoikomobile.com/all-plans',label:'View All Plans'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/top-up-plan',label:'Buy Top-Up Online'}]),
       makeActionBar([{label:'💳 Buy Top-Up Now', action:'How do I purchase a top-up?', type:'primary'},{label:'📲 Auto-Renew Info', action:'Tell me about auto-renew for top-ups'}])
     ]};
   }
@@ -1679,17 +1772,18 @@ function smartReply(text) {
   // Daily Adventure Pass (SPECIFIC)
   if (/daily\s*adventure\s*pass|adventure\s*pass.*\$7|7\.50.*day|500mb.*24/i.test(t)) {
     return {text:"The **Daily Adventure Pass** is perfect for quick trips! 🌅", cards:[
-      makeInfoCard('🌅','Daily Adventure Pass — $7.50/day',[
-        {label:'Price',        val:'$7.50 per day (24 hours)',    org:true},
-        {label:'Data',         val:'500MB',                        org:true},
-        {label:'Valid for',    val:'24 hours from activation',     org:true},
-        {label:'Best for',     val:'Quick day trips or weekends',  org:true},
-        {label:'Coverage',     val:'Works in 200+ countries',      org:true},
-        {label:'Auto-disable', val:'Expires automatically after 24hr'}
+      makeInfoCard('🌅','Daily Adventure Pass — $7.50 / 24 Hours',[
+        {label:'Price',            val:'$7.50 per day (24 hours)',              org:true},
+        {label:'Data',             val:'500MB high-speed + unlimited',           org:true},
+        {label:'Free intl calls',  val:'200+ countries included',               org:true},
+        {label:'Talk & Text',      val:'Free — unlimited',                       org:true},
+        {label:'Hotspot',          val:'Mobile hotspot included',               org:true},
+        {label:'Canada & Mexico',  val:'Roaming included at no extra cost',     org:true},
+        {label:'Best for',         val:'Day trips, stopovers, or weekend breaks', org:true}
       ]),
-      makeNotif('info','💡','Using Wi-Fi? International Wi-Fi Calling is FREE on ALL plans!'),
-      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'Buy Adventure Pass'},{url:'https://zoikomobile.com/roaming-rates',label:'Rates by Country'}]),
-      makeActionBar([{label:'📍 Buy now', action:'__callback__', type:'primary'},{label:'🗺️ Compare passes', action:'Tell me about travel passes'}])
+      makeNotif('info','💡','Wi-Fi Calling is FREE on ALL Zoiko plans — call home over hotel Wi-Fi at no cost!'),
+      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'Buy Daily Adventure Pass'},{url:'https://zoikomobile.com/roamingrates',label:'Rates by Country'}]),
+      makeActionBar([{label:'📍 Buy now', action:'__callback__', type:'primary'},{label:'🗺️ Compare all passes', action:'Tell me about travel passes'}])
     ]};
   }
 
@@ -1697,49 +1791,52 @@ function smartReply(text) {
   if (/voyager\s*pass|voyager.*16|2gb.*7\s*day|7\s*day.*pass/i.test(t)) {
     return {text:"The **Voyager Pass** is our most popular travel pass! 🗺️", cards:[
       makeInfoCard('🗺️','Voyager Pass — $16 for 7 Days',[
-        {label:'Price',        val:'$16 for 7 days',              org:true},
-        {label:'Data',         val:'2GB',                          org:true},
-        {label:'Valid for',    val:'7 days from activation',       org:true},
-        {label:'Best for',     val:'Week-long trips abroad',       org:true},
-        {label:'Coverage',     val:'Works in 200+ countries',      org:true},
-        {label:'Great value',  val:'$2.30/day for a full week!'}
+        {label:'Price',            val:'$16 for 7 days',                        org:true},
+        {label:'Data',             val:'2GB high-speed + unlimited',             org:true},
+        {label:'Free intl calls',  val:'200+ countries included',               org:true},
+        {label:'Talk & Text',      val:'Free — unlimited',                       org:true},
+        {label:'Hotspot',          val:'Mobile hotspot included',               org:true},
+        {label:'Canada & Mexico',  val:'Roaming included at no extra cost',     org:true},
+        {label:'Great value',      val:'Only $2.30/day for a full week!',       org:true}
       ]),
       makeNotif('success','✈️','Popular for European vacations, Caribbean trips, and Asia travel!'),
-      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'Buy Voyager Pass'},{url:'https://zoikomobile.com/roaming-rates',label:'Country Rates'}]),
-      makeActionBar([{label:'🗺️ Buy now', action:'__callback__', type:'primary'},{label:'🌍 Other passes', action:'Tell me about travel passes'}])
+      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'Buy Voyager Pass'},{url:'https://zoikomobile.com/roamingrates',label:'Country Rates'}]),
+      makeActionBar([{label:'🗺️ Buy now', action:'__callback__', type:'primary'},{label:'🌍 Compare all passes', action:'Tell me about travel passes'}])
     ]};
   }
 
-  // Explorer Pass (SPECIFIC)
+  // Explorer Pass (SPECIFIC) — officially called "Zoiko Explorer Pass"
   if (/explorer\s*pass|explorer.*52|15gb.*14|14\s*day.*pass/i.test(t)) {
-    return {text:"The **Explorer Pass** is for serious adventurers! 🧭", cards:[
-      makeInfoCard('🧭','Explorer Pass — $52 for 14 Days',[
-        {label:'Price',        val:'$52 for 14 days',             org:true},
-        {label:'Data',         val:'15GB',                         org:true},
-        {label:'Valid for',    val:'14 days from activation',      org:true},
-        {label:'Best for',     val:'Extended trips and sabbaticals', org:true},
-        {label:'Coverage',     val:'Works in 200+ countries',      org:true},
-        {label:'Per day cost', val:'Only $3.71/day!'}
+    return {text:"The **Zoiko Explorer Pass** is for serious adventurers! 🧭", cards:[
+      makeInfoCard('🧭','Zoiko Explorer Pass — $52 for 14 Days',[
+        {label:'Price',            val:'$52 for 14 days',                          org:true},
+        {label:'Data',             val:'15GB high-speed + unlimited',               org:true},
+        {label:'Valid for',        val:'14 days from activation',                   org:true},
+        {label:'Free intl calls',  val:'200+ countries included',                   org:true},
+        {label:'Hotspot',          val:'Mobile hotspot included',                   org:true},
+        {label:'Canada & Mexico',  val:'Free roaming included',                     org:true},
+        {label:'Per day cost',     val:'Only $3.71/day — best value!'}
       ]),
       makeNotif('info','🌟','Perfect for backpacking, business trips, and semester abroad!'),
-      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'Buy Explorer Pass'},{url:'https://zoikomobile.com/roaming-rates',label:'Check Rates'}]),
-      makeActionBar([{label:'🧭 Buy now', action:'__callback__', type:'primary'},{label:'💚 Cheaper option', action:'Tell me about the Voyager Pass'}])
+      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'Buy Zoiko Explorer Pass'},{url:'https://zoikomobile.com/roamingrates',label:'Check Country Rates'}]),
+      makeActionBar([{label:'🧭 Buy now', action:'__callback__', type:'primary'},{label:'💚 Shorter trip?', action:'Tell me about the Voyager Pass'}])
     ]};
   }
 
-  // GENERAL TRAVEL PASSES (comes after specific handlers - excludes specific pass types)
+  // GENERAL TRAVEL PASSES (duplicate catch-all after specific handlers)
   if (/travel.*pass|roaming.*pass|international.*pass|global\s*connect|traveling|going.*abroad|travel.*plan|travel.*detail/i.test(t) && !/daily\s*adventure|voyager|explorer|adventure\s*pass/i.test(t)) {
     return {text:"Zoiko has **4 travel passes** for when you're heading outside North America! ✈️", cards:[
-      makeInfoCard('✈️','Travel & Roaming Passes',[
-        {label:'🌅 Daily Adventure Pass', val:'$7.50/day · 500MB · 24 hours',                         org:true},
-        {label:'🗺️ Voyager Pass',         val:'$16 · 2GB · 7 days',                                  org:true},
-        {label:'🧭 Explorer Pass',        val:'$52 · 15GB · 14 days',                                 org:true},
-        {label:'🌍 Global Connect',       val:'$65 · 10GB · 24hr (price varies by country)',          org:true}
+      makeInfoCard('✈️','Zoiko Travel Passes — All Prices & Features',[
+        {label:'🌅 Daily Adventure Pass', val:'$7.50 · 500MB + Unlimited · 24 hours · Free intl calls 200+ countries', org:true},
+        {label:'🗺️ Voyager Pass',         val:'$16 · 2GB + Unlimited · 7 days · Free intl calls 200+ countries',      org:true},
+        {label:'🧭 Zoiko Explorer Pass',  val:'$52 · 15GB + Unlimited · 14 days · Free intl calls 200+ countries',    org:true},
+        {label:'🌍 Global Connect',       val:'$65 · 10GB high-speed · 1 day · Frequent traveler plan',               org:true},
+        {label:'All passes include',      val:'Free talk & text · Canada & Mexico roaming · Mobile hotspot',          org:true}
       ]),
-      makeNotif('info','💡','Already on Unlimited One ($30) or above? You get FREE Canada & Mexico roaming — no pass needed!'),
-      makeNotif('teal','📶','Wi-Fi Calling is free on ALL plans — call home over hotel Wi-Fi at zero extra cost!'),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'View Travel Passes Online'},{url:'https://zoikomobile.com/contact-us',label:'Ask About Your Destination'}]),
-      makeActionBar([{label:'🌅 Daily $7.50', action:'Tell me about the Daily Adventure Pass'},{label:'🗺️ 7-day $16', action:'Tell me about the Voyager Pass'},{label:'🧭 14-day $52', action:'Tell me about the Explorer Pass'}])
+      makeNotif('info','💡','All passes include FREE international calls to 200+ countries and mobile hotspot access!'),
+      makeNotif('teal','📶','Wi-Fi Calling is FREE on ALL Zoiko plans — call home over hotel Wi-Fi at zero cost!'),
+      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'View Travel Plans'},{url:'https://zoikomobile.com/roamingrates',label:'Country Rates'}]),
+      makeActionBar([{label:'🌅 Daily $7.50', action:'Tell me about the Daily Adventure Pass'},{label:'🗺️ 7-day $16', action:'Tell me about the Voyager Pass'},{label:'🧭 14-day $52', action:'Tell me about the Zoiko Explorer Pass'}])
     ]};
   }
 
@@ -1760,7 +1857,7 @@ function smartReply(text) {
       ]),
       makeNotif('info','💡','Calling Canada & Mexico is FREE on all plans. Roaming IN those countries needs Unlimited One ($30) or above.'),
       makeNotif('teal','🌐','For the complete per-country rate list — including specific rates, zones, and out-of-bundle pricing — visit our Roaming Rates page:'),
-      makeLinksBar([{url:'https://zoikomobile.com/roaming-rates',label:'🌍 Full Country Rates — zoikomobile.com/roaming-rates'},{url:'https://zoikomobile.com/all-plans',label:'View All Plans'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/roamingrates',label:'🌍 Full Country Rates — zoikomobile.com/roamingrates'},{url:'https://zoikomobile.com/all-plans',label:'View All Plans'}]),
       makeActionBar([{label:'🇮🇳 India', action:'India calling'},{label:'🇵🇭 Philippines', action:'Philippines calling'},{label:'🇲🇽 Mexico roaming', action:'Mexico roaming'},{label:'🇨🇦 Canada roaming', action:'Canada roaming'}])
     ]};
   }
@@ -1779,7 +1876,7 @@ function smartReply(text) {
       makeNotif('success','✈️','International calling included on ALL plans — 70–200+ countries free depending on your plan!'),
       makeNotif('teal','🌐','For exact per-country rates, zones, and out-of-bundle pricing — check our full Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roaming-rates',label:'🌍 Full Roaming Rates — all countries & zones'},
+        {url:'https://zoikomobile.com/roamingrates',label:'🌍 Full Roaming Rates — all countries & zones'},
         {url:'https://zoikomobile.com/travel-plans',label:'Travel Day Passes'}
       ]),
       makeActionBar([{label:'🇮🇳 India', action:'India calling'},{label:'🇵🇭 Philippines', action:'Philippines calling'},{label:'🌏 Travel Passes', action:'Tell me about travel passes'}])
@@ -1799,7 +1896,7 @@ function smartReply(text) {
       ]),
       makeNotif('teal','🌐','For exact per-country rates, zones, and out-of-bundle pricing — check the full Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roaming-rates',label:'🌍 View Full Roaming Rates — all countries'},
+        {url:'https://zoikomobile.com/roamingrates',label:'🌍 View Full Roaming Rates — all countries'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans'}
       ]),
       makeActionBar([{label:'✈️ Travel Passes', action:'Tell me about travel passes', type:'primary'},{label:'📶 Wi-Fi Calling', action:'How does Wi-Fi Calling work?'}])
@@ -1811,7 +1908,7 @@ function smartReply(text) {
     return {text:"The full list of 200+ countries is on our **Roaming Rates page** — it includes every country, zone, and exact rate! 🌍", cards:[
       makeNotif('success','🌐','Zoiko serves 200+ countries across North America, Europe, Asia-Pacific, Middle East, Caribbean, Africa, and South America.'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roaming-rates',label:'🌍 See All 200+ Countries & Rates — zoikomobile.com/roaming-rates'},
+        {url:'https://zoikomobile.com/roamingrates',label:'🌍 See All 200+ Countries & Rates — zoikomobile.com/roamingrates'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans'}
       ]),
       makeActionBar([{label:'📋 View Roaming Rates', action:'Do I pay extra for roaming?', type:'primary'},{label:'✈️ Travel Passes', action:'Tell me about travel passes'}])
@@ -1827,11 +1924,11 @@ function smartReply(text) {
         {label:'Free calling on Flex',   val:'India not in the 70-country free list — check rates', org:true},
         {label:'Roaming IN India',       val:'Travel pass required — from $7.50/day',             org:true},
         {label:'Wi-Fi Calling',          val:'FREE on all plans — call India via hotel Wi-Fi',    org:true},
-        {label:'Exact per-min rates',    val:'See full details at zoikomobile.com/roaming-rates', org:true}
+        {label:'Exact per-min rates',    val:'See full details at zoikomobile.com/roamingrates', org:true}
       ]),
       makeNotif('teal','🌐','For exact rates and minute allowances to India, visit our full Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roaming-rates',label:'🇮🇳 India Roaming & Calling Rates'},
+        {url:'https://zoikomobile.com/roamingrates',label:'🇮🇳 India Roaming & Calling Rates'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans with India Calling'}
       ]),
       makeActionBar([{label:'⚡ Get Zoiko Core $25', action:'Tell me about Zoiko Core plan', type:'primary'},{label:'✈️ Travel Pass for India', action:'Tell me about travel passes'}])
@@ -1844,11 +1941,11 @@ function smartReply(text) {
         {label:'Free calling to Philippines', val:'Included on Core ($25+), Max, Infinity, Supreme', org:true},
         {label:'Roaming IN Philippines',      val:'Travel pass required — from $7.50/day',          org:true},
         {label:'Wi-Fi Calling',               val:'FREE on all plans — call home via hotel Wi-Fi',  org:true},
-        {label:'Exact per-min rates',         val:'See full details at zoikomobile.com/roaming-rates', org:true}
+        {label:'Exact per-min rates',         val:'See full details at zoikomobile.com/roamingrates', org:true}
       ]),
       makeNotif('teal','🌐','For the exact minute allowance and rates for the Philippines, visit our Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roaming-rates',label:'🇵🇭 Philippines Roaming & Calling Rates'},
+        {url:'https://zoikomobile.com/roamingrates',label:'🇵🇭 Philippines Roaming & Calling Rates'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans with Philippines Calling'}
       ]),
       makeActionBar([{label:'⚡ Get a Plan', action:'Show me all plans', type:'primary'},{label:'✈️ Travel Pass', action:'Tell me about travel passes'}])
@@ -1861,11 +1958,11 @@ function smartReply(text) {
         {label:'Free calling to Pakistan', val:'Included on Core ($25+), Max, Infinity, Supreme', org:true},
         {label:'Roaming IN Pakistan',      val:'Travel pass required — from $7.50/day',          org:true},
         {label:'Wi-Fi Calling',            val:'FREE on all plans — great for Pakistan calls',   org:true},
-        {label:'Exact per-min rates',      val:'See full details at zoikomobile.com/roaming-rates', org:true}
+        {label:'Exact per-min rates',      val:'See full details at zoikomobile.com/roamingrates', org:true}
       ]),
       makeNotif('teal','🌐','For exact rates and minute allowances to Pakistan, visit our Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roaming-rates',label:'🇵🇰 Pakistan Roaming & Calling Rates'},
+        {url:'https://zoikomobile.com/roamingrates',label:'🇵🇰 Pakistan Roaming & Calling Rates'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans with Pakistan Calling'}
       ]),
       makeActionBar([{label:'⚡ Get Zoiko Core $25', action:'Tell me about Zoiko Core plan', type:'primary'},{label:'✈️ Travel Pass', action:'Tell me about travel passes'}])
@@ -1879,11 +1976,11 @@ function smartReply(text) {
         {label:'Roaming IN Canada',       val:'FREE on Unlimited One ($30+), Infinity, Supreme',org:true},
         {label:'Roaming on Flex/Core',    val:'Travel pass required for roaming IN Canada',     org:true},
         {label:'Wi-Fi Calling',           val:'FREE on all plans — no extra charge',            org:true},
-        {label:'Exact zone/rates',        val:'See full details at zoikomobile.com/roaming-rates', org:true}
+        {label:'Exact zone/rates',        val:'See full details at zoikomobile.com/roamingrates', org:true}
       ]),
       makeNotif('teal','🌐','For exact zone rates and out-of-bundle pricing for Canada, visit our Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roaming-rates',label:'🇨🇦 Canada Roaming Rates & Zones'},
+        {url:'https://zoikomobile.com/roamingrates',label:'🇨🇦 Canada Roaming Rates & Zones'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans with Free Canada Roaming'}
       ]),
       makeActionBar([{label:'🎮 Get Unlimited One $30', action:'Tell me about Unlimited One plan', type:'primary'},{label:'📱 See all plans', action:'Show me all plans'}])
@@ -1897,11 +1994,11 @@ function smartReply(text) {
         {label:'Roaming IN Mexico',       val:'FREE on Unlimited One ($30+), Infinity, Supreme',org:true},
         {label:'Roaming on Flex/Core',    val:'Travel pass required for roaming IN Mexico',     org:true},
         {label:'Wi-Fi Calling',           val:'FREE on all plans — no extra charge',            org:true},
-        {label:'Exact zone/rates',        val:'See full details at zoikomobile.com/roaming-rates', org:true}
+        {label:'Exact zone/rates',        val:'See full details at zoikomobile.com/roamingrates', org:true}
       ]),
       makeNotif('teal','🌐','For exact zone rates and out-of-bundle pricing for Mexico, visit our Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roaming-rates',label:'🇲🇽 Mexico Roaming Rates & Zones'},
+        {url:'https://zoikomobile.com/roamingrates',label:'🇲🇽 Mexico Roaming Rates & Zones'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans with Free Mexico Roaming'}
       ]),
       makeActionBar([{label:'🎮 Get Unlimited One $30', action:'Tell me about Unlimited One plan', type:'primary'},{label:'📱 See all plans', action:'Show me all plans'}])
@@ -1914,11 +2011,11 @@ function smartReply(text) {
         {label:'Free calling to UK',  val:'Included on Essentials ($20+), Core, Max, Infinity, Supreme', org:true},
         {label:'Roaming IN the UK',   val:'Travel pass required — from $7.50/day',                       org:true},
         {label:'Wi-Fi Calling',       val:'FREE on all plans — ideal for UK trips',                      org:true},
-        {label:'Exact per-min rates', val:'See full details at zoikomobile.com/roaming-rates',           org:true}
+        {label:'Exact per-min rates', val:'See full details at zoikomobile.com/roamingrates',           org:true}
       ]),
       makeNotif('teal','🌐','For exact zone rates and minute allowances for the UK, visit our Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roaming-rates',label:'🇬🇧 UK Roaming & Calling Rates'},
+        {url:'https://zoikomobile.com/roamingrates',label:'🇬🇧 UK Roaming & Calling Rates'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans with UK Calling'}
       ]),
       makeActionBar([{label:'⚡ Get Essentials $20', action:'Tell me about Essentials plan', type:'primary'},{label:'✈️ Travel Pass', action:'Tell me about travel passes'}])
@@ -1931,11 +2028,11 @@ function smartReply(text) {
         {label:'Free calling to Australia', val:'Included on Core ($25+), Max, Infinity, Supreme', org:true},
         {label:'Roaming IN Australia',      val:'Travel pass required — from $7.50/day',          org:true},
         {label:'Wi-Fi Calling',             val:'FREE on all plans — call Australia via Wi-Fi',   org:true},
-        {label:'Exact per-min rates',       val:'See full details at zoikomobile.com/roaming-rates', org:true}
+        {label:'Exact per-min rates',       val:'See full details at zoikomobile.com/roamingrates', org:true}
       ]),
       makeNotif('teal','🌐','For exact zone rates and minute allowances for Australia, visit our Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roaming-rates',label:'🇦🇺 Australia Roaming & Calling Rates'},
+        {url:'https://zoikomobile.com/roamingrates',label:'🇦🇺 Australia Roaming & Calling Rates'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans with Australia Calling'}
       ]),
       makeActionBar([{label:'⚡ Get Zoiko Core $25', action:'Tell me about Zoiko Core plan', type:'primary'},{label:'✈️ Travel Pass', action:'Tell me about travel passes'}])
@@ -1946,34 +2043,19 @@ function smartReply(text) {
   if (/which\s*country\s*are\s*you\s*asking|country\s*are\s*you|which\s*country/i.test(t) && !/roaming|travel|pass/i.test(t)) {
     return {text:"Just tell me which country you're interested in! 🌍 And for the full per-country rates and zones, check our Roaming Rates page:", cards:[
       makeInfoCard('🌍','Popular Country Quick-Links',[
-        {label:'🇮🇳 India',       val:'Free calling on Core ($25+) · rates at zoikomobile.com/roaming-rates', org:true},
-        {label:'🇵🇭 Philippines', val:'Free calling on Core ($25+) · rates at zoikomobile.com/roaming-rates', org:true},
-        {label:'🇵🇰 Pakistan',    val:'Free calling on Core ($25+) · rates at zoikomobile.com/roaming-rates', org:true},
+        {label:'🇮🇳 India',       val:'Free calling on Core ($25+) · rates at zoikomobile.com/roamingrates', org:true},
+        {label:'🇵🇭 Philippines', val:'Free calling on Core ($25+) · rates at zoikomobile.com/roamingrates', org:true},
+        {label:'🇵🇰 Pakistan',    val:'Free calling on Core ($25+) · rates at zoikomobile.com/roamingrates', org:true},
         {label:'🇨🇦 Canada',      val:'Calling FREE all plans · roaming free on $30+',                        org:true},
         {label:'🇲🇽 Mexico',      val:'Calling FREE all plans · roaming free on $30+',                        org:true},
         {label:'🇬🇧 UK',          val:'Free calling on Essentials ($20+)',                                     org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/roaming-rates',label:'🌍 Full Country Rates — zoikomobile.com/roaming-rates'},{url:'https://zoikomobile.com/travel-plans',label:'Travel Passes'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/roamingrates',label:'🌍 Full Country Rates — zoikomobile.com/roamingrates'},{url:'https://zoikomobile.com/travel-plans',label:'Travel Passes'}]),
       makeActionBar([{label:'📋 Free countries by plan', action:'Which countries can I call free?', type:'primary'}])
     ]};
   }
 
-  // United States Postal Service Employee Discount handler
-  if (/usps|postal|mail\s*carrier|postal\s*service|employee\s*discount/i.test(t)) {
-    return {text:"United States Postal Service employees get special Zoiko discounts! 📬", cards:[
-      makeInfoCard('📬','United States Postal Service Employee Discount Program',[
-        {label:'Discount',      val:'20% off monthly plans',           org:true},
-        {label:'Who qualifies', val:'Active United States Postal Service employees',           org:true},
-        {label:'How to claim',  val:'Verify via United States Postal Service email at signup', org:true},
-        {label:'On what plans', val:'All prepaid and postpaid plans',  org:true},
-        {label:'Stacks with',   val:'Family plans & auto-pay bonus',   org:true},
-        {label:'Example',       val:'Zoiko Core $25 → only $20/month'}
-      ]),
-      makeNotif('success','🎉','Combine with 20% family discount for even more savings!'),
-      makeLinksBar([{url:'https://zoikomobile.com/postal-service-workers',label:'Employee Discounts'},{url:'https://zoikomobile.com/all-plans',label:'See Plans'}]),
-      makeActionBar([{label:'✅ Sign up for discount', action:'__callback__', type:'primary'},{label:'💰 Family savings', action:'Calculate my family savings'}])
-    ]};
-  }
+  // USPS Employee Discount handler — consolidated below (search for postal_service|usps main handler)
 
   // Multi-line / family savings handler
   if (/calculate.*saving|family.*saving|multi.line.*saving|save.*line|discount.*line|4\s*line|3\s*line|5\s*line/i.test(t)) {
@@ -1986,7 +2068,7 @@ function smartReply(text) {
         {label:'5+ lines', val:'25% off per line → Save $50+/month',    org:true}
       ]),
       makeNotif('success','🎉','Example: 4 lines of Zoiko Core saves you $30/month! That\'s $360/year!'),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'View Family Plans'},{url:'https://zoikomobile.com/family-savings',label:'Family Savings Details'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/family-plans',label:'View Family Plans'},{url:'https://zoikomobile.com/family-plans',label:'Family Savings Details'}]),
       makeActionBar([{label:'👨‍👩‍👧 Get family plan', action:'How do family plans work?', type:'primary'},{label:'💼 Business rates', action:'Tell me about business plans'}])
     ]};
   }
@@ -2004,7 +2086,7 @@ function smartReply(text) {
         {ico:'💚',title:'Cheapest plan — $13/mo',          sub:'Zoiko Flex · No contract',                           action:'What is the cheapest plan?'},
         {ico:'🚀',title:'Elite plans — from $65/mo',       sub:'Zero throttle · VIP perks',                          action:'Tell me about your elite plans'}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'View All Plans Online'},{url:'https://zoikomobile.com/business-deals',label:'Business Plans'}])
+      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'View All Plans Online'},{url:'https://zoikomobile.com/business-postpaid-plans',label:'Business Plans'}])
     ]};
   }
 
@@ -2049,7 +2131,7 @@ function smartReply(text) {
         {label:'International',val:'70+ countries free',org:true},{label:'Free SIM',val:'Included',org:true},
         {label:'Contract',val:'None — cancel anytime',org:true},{label:'Credit check',val:'Not required',org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Zoiko Flex — $13/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-flex/',label:'Get Zoiko Flex — $13/mo'}]),
       makeActionBar([{label:'⚖️ Compare with Essentials', action:'Compare Zoiko Flex and Essentials', type:'primary'},{label:'📲 Sign up', action:'How do I sign up for Zoiko?'}])
     ]};
   }
@@ -2062,7 +2144,7 @@ function smartReply(text) {
         {label:'International',val:'100+ countries free',org:true},{label:'Priority Support',val:'✓ Included',org:true},
         {label:'Contract',val:'None — cancel anytime',org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Essentials — $20/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-essential/',label:'Get Essentials — $20/mo'}]),
       makeActionBar([{label:'⚖️ Compare with Unlimited One', action:'Compare Essentials and Unlimited One', type:'primary'},{label:'📲 Sign up', action:'How do I sign up for Zoiko?'}])
     ]};
   }
@@ -2074,7 +2156,7 @@ function smartReply(text) {
         {label:'Hotspot',val:'6GB'},{label:'International',val:'150+ countries free',org:true},
         {label:'Roaming',val:'Canada & Mexico — free!',org:true},{label:'Contract',val:'None',org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Unlimited One — $30/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-unlimited-one/',label:'Get Unlimited One — $30/mo'}]),
       makeActionBar([{label:'⚖️ Compare with Unlimited Plus', action:'Compare Unlimited One and Unlimited Plus', type:'primary'}])
     ]};
   }
@@ -2086,7 +2168,7 @@ function smartReply(text) {
         {label:'Hotspot',val:'12GB',org:true},{label:'International',val:'200+ countries free',org:true},
         {label:'Financing',val:'Device financing options available',org:true},{label:'Contract',val:'None',org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Unlimited Plus — $45/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-unlimited-plus/',label:'Get Unlimited Plus — $45/mo'}]),
       makeActionBar([{label:'🏆 Compare with Premium', action:'Compare Unlimited Plus and Premium Unlimited', type:'primary'}])
     ]};
   }
@@ -2099,7 +2181,7 @@ function smartReply(text) {
         {label:'VIP Support',val:'✓ Priority support included',org:true},{label:'Roaming',val:'Canada & Mexico — free!',org:true},
         {label:'Contract',val:'None — cancel anytime',org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Premium Unlimited — $55/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-premium-unlimited/',label:'Get Premium Unlimited — $55/mo'}]),
       makeActionBar([{label:'🌟 Compare with Zoiko Infinity', action:'Compare Premium Unlimited and Zoiko Infinity', type:'primary'}])
     ]};
   }
@@ -2111,7 +2193,7 @@ function smartReply(text) {
         {label:'Hotspot',val:'2GB'},{label:'Texts',val:'15,000'},{label:'International',val:'200+ countries free',org:true},
         {label:'Contract',val:'12 or 24-month option'},{label:'Credit check',val:'Not required',org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Zoiko Lite — $15/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-lite/',label:'Get Zoiko Lite — $15/mo'}]),
       makeActionBar([{label:'⚡ Compare with Core', action:'Compare Zoiko Lite and Zoiko Core', type:'primary'}])
     ]};
   }
@@ -2123,7 +2205,7 @@ function smartReply(text) {
         {label:'Hotspot',val:'4GB'},{label:'Texts',val:'20,000'},{label:'International',val:'200+ countries free',org:true},
         {label:'Contract',val:'12 or 24-month option'},{label:'Credit check',val:'Not required',org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Zoiko Core — $25/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-core/',label:'Get Zoiko Core — $25/mo'}]),
       makeActionBar([{label:'⚖️ Compare with Max', action:'Compare Zoiko Core and Zoiko Max', type:'primary'}])
     ]};
   }
@@ -2135,7 +2217,7 @@ function smartReply(text) {
         {label:'Hotspot',val:'10GB'},{label:'Texts',val:'30,000'},{label:'International',val:'200+ countries free',org:true},
         {label:'Contract',val:'12 or 24-month option'},{label:'Credit check',val:'Not required'}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Zoiko Max — $50/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-max/',label:'Get Zoiko Max — $50/mo'}]),
       makeActionBar([{label:'🌟 Compare with Infinity', action:'Compare Zoiko Max and Zoiko Infinity', type:'primary'}])
     ]};
   }
@@ -2147,7 +2229,7 @@ function smartReply(text) {
         {label:'Throttle',val:'Never 🔥',org:true},{label:'Hotspot',val:'15GB'},{label:'International',val:'200+ countries',org:true},
         {label:'Roaming',val:'Canada & Mexico free',org:true},{label:'Device Financing',val:'Available',org:true},{label:'Credit check',val:'Not required'}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Zoiko Infinity — $65/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-infinity/',label:'Get Zoiko Infinity — $65/mo'}]),
       makeActionBar([{label:'🚀 Compare with Supreme', action:'Compare Zoiko Infinity and Supreme Unlimited', type:'primary'}])
     ]};
   }
@@ -2160,7 +2242,7 @@ function smartReply(text) {
         {label:'International',val:'200+ countries 🏆',org:true},{label:'VIP Perks',val:'Full VIP + Priority Network',org:true},
         {label:'Roaming',val:'Canada & Mexico free',org:true},{label:'Financing',val:'Max device financing',org:true},{label:'Credit check',val:'Not required'}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Get Supreme Unlimited — $72/mo'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-supreme-unlimited/',label:'Get Supreme Unlimited — $72/mo'}]),
       makeActionBar([{label:'👑 See VIP perks', action:'Tell me about VIP perks', type:'primary'},{label:'⚖️ Compare with Infinity', action:'Compare Zoiko Infinity and Supreme Unlimited'}])
     ]};
   }
@@ -2259,36 +2341,12 @@ function smartReply(text) {
         {label:'Visit zoikomobile.com/byod-plans/', sub:'Enter your IMEI for an instant result'},
         {label:'Choose a plan and activate!',    sub:'Port-in is always free'}
       ]),
-      makeInfoCard('📱','Compatible Devices & Phone Specs',[
-        {label:'iPhone',val:'iPhone 6 and newer ✓ (XS, 11, 12, 13, 14, 15 fully supported)',org:true},
-        {label:'iOS Features',val:'Wi-Fi Calling · eSIM · VoLTE · Advanced messaging'},
-        {label:'iOS IMEI',val:'Settings → General → About → IMEI'},
-        {label:'Samsung',val:'Galaxy S6 and newer ✓ (S20, S21, S22, S23, S24 fully supported)',org:true},
-        {label:'Android Features',val:'5G ready · eSIM compatible · Wi-Fi Calling · All modern features'},
-        {label:'Android IMEI',val:'Settings → About Phone → SIM Status (or dial *#06#)'},
-        {label:'Google Pixel / OnePlus',val:'Pixel 4+ · OnePlus 7T+ — Full compatibility ✓',org:true},
-        {label:'Motorola / Other',val:'Motorola Edge/G series · Most modern phones work ✓'},
-        {label:'Required',val:'GSM unlocked device (check with your carrier if unsure)',org:true}
+      makeInfoCard('📱','Compatible Devices',[
+        {label:'iPhone',val:'iPhone 6 and newer ✓',org:true},{label:'iOS IMEI',val:'Settings → General → About'},
+        {label:'Samsung',val:'Galaxy S6 and newer ✓',org:true},{label:'Android IMEI',val:'Settings → About Phone → SIM Status'},
+        {label:'Required',val:'GSM unlocked device'}
       ]),
       makeLinksBar([{url:'https://zoikomobile.com/byod-plans/',label:'Check My Phone Compatibility'}])
-    ]};
-  }
-
-  if (/phone\s*feature|phone.*info|phone\s*spec|5g.*phone|volte|wifi\s*calling.*phone|phone.*wifi|phone.*call/i.test(t) && !/international|port|byod/i.test(t)) {
-    return {text:"Zoiko phones support all the latest features — **5G, Wi-Fi Calling, VoLTE, and more!** 📱", cards:[
-      makeInfoCard('📱','Phone Features on Zoiko',[
-        {label:'5G Network',         val:'Available on all modern phones · Ultra-fast speeds', org:true},
-        {label:'Wi-Fi Calling',      val:'Call over Wi-Fi for free · No extra charge ✓',       org:true},
-        {label:'VoLTE',              val:'Crystal-clear voice calls · Better quality',           org:true},
-        {label:'Rich Communication', val:'Advanced texting & messaging features',               org:true},
-        {label:'Visual Voicemail',   val:'See voicemail transcripts on iPhone & Android'},
-        {label:'Caller ID',          val:'Full caller identification · Block spam calls ✓'},
-        {label:'Call Forwarding',    val:'Redirect calls to another number anytime'},
-        {label:'Multi-Line Support', val:'Add multiple lines to one account — save 20%!', org:true}
-      ]),
-      makeNotif('teal','💡','All plans include: Unlimited talk, unlimited texting, Wi-Fi calling, and 5G access on compatible phones.'),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'View All Plans'},{url:'https://zoikomobile.com/byod-plans/',label:'Check Phone Compatibility'}]),
-      makeActionBar([{label:'📱 Browse phones', action:'Do you sell phones?'},{label:'👨‍👩‍👧 Family plan', action:'Tell me about family plans'}])
     ]};
   }
 
@@ -2337,18 +2395,18 @@ function smartReply(text) {
     ]};
   }
 
-  if (/deal|promo|promotion|discount|offer|sale|coupon|special/i.test(t)) {
+  if (/deal|promo|promotion|discount|offer|sale|coupon|special/i.test(t) && !/militar|veteran|college|student|university|usps|postal|animal\s*charit|charity\s*worker|military\s*discount|student\s*discount/i.test(t)) {
     return {text:"Here are all **active Zoiko promotions**! 🎉", cards:[
       makeInfoCard('🎉','Current Deals & Promotions',[
         {label:'👨‍👩‍👧 Family Plan',  val:'20% off with 3+ lines — auto-applied',     org:true},
-        {label:'📬 United States Postal Service Employees', val:'Lifetime 20% off BYOD + nominate 5 friends',org:true},
+        {label:'📬 USPS Employees', val:'Lifetime 20% off any plan + nominate 5 friends',org:true},
         {label:'🎁 MOMSGIFT40',     val:'45% off top-up plans (May 2025)',            org:true},
         {label:'📱 BESTMOM20',      val:'25% off refurbished phones (May 2025)',      org:true},
         {label:'📲 Free Port-In',   val:'Transfer from any carrier — $0',            org:true},
         {label:'⚡ No Activation Fees',val:'On any plan, ever',                       org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Shop All Deals'},{url:'https://zoikomobile.com/business-deals',label:'Business Deals'}]),
-      makeActionBar([{label:'📬 United States Postal Service discount', action:'Tell me about the United States Postal Service employee discount', type:'primary'},{label:'👨‍👩‍👧 Family savings', action:'Calculate my family savings'}])
+      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Shop All Deals'},{url:'https://zoikomobile.com/business-postpaid-plans',label:'Business Deals'}]),
+      makeActionBar([{label:'📬 USPS discount', action:'Tell me about the USPS postal service worker program', type:'primary'},{label:'👨‍👩‍👧 Family savings', action:'Calculate my family savings'}])
     ]};
   }
 
@@ -2361,7 +2419,7 @@ function smartReply(text) {
         {label:'Messaging',          val:'Free unlimited between plan members', org:true},
         {label:'Parental controls',  val:'Free on all family lines'}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'View Family Plans Online'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/family-plans',label:'View Family Plans Online'}]),
       makeActionBar([{label:'💰 Calculate my savings', action:'Calculate savings for 4 lines', type:'primary'}])
     ]};
   }
@@ -2407,7 +2465,7 @@ function smartReply(text) {
     ]};
   }
 
-  if (/about\s*zoiko|who\s*is\s*zoiko|company|what\s*is\s*zoiko/i.test(t)) {
+  if (/about\s*zoiko|who\s*is\s*zoiko|company|what\s*is\s*zoiko/i.test(t) && !/device|protect|insur|akko|plan|partner|student|militar|veteran|postal|usps|animal|charit|travel|refurb|phone|claim/i.test(t)) {
     return {text:"**Zoiko Mobile** is the USA's best-rated mobile network — premium 5G with total transparency! 📱", cards:[
       makeInfoCard('🏢','About Zoiko Mobile',[
         {label:'Recognition', val:"USA's best-rated mobile network",   org:true},
@@ -2421,38 +2479,9 @@ function smartReply(text) {
     ]};
   }
 
-  if (/usps|postal\s*worker|postal\s*service|postal\s*discount/i.test(t)) {
-    return {text:"Zoiko offers an exclusive **lifetime 20% discount** for all United States Postal Service employees! 📬", cards:[
-      makeInfoCard('📬','United States Postal Service Employee Discount',[
-        {label:'Discount',         val:'20% OFF — lifetime, permanently',         org:true},
-        {label:'Applies to',       val:'All BYOD plans',                          org:true},
-        {label:'Nomination benefit',val:'Nominate up to 5 friends/family for same discount!', org:true},
-        {label:'Required',         val:'United States Postal Service work email + government-issued United States Postal Service Work ID'}
-      ]),
-      makeStepCard('HOW TO CLAIM YOUR United States Postal Service DISCOUNT',[
-        {label:'Choose any BYOD plan',               sub:''},
-        {label:'Register with your United States Postal Service work email', sub:'Official .usps.gov or .usps.com email'},
-        {label:'Upload your United States Postal Service Work ID',           sub:'Government-issued ID required'},
-        {label:'Discount activates once verified',   sub:'Then nominate up to 5 friends/family 🎉'}
-      ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'View BYOD Plans'},{url:'https://zoikomobile.com/contact-us',label:'Verify My United States Postal Service Status'}])
-    ]};
-  }
+  // USPS consolidated in main handler below
 
-  if (/protect|insurance|akko|device.*protection|zoiko.*protect/i.test(t)) {
-    return {text:"**Zoiko Protect** powered by AKKO covers just about everything! 🛡️", cards:[
-      makeInfoCard('🛡️','Zoiko Protect — $9.99/device/month',[
-        {label:'Cost',              val:'$9.99 per device per month',                     org:true},
-        {label:'✅ Accidental damage',val:'Cracked screens, drops',                       org:true},
-        {label:'✅ Water damage',   val:'Spills and liquid submersion',                   org:true},
-        {label:'✅ Theft',          val:'Including theft from vehicles (forced entry)',    org:true},
-        {label:'✅ Mechanical failures',val:'Component and electrical malfunctions',      org:true},
-        {label:'Eligible devices',  val:'Smartphones, laptops, tablets, smartwatches, headphones, smart hubs', org:true},
-        {label:'Best on',           val:'Business Infinite plan',                         org:true}
-      ]),
-      makeLinksBar([{url:'https://zoikomobile.com/device-protection',label:'Learn More About Zoiko Protect'},{url:'https://zoikomobile.com/all-plans',label:'View Plans'}])
-    ]};
-  }
+  // Device protection consolidated in main handler below
 
   if (/return|refund|warranty|rma|restocking|return.*policy/i.test(t)) {
     return {text:"Here's Zoiko's return and warranty policy! 📦", cards:[
@@ -2489,12 +2518,12 @@ function smartReply(text) {
   if (/office|location|store|find.*zoiko|nearest\s*office|where.*zoiko/i.test(t)) {
     return {text:"We have **6 Zoiko offices** across the US! 📍", cards:[
       makeInfoCard('📍','Zoiko Mobile Offices',[
-        {label:'🏢 Austin TX (HQ)',  val:'5900 Balcones Drive, Suite 100 · 800-988-8116',  org:true},
-        {label:'🏢 Washington DC',   val:'1717 N Street NW, Suite 1 · 800-477-1477'},
-        {label:'🏢 Sacramento CA',   val:'1401 21st Street, Suite R · 800-477-1477'},
-        {label:'🏢 Springfield IL',  val:'2501 Chatham Rd, Suite R · 847-728-6872'},
-        {label:'🏢 Dover DE',        val:'8 The Green, Suite A · 302-899-7312'},
-        {label:'🏢 Orlando FL',      val:'12386 State Road 535, #302 · 800-477-1477'}
+        {label:'🏢 Austin TX (HQ)',  val:'5900 Balcones Drive, Suite 100 · 800-988-8116 | 800-477-1477 · info@zoikomobile.com',  org:true},
+        {label:'🏢 Washington DC',   val:'1717 N Street NW, Suite 1 · 800-988-8116 | 800-477-1477 · info@zoikomobile.com',      org:true},
+        {label:'🏢 Sacramento CA',   val:'1401 21st Street, Suite R · 800-988-8116 | 800-477-1477 · info@zoikomobile.com',      org:true},
+        {label:'🏢 Springfield IL',  val:'2501 Chatham Rd, Suite R · 847-728-6872 · info@zoikomobile.com',                      org:true},
+        {label:'🏢 Dover DE',        val:'8 The Green, Suite A · 302-899-7312 · info@zoikomobile.com',                          org:true},
+        {label:'🏢 Orlando FL',      val:'12386 State Road 535, #302 · 800-988-8116 | 800-477-1477 · info@zoikomobile.com',     org:true}
       ]),
       makeLinksBar([{url:'https://zoikomobile.com/contact-us',label:'Contact Any Office'}])
     ]};
@@ -2676,89 +2705,300 @@ function smartReply(text) {
   // ════════════════════════════════════════════════════════════════════
   // SUPPORT PHONE NUMBER
   // ════════════════════════════════════════════════════════════════════
-  if (/support\s*number|phone\s*number.*support|call\s*zoiko|contact\s*number|800.988|how.*call.*support|zoiko.*phone/i.test(t)) {
+  if (/support\s*number|phone\s*number.*support|call\s*zoiko|contact\s*number|800.988|how.*call.*support|zoiko.*phone|email.*zoiko|zoiko.*email/i.test(t)) {
     return {text:"Here are all the ways to reach Zoiko Mobile! 📞", cards:[
-      makeInfoCard('📞','Zoiko Mobile Contact Numbers',[
-        {label:'📞 Main support',     val:'800-988-8116 (24/7)',            org:true},
-        {label:'📞 Alternate',        val:'800-477-1477'},
-        {label:'📞 Springfield IL',   val:'847-728-6872'},
-        {label:'📞 Dover DE',         val:'302-899-7312'},
-        {label:'📱 From Zoiko phone', val:'Dial 500 — fastest!',           org:true},
-        {label:'📧 Email',            val:'info@zoikomobile.com'},
-        {label:'🕐 Hours',            val:'24/7 — always available'}
+      makeInfoCard('📞','Zoiko Mobile — Contact Directory',[
+        {label:'📞 Main support',        val:'800-988-8116 (24/7)',                   org:true},
+        {label:'📞 Alternate line',      val:'800-477-1477 (24/7)',                   org:true},
+        {label:'📞 Springfield, IL',     val:'847-728-6872',                          org:true},
+        {label:'📞 Dover, DE',           val:'302-899-7312',                          org:true},
+        {label:'📱 From Zoiko phone',    val:'Dial 500 — fastest!',                   org:true},
+        {label:'📧 General enquiries',   val:'info@zoikomobile.com',                  org:true},
+        {label:'📧 Technical support',   val:'support@zoikomobile.com',               org:true},
+        {label:'📧 Partnership',         val:'partnership@zoikomobile.com',           org:true},
+        {label:'🕐 Hours',               val:'24/7 — always available'}
       ]),
       makeLinksBar([{url:'https://zoikomobile.com/contact-us',label:'Contact Us Online'},{url:'https://zoikomobile.com/customer-service',label:'Customer Service Center'}]),
       makeActionBar([{label:'🎧 Request callback', action:'__callback__', type:'primary'}])
     ]};
   }
   // ════════════════════════════════════════════════════════════════════
-  // CALLBACK / REQUEST A CALL
+  // NEW PHONES / SMARTPHONES STORE
   // ════════════════════════════════════════════════════════════════════
-  if (/call\s*back|callback|request.*call|speak.*agent|talk.*agent|live.*agent|human.*agent|agent.*human|call.*me|reach.*me|contact.*me|get.*call|want.*call|need.*call|schedule.*call/i.test(t)) {
-    return {text:"I'll connect you with a Zoiko agent right away! 🎧 Fill in your details below and we'll call you back within 24 hours.", cards:[
-      makeNotif('info','📞','A real Zoiko agent will call you personally — usually within a few hours!'),
-      makeActionBar([{label:'🎧 Request Callback Now', action:'__callback__', type:'primary'},{label:'📞 Call us directly', action:'What is the Zoiko support number?'}])
+  if (/new\s*(phone|smartphone|device)|buy.*phone|phones?\s*for\s*sale|purchase.*phone|zoiko.*phone.*store|phones\.zoiko/i.test(t)) {
+    return {text:"Zoiko sells **brand new smartphones** starting from just $59! 📱", cards:[
+      makeInfoCard('📱','New Smartphones — phones.zoikomobile.com',[
+        {label:'NUU F4L Flip Phone',       val:'$59.00 — LTE flip phone',                              org:true},
+        {label:'BLU C5L MAX',              val:'$59.00 — affordable Android',                          org:true},
+        {label:'PCD P65',                  val:'$69.00',                                               org:true},
+        {label:'Nokia G10',                val:'$79.00',                                               org:true},
+        {label:'Samsung Galaxy A03s',      val:'$109.00',                                              org:true},
+        {label:'Motorola G 5G (2022)',      val:'$119.00 — 5G capable',                                org:true},
+        {label:'Motorola G Play (2023/24)', val:'$129.00 each',                                        org:true},
+        {label:'Network',                  val:'All unlocked — T-Mobile 5G + 4G LTE ready',           org:true}
+      ]),
+      makeNotif('success','⚡','All phones come network-unlocked and eSIM-compatible. Pair with any Zoiko plan from $15/mo!'),
+      makeLinksBar([{url:'https://phones.zoikomobile.com',label:'🛒 Shop All New Phones'},{url:'https://zoikomobile.com/byod-plans',label:'Bring Your Own Phone'}]),
+      makeActionBar([{label:'📱 Shop phones', action:'__callback__', type:'primary'},{label:'🔄 Refurbished phones', action:'Tell me about refurbished phones'}])
     ]};
   }
 
   // ════════════════════════════════════════════════════════════════════
-  // COLLEGE / STUDENT PLANS
+  // REFURBISHED PHONES
   // ════════════════════════════════════════════════════════════════════
-  if (/colleg|student|university|campus|school|grad|undergrad|dorm|semester/i.test(t)) {
-    return {text:"Zoiko has special **College Student Plans** — affordable wireless built for students! 🎓", cards:[
-      makeInfoCard('🎓','College Student Plan Benefits',[
-        {label:'Who qualifies',     val:'Current college/university students',              org:true},
-        {label:'How to verify',    val:'Verify with your .edu email at signup',            org:true},
-        {label:'Plans available',  val:'All Zoiko prepaid & postpaid plans',               org:true},
-        {label:'Best for students',val:'Zoiko Flex $15 or Core $25 — most popular',       org:true},
-        {label:'No credit check',  val:'Perfect for first-time phone plan holders',       org:true},
-        {label:'eSIM',             val:'Activate instantly on your laptop or phone',      org:true}
+  if (/refurb|certified\s*pre.?own|second.?hand|used\s*phone|pre.?used|recondition/i.test(t)) {
+    return {text:"Zoiko offers **20 certified refurbished devices** — up to 40% off retail! ♻️", cards:[
+      makeInfoCard('🍎','iPhones — Certified Refurbished (Sale Prices)',[
+        {label:'iPhone SE 3 (64GB)',          val:'$154.20  (orig. $257.00)',    org:true},
+        {label:'iPhone 11 (128GB)',            val:'$177.60  (orig. $296.00)',    org:true},
+        {label:'iPhone 11 Pro (64–512GB)',     val:'$196.95  (orig. $328.25)',    org:true},
+        {label:'iPhone 11 Pro Max (512GB)',    val:'$252.60  (orig. $421.00)',    org:true},
+        {label:'iPhone 12 Mini (64–256GB)',    val:'$166.35  (orig. $277.25)',    org:true},
+        {label:'iPhone 12 Pro Max (256GB)',    val:'$337.80  (orig. $563.00)',    org:true},
+        {label:'iPhone 13 Mini (128–512GB)',   val:'$228.60  (orig. $381.00)',    org:true},
+        {label:'iPhone 13 (128/256GB)',        val:'$276.00  (orig. $460.00)',    org:true},
+        {label:'iPhone 13 Pro (128–512GB)',    val:'$330.60  (orig. $551.00)',    org:true},
+        {label:'iPhone 13 Pro Max (256GB)',    val:'$420.15  (orig. $700.25)',    org:true},
+        {label:'iPhone 14 Pro 5G (128GB)',     val:'$323.40  (orig. $539.00)',    org:true},
+        {label:'iPhone 14 Pro (1TB)',          val:'$507.00  (orig. $845.00)',    org:true},
+        {label:'iPhone 14 Pro Max (512GB)',    val:'$574.80  (orig. $958.00)',    org:true},
+        {label:'iPhone 15 (128GB)',            val:'$411.60  (orig. $686.00)',    org:true}
       ]),
-      makeNotif('success','🎉','No contracts, no hidden fees — perfect for students on a budget!'),
-      makeNotif('info','💡','Stack with family plan discount if your parents are on Zoiko too — save even more!'),
-      makeLinksBar([{url:'https://zoikomobile.com/college-student',label:'🎓 View College Student Plans'},{url:'https://zoikomobile.com/all-plans',label:'Compare All Plans'}]),
-      makeActionBar([{label:'📱 See student plans', action:'Show me all plans', type:'primary'},{label:'🎧 Ask a question', action:'__callback__'}])
+      makeInfoCard('🤖','Samsung & Google — Certified Refurbished',[
+        {label:'Galaxy S22 (128/256GB)',       val:'$208.20  (orig. $347.00)',    org:true},
+        {label:'Galaxy S22+ 5G (128/256GB)',   val:'$238.55  (orig. $397.59)',    org:true},
+        {label:'Galaxy S23 FE (128GB)',        val:'$241.35  (orig. $402.25)',    org:true},
+        {label:'Galaxy S23+ (256GB)',          val:'$343.80  (orig. $573.00)',    org:true},
+        {label:'Google Pixel 8 Pro (128GB)',   val:'$350.40  (orig. $584.00)',    org:true}
+      ]),
+      makeInfoCard('🌍','Add-On Available',[
+        {label:'International Plan',           val:'$8.40  (orig. $14.00) — add roaming to any device', org:true},
+        {label:'All devices',                  val:'Network-unlocked · eSIM-compatible · Certified inspected', org:true}
+      ]),
+      makeNotif('teal','♻️','Save up to 40% vs buying new! Every device is certified and ready to activate with any Zoiko plan.'),
+      makeLinksBar([{url:'https://zoikomobile.com/product-category/refurbished',label:'🛒 Shop All Refurbished Phones'},{url:'https://phones.zoikomobile.com',label:'Shop New Phones'}]),
+      makeActionBar([{label:'🛒 Shop now', action:'__callback__', type:'primary'},{label:'📱 New phones', action:'Tell me about new phones'}])
     ]};
   }
 
   // ════════════════════════════════════════════════════════════════════
-  // MILITARY / VETERANS
+  // DEVICE PROTECTION / INSURANCE
   // ════════════════════════════════════════════════════════════════════
-  if (/militar|veteran|vet\b|army|navy|air\s*force|marine|coast\s*guard|national\s*guard|active\s*duty|service\s*member|armed\s*forces/i.test(t)) {
-    return {text:"Thank you for your service! 🇺🇸 Zoiko offers a **lifetime military discount** for veterans and active duty members.", cards:[
-      makeInfoCard('🇺🇸','Military & Veteran Discount',[
-        {label:'Discount amount',   val:'20% OFF — for life, every month',                 org:true},
-        {label:'Who qualifies',    val:'Active duty, veterans, retired military',          org:true},
-        {label:'How to claim',     val:'Verify with military ID or DD-214 at signup',     org:true},
-        {label:'Applies to',       val:'All BYOD plans — bring your own device',          org:true},
-        {label:'Family benefit',   val:'Nominate up to 5 family/friends for 15% lifetime',org:true},
-        {label:'Stack with',       val:'Family plan discount for even more savings',      org:true}
+  // DEVICE PROTECTION / INSURANCE
+  // ════════════════════════════════════════════════════════════════════
+  if (/device\s*protect|phone\s*protect|phone\s*insur|device\s*insur|cracked\s*screen|protect.*phone|insur.*phone|akko|total.*protect|zoiko.*protect|zoiko.*insur/i.test(t) && !/business\s*plan|health|car\s*insur/i.test(t)) {
+    // Specific: how to file a claim
+    if (/file.*claim|submit.*claim|make.*claim|claim.*process|how.*claim/i.test(t)) {
+      return {text:"Filing a device protection claim with AKKO is quick and easy! 🛡️", cards:[
+        makeStepCard('HOW TO FILE A DEVICE PROTECTION CLAIM',[
+          {label:'Log in to your Zoiko Mobile account',         sub:'https://zoikomobile.com/login'},
+          {label:'Go to Device Protection → File a Claim',     sub:'Or visit AKKO claims portal directly'},
+          {label:'Select the device and type of damage',        sub:'Cracked screen, theft, water damage, etc.'},
+          {label:'Upload supporting photos or police report',   sub:'Required for theft claims'},
+          {label:'Submit — AKKO will contact you within 24–48hrs', sub:'Fast resolution via AKKO\'s network'}
+        ]),
+        makeNotif('info','📞','Need help? Call 800-988-8116 or email support@zoikomobile.com — 24/7 support.'),
+        makeLinksBar([{url:'https://zoikomobile.com/device-protection',label:'🛡️ Device Protection Portal'},{url:'https://zoikomobile.com/contact-us',label:'Contact Support'}]),
+        makeActionBar([{label:'🛡️ Go to portal', action:'__callback__', type:'primary'},{label:'📞 Call support', action:'What is the Zoiko support number?'}])
+      ]};
+    }
+    return {text:"**Total Device Protection** with Zoiko Mobile Insurance — powered by AKKO! 🛡️", cards:[
+      makeInfoCard('🛡️','Total Device Protection — $9.99/mo per device',[
+        {label:'Provider',               val:'AKKO — trusted leader in device protection',                org:true},
+        {label:'Monthly price',          val:'Starting at $9.99/month per device',                        org:true},
+        {label:'✅ Cracked screens',     val:'Accidental screen damage fully covered',                    org:true},
+        {label:'✅ Accidental damage',   val:'Drops and other mishaps',                                   org:true},
+        {label:'✅ Water damage',        val:'Spills, liquid submersion, and all liquid-related issues',  org:true},
+        {label:'✅ Theft',               val:'Stolen devices — including car break-in (forced entry)',    org:true},
+        {label:'✅ Mechanical failures', val:'Electrical & component failures (phones)',                  org:true},
+        {label:'Devices covered',        val:'Phones (new & BYOD), laptops, tablets, smartwatches, smart hubs, headphones', org:true},
+        {label:'Claims',                 val:'Fast — visit claims portal or call support',                org:true},
+        {label:'Enroll',                 val:'At checkout or anytime via your Zoiko account dashboard',  org:true}
       ]),
-      makeNotif('success','🎖️','The 20% military discount is LIFETIME — it never expires, never reduces!'),
-      makeNotif('teal','👨‍👩‍👧','Nominate up to 5 friends or family members — they get 15% off for life too!'),
-      makeLinksBar([{url:'https://zoikomobile.com/military-veterans',label:'🇺🇸 Military & Veteran Plans'},{url:'https://zoikomobile.com/all-plans',label:'View All Plans'}]),
-      makeActionBar([{label:'🇺🇸 Claim my discount', action:'__callback__', type:'primary'},{label:'📱 View BYOD plans', action:'I want to bring my own phone'}])
+      makeNotif('success','🛡️','One plan protects your phone AND home electronics — BYOD or new device, all covered from $9.99/mo!'),
+      makeLinksBar([{url:'https://zoikomobile.com/device-protection',label:'🛡️ Get Device Protection'},{url:'https://zoikomobile.com/device-protection',label:'📋 How to Enroll'}]),
+      makeActionBar([{label:'🛡️ Protect my device', action:'__callback__', type:'primary'},{label:'❓ How to file a claim', action:'How do I file a device protection claim?'}])
+    ]};
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // COLLEGE STUDENT DISCOUNT
+  // ════════════════════════════════════════════════════════════════════
+  if (/college|student\s*discount|student\s*deal|university|enrolled|enrollment|student\s*id|student\s*plan/i.test(t)) {
+    return {text:"Great news for students! 🎓 Zoiko offers **20% off any plan** — College Student Discount Program!", cards:[
+      makeInfoCard('🎓','Zoiko Mobile College Student Discount Program',[
+        {label:'Discount',           val:'20% off ANY Zoiko Mobile plan',                              org:true},
+        {label:'Who qualifies?',     val:'Any student enrolled at a recognized US college or university', org:true},
+        {label:'Proof required',     val:'Valid student ID OR current enrollment verification',         org:true},
+        {label:'Verification time',  val:'Up to 48 hours — confirmation sent by email',                org:true},
+        {label:'Duration',           val:'No duration limit — keep discount as long as you\'re a customer & student', org:true},
+        {label:'Annual renewal',     val:'May need to update student status after each academic year',  org:true},
+        {label:'Combinable?',        val:'Cannot be combined with other promotions or discounts',      org:true},
+        {label:'Keep your number',   val:'Yes — free port-in from any carrier',                        org:true},
+        {label:'No hidden fees',     val:'You only pay plan price minus 20% — nothing else',           org:true}
+      ]),
+      makeStepCard('HOW TO GET YOUR 20% STUDENT DISCOUNT',[
+        {label:'Visit zoikomobile.com and choose your plan',     sub:'Any plan qualifies — prepaid, postpaid, BYOD'},
+        {label:'Register at the student discount form',          sub:'https://zoikomobile.com/college-student-discount-form'},
+        {label:'Provide student ID or enrollment verification',  sub:'From any recognized US college or university'},
+        {label:'Wait up to 48 hrs for confirmation email',       sub:'Discount activates immediately after approval!'}
+      ]),
+      makeLinksBar([{url:'https://zoikomobile.com/college-student-discount-form',label:'🎓 Register Now'},{url:'https://zoikomobile.com/college-student',label:'Full Program Details'},{url:'https://zoikomobile.com/all-plans',label:'Browse Plans'}]),
+      makeActionBar([{label:'🎓 Register now', action:'__callback__', type:'primary'},{label:'📱 See all plans', action:'Show me all plans'}])
+    ]};
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // MILITARY & VETERANS DISCOUNT
+  // ════════════════════════════════════════════════════════════════════
+  if (/militar|veteran|active.?duty|reservist|armed\s*forces|service\s*member/i.test(t)) {
+    return {text:"Thank you for your service! 🇺🇸 Zoiko honors military and veterans with **lifetime discounts**!", cards:[
+      makeInfoCard('🇺🇸','Military & Veterans Lifetime Deals',[
+        {label:'Personal discount',      val:'20% LIFETIME off any BYOD plan (prepaid or contract)',       org:true},
+        {label:'Family & friends',       val:'15% lifetime off BYOD plans for up to 5 nominated people',  org:true},
+        {label:'Who qualifies?',         val:'Active-duty military, veterans, reservists — new customers only', org:true},
+        {label:'Proof required',         val:'Valid military ID or official proof of veteran status',      org:true},
+        {label:'Verification time',      val:'Up to 48 hours — confirmation sent by email',               org:true},
+        {label:'Unlimited talk & text',  val:'US, Canada & Mexico included',                              org:true},
+        {label:'5G access',              val:'Available in select areas nationwide',                       org:true},
+        {label:'North America roaming',  val:'US, Canada & Mexico — no extra charges',                    org:true},
+        {label:'Wi-Fi Calling',          val:'Free on all plans — call home even when deployed overseas',  org:true},
+        {label:'Lifetime',               val:'Discount stays as long as you remain a Zoiko customer',     org:true}
+      ]),
+      makeNotif('success','🇺🇸','Nominate up to 5 family members or friends — they each get 15% lifetime off their own BYOD plans!'),
+      makeLinksBar([{url:'https://zoikomobile.com/military-veterans-form',label:'🇺🇸 Register Now'},{url:'https://zoikomobile.com/military-veterans',label:'Full Program Details'}]),
+      makeActionBar([{label:'🇺🇸 Register now', action:'__callback__', type:'primary'},{label:'👨‍👩‍👧 Nominate family', action:'How do I nominate family for the military plan?'}])
+    ]};
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // USPS / POSTAL SERVICE WORKERS
+  // ════════════════════════════════════════════════════════════════════
+  if (/postal\s*service|usps|mail\s*carrier|mail\s*worker|postal\s*worker|u\.s\.\s*postal/i.test(t)) {
+    return {text:"Zoiko salutes **U.S. Postal Service Workers** with a special 20% lifetime discount! 📬", cards:[
+      makeInfoCard('📬','A Special Thank You To U.S. Postal Service Workers',[
+        {label:'Discount',           val:'20% off ANY Zoiko Mobile plan — for life',                    org:true},
+        {label:'Family & friends',   val:'Nominate up to 5 people for 20% off their BYOD plans',        org:true},
+        {label:'Who qualifies?',     val:'U.S. Postal Service workers — new customers only',            org:true},
+        {label:'Sign up with',       val:'Your official USPS work email address',                       org:true},
+        {label:'Proof required',     val:'Valid government-issued USPS work ID',                        org:true},
+        {label:'Verification time',  val:'Up to 48 hours — confirmation sent by email',                 org:true},
+        {label:'Combinable?',        val:'YES — can be combined with other Zoiko promotions!',          org:true},
+        {label:'North America',      val:'US, Canada & Mexico roaming included on all plans',           org:true},
+        {label:'Support',            val:'800-988-8116 or info@zoikomobile.com'                        }
+      ]),
+      makeStepCard('HOW TO CLAIM YOUR USPS DISCOUNT',[
+        {label:'Browse plans at zoikomobile.com/all-plans',    sub:'Any Zoiko plan qualifies'},
+        {label:'Sign up with your official USPS work email',   sub:'Required for verification'},
+        {label:'Provide your valid USPS government work ID',   sub:'Confirms your Postal Service status'},
+        {label:'Nominate up to 5 family members or friends',   sub:'They all get 20% off their BYOD plans too!'},
+        {label:'Receive confirmation email within 48 hours',   sub:'Discount activates immediately after approval'}
+      ]),
+      makeLinksBar([{url:'https://zoikomobile.com/postal-service-workers-form',label:'📬 Sign Up Today'},{url:'https://zoikomobile.com/postal-service-workers',label:'Full Program Details'},{url:'https://zoikomobile.com/all-plans',label:'Browse Plans'}]),
+      makeActionBar([{label:'📬 Register now', action:'__callback__', type:'primary'},{label:'📱 Browse plans', action:'Show me all plans'}])
     ]};
   }
 
   // ════════════════════════════════════════════════════════════════════
   // ANIMAL CHARITIES
   // ════════════════════════════════════════════════════════════════════
-  if (/animal|charity|charities|donate|donation|pet|rescue|shelter|wildlife|nonprofit|non.profit/i.test(t)) {
-    return {text:"Zoiko Mobile gives back! 🐾 We support **animal charities** through our community program.", cards:[
-      makeInfoCard('🐾','Zoiko Animal Charity Program',[
-        {label:'What it is',       val:'Zoiko donates a portion of revenue to animal charities', org:true},
-        {label:'Who benefits',     val:'Animal rescue shelters & wildlife organizations',        org:true},
-        {label:'How you help',     val:'Every Zoiko plan you buy supports the cause',           org:true},
-        {label:'Program details',  val:'Visit zoikomobile.com/animal-charities for full info', org:true}
+  if (/animal\s*charit|animal\s*welfare|animal\s*shelter|pet\s*rescue|animal\s*worker|charity\s*worker|animal.*discount/i.test(t)) {
+    return {text:"Your connection saves lives! 🐾 Zoiko supports animals and animal charities while keeping you connected!", cards:[
+      makeInfoCard('🐾','Exclusive Discounts for Animal Charity Workers',[
+        {label:'Discount',           val:'20% off Zoiko plans for charity workers — for life',             org:true},
+        {label:'Family coverage',    val:'Up to 5 family members get the same 20% discount',               org:true},
+        {label:'Who qualifies?',     val:'Employees of registered US animal welfare charities',             org:true},
+        {label:'Proof required',     val:'Charity-issued ID badge AND employment letter on official letterhead', org:true},
+        {label:'Verification time',  val:'Up to 48 hours — confirmation sent by email',                    org:true},
+        {label:'Zoiko donates',      val:'Up to 2% of annual profits to animal welfare causes',             org:true},
+        {label:'Grace period',       val:'Discount continues for 3 months if you leave the charity sector', org:true},
+        {label:'Combinable?',        val:'Cannot be combined with other discounts or promotions',           org:true},
+        {label:'Support phone',      val:'800-477-1477',                                                    org:true},
+        {label:'Support email',      val:'partnership@zoikomobile.com',                                     org:true}
       ]),
-      makeNotif('success','🐾','Your Zoiko subscription helps animals in need — feel good about your mobile plan!'),
-      makeLinksBar([{url:'https://zoikomobile.com/animal-charities',label:'🐾 Learn About Our Animal Charities'},{url:'https://zoikomobile.com/all-plans',label:'Get a Plan & Give Back'}]),
-      makeActionBar([{label:'🐾 Learn more', action:'Show me all plans', type:'primary'},{label:'🎧 Ask a question', action:'__callback__'}])
+      makeNotif('teal','🐾','From rescuing pets to supporting shelters — your Zoiko plan literally saves animals every year!'),
+      makeLinksBar([
+        {url:'https://zoikomobile.com/animal-charity-worker-registration',label:'🐾 Register as Worker'},
+        {url:'https://zoikomobile.com/zoiko-mobile-animal-welfare-partnership/',label:'🤝 Partner With Us Today'},
+        {url:'https://zoikomobile.com/animal-charities',label:'Full Program Details'}
+      ]),
+      makeActionBar([{label:'🐾 Register now', action:'__callback__', type:'primary'},{label:'🤝 Charity partnership', action:'Tell me about becoming a Zoiko partner'}])
     ]};
   }
 
-  const hasZoikoKw = /plan|sim|esim|data|call|text|phone|network|coverage|pay|bill|port|number|byod|family|international|activat|device|signal|5g|4g|deal|promo|support|agent|help|zoiko|mobile|hotspot|roam|countr|wifi|cancel|contract|postpaid|prepaid|unlimited|protect|office|price|cost|save|switch|bring|unlock|compatible|speed|carrier|account|callback|business|invoice|overcharg|travel|balance|password|email|update|login|militar|veteran|colleg|student|animal|charit|callback|call\s*back/i.test(t);
+  // ════════════════════════════════════════════════════════════════════
+  // BECOME A PARTNER
+  // ════════════════════════════════════════════════════════════════════
+  if (/becom.*partner|partner.*zoiko|zoiko.*partner|retail.*partner|wholesale.*partner|affiliate.*program|resell.*zoiko|zoiko.*retailer|zoiko.*affiliate|corporate.*collaborat|partner\s*with\s*us|partner.*opportun/i.test(t)) {
+    return {text:"Join forces with Zoiko Mobile! 🤝 Multiple partnership opportunities to collaborate and grow together:", cards:[
+      makeInfoCard('🤝','Partnership Opportunities — Zoiko Mobile America',[
+        {label:'Retail Partnership',      val:'Expand your store with Zoiko devices, SIMs & services — physical or online', org:true},
+        {label:'Wholesale Partnership',   val:'Competitive bulk pricing for retailers, distributors & businesses',           org:true},
+        {label:'Affiliate Program',       val:'Earn commissions promoting Zoiko to your audience online',                    org:true},
+        {label:'Corporate Collaboration', val:'Exclusive employee discounts on devices and mobile services',                 org:true},
+        {label:'Primary contact',         val:'partnership@zoikomobile.com',                                                org:true},
+        {label:'HQ address',              val:'5900 Balcones Drive, Suite 100, Austin, TX 78731',                           org:true}
+      ]),
+      makeStepCard('HOW TO GET STARTED',[
+        {label:'Explore the partnership type that suits you',  sub:'Retail · Wholesale · Affiliate · Corporate'},
+        {label:'Apply or inquire',                             sub:'Complete the form or email partnership@zoikomobile.com'},
+        {label:'Collaborate and grow',                         sub:'Our team supports you every step of the way'}
+      ]),
+      makeLinksBar([
+        {url:'https://zoikomobile.com/become-partner-form',label:'🤝 Apply to Partner'},
+        {url:'https://zoikomobile.com/become-retailer',label:'Become a Retailer'},
+        {url:'https://zoikomobile.com/become-affiliate',label:'Become an Affiliate'},
+        {url:'https://zoikomobile.com/become-partner',label:'All Partnership Info'}
+      ]),
+      makeActionBar([{label:'🤝 Apply now', action:'__callback__', type:'primary'},{label:'📧 Email us', action:'What is the Zoiko support number?'}])
+    ]};
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // ABOUT ZOIKO MOBILE
+  // ════════════════════════════════════════════════════════════════════
+  if (/about\s*zoiko|who\s*is\s*zoiko|what\s*is\s*zoiko|zoiko\s*story|history.*zoiko|zoiko.*history|founder|lennox|how.*zoiko.*start|zoiko.*mean/i.test(t) && !/device|protect|insur|akko|plan|partner|student|militar|veteran|postal|usps|animal|charit|travel|refurb|phone|claim/i.test(t)) {
+    return {text:"Zoiko Mobile — connecting every possibility, inspired by animals, music & nature! 🌟", cards:[
+      makeInfoCard('🌟','The Zoiko Mobile Chronicle',[
+        {label:'Founded by',      val:'Lennox McLeod — ex-Vodafone project manager',                              org:true},
+        {label:'Name origin',     val:'"Zoi" from Zoion (living being/animal) + "ko" from Zoologikos — a linguistic innovation', org:true},
+        {label:'Tagline',         val:'"Connecting Every Possibility"',                                            org:true},
+        {label:'Identity',        val:'The Animal and Music Loving Network 🐾🎵',                                  org:true},
+        {label:'Network',         val:'MVNO on T-Mobile — nationwide 5G + 4G LTE',                                org:true},
+        {label:'Plans from',      val:'$15/mo — no credit check, no hidden fees, no contracts',                   org:true},
+        {label:'International',   val:'Free calls to 200+ countries on all plans',                                 org:true},
+        {label:'Animal welfare',  val:'Up to 2% of annual profits donated to animal welfare causes',               org:true},
+        {label:'Headquarters',    val:'5900 Balcones Drive, Suite 100, Austin, TX 78731',                         org:true},
+        {label:'Support',         val:'800-988-8116 · 24/7'}
+      ]),
+      makeNotif('teal','🐾🎵','Lennox combined his passion for animals, music, theology, Greek language, and mathematics to create something truly unique!'),
+      makeLinksBar([
+        {url:'https://zoikomobile.com/about',label:'📖 Full Story — About Us'},
+        {url:'https://zoikomobile.com/news',label:'📰 News & Press'},
+        {url:'https://zoikomobile.com/blog',label:'📝 Blog'},
+        {url:'https://zoikomobile.com/animal-charities',label:'🐾 Animal Welfare'}
+      ]),
+      makeActionBar([{label:'📱 See our plans', action:'Show me all plans', type:'primary'},{label:'🤝 Partner with us', action:'Tell me about becoming a Zoiko partner'}])
+    ]};
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // NEWS / PRESS
+  // ════════════════════════════════════════════════════════════════════
+  if (/news|press|media|announcements?|latest.*zoiko|zoiko.*update|blog/i.test(t) && !/bad|no\s*news/i.test(t)) {
+    return {text:"Stay up to date with the latest from Zoiko Mobile! 📰", cards:[
+      makeInfoCard('📰','Zoiko News & Media',[
+        {label:'Press & Media',  val:'Latest announcements and company news',   org:true},
+        {label:'Blog',           val:'Tips, guides, and telecom insights',      org:true},
+        {label:'Sustainability', val:'Our commitment to a greener future',      org:true},
+        {label:'Animal welfare', val:'How your plan supports animals in need',  org:true}
+      ]),
+      makeLinksBar([{url:'https://zoikomobile.com/news',label:'📰 News & Press'},{url:'https://zoikomobile.com/blog',label:'📝 Blog'},{url:'https://zoikomobile.com/about',label:'📖 About Us'}]),
+      makeActionBar([{label:'📖 About Zoiko', action:'Tell me about Zoiko Mobile'},{label:'🤝 Become a partner', action:'Tell me about becoming a Zoiko partner'}])
+    ]};
+  }
+
+  const hasZoikoKw = /plan|sim|esim|data|call|text|phone|network|coverage|pay|bill|port|number|byod|family|international|activat|device|signal|5g|4g|deal|promo|support|agent|help|zoiko|mobile|hotspot|roam|countr|wifi|cancel|contract|postpaid|prepaid|unlimited|protect|office|price|cost|save|switch|bring|unlock|compatible|speed|carrier|account|callback|business|invoice|overcharg|travel|balance|password|email|update|login|student|militar|veteran|postal|usps|animal|charit|partner|affiliate|refurb|about|news|insurance|college|university/i.test(t);
 
   if (!hasZoikoKw) {
     // Completely off-topic — friendly redirect
@@ -2794,7 +3034,7 @@ function getSuggestions(reply) {
   if (r.includes('cancel')||r.includes('close.*account'))
     return ['Switch to a lower plan','Talk to retention team','How do I port my number?'];
   // Business
-  if (r.includes('business')||r.includes('business-deals'))
+  if (r.includes('business')||r.includes('business-postpaid-plans'))
     return ['Calculate savings for 5 lines','Show me all postpaid plans','Talk to a live agent'];
   // Plans
   if ((r.includes('flex')||r.includes('$13'))&&!r.includes('core'))
@@ -2811,7 +3051,7 @@ function getSuggestions(reply) {
   if (r.includes('family')||r.includes('20%')||r.includes('lines'))
     return ['Calculate savings for 4 lines','Can I mix prepaid and postpaid?','How many lines can I add?'];
   // International / countries
-  if (r.includes('roaming-rates')||r.includes('roaming rates')||r.includes('international calling'))
+  if (r.includes('roamingrates')||r.includes('roaming rates')||r.includes('international calling'))
     return ['Is India included?','What about Philippines?','Do I pay extra for roaming?'];
   if (r.includes('india'))
     return ['Which countries can I call free?','Tell me about travel passes','Tell me about Zoiko Core plan'];
@@ -3088,7 +3328,7 @@ micBtn.addEventListener('click',async()=>{
 clearBtn.addEventListener('click',()=>{
   chatMsgs=[]; msgCount=0; sessionStart=Date.now();
   window.speechSynthesis.cancel(); hideToolBar();
-  msgs.innerHTML=`<div class="welcome" id="welcome"><div class="wlogo"><img src="${LOGO}" alt="Zoiko"/></div><div class="wsub">New conversation — How can I help you today?</div></div><div class="chips" id="chips"><div class="chip" onclick="quick('Show me all plans')">📱 Plans</div><div class="chip" onclick="quick('How do I activate my SIM?')">🔌 Activate</div><div class="chip" onclick="quick('Tell me about family plans')">👨‍👩‍👧 Family</div><div class="chip" onclick="quick('Which countries can I call free?')">🌍 Intl Calling</div><div class="chip" onclick="quick('What deals do you have?')">🎉 Deals</div><div class="chip" onclick="quick('I need support')">🎧 Help</div></div>`;
+  msgs.innerHTML=`<div class="welcome" id="welcome"><div class="wlogo"><img src="${LOGO}" alt="Zoiko"/></div><div class="wsub">New conversation — How can I help you today?</div></div><div class="chips" id="chips"><div class="chip" onclick="quick('Show me all plans')">📱 Plans</div><div class="chip" onclick="quick('How do I activate my SIM?')">🔌 Activate</div><div class="chip" onclick="quick('Tell me about family plans')">👨‍👩‍👧 Family</div><div class="chip" onclick="quick('Which countries can I call free?')">🌍 Intl Calling</div><div class="chip" onclick="quick('Tell me about military and veterans lifetime deals')">🇺🇸 Military</div><div class="chip" onclick="quick('Tell me about the college student program')">🎓 Students</div><div class="chip" onclick="quick('Tell me about Zoiko device protection')">🛡️ Protection</div><div class="chip" onclick="quick('I need support')">🎧 Help</div></div>`;
 });
 
 // ══════════════════════════════════════════════
@@ -3117,10 +3357,10 @@ window.addEventListener('load',()=>{
     const bootCards = [makeMenuCards([
       {ico:'📱',title:'Browse all plans',sub:'From $15/mo · No credit check · eSIM ready',action:'Show me all plans'},
       {ico:'🔌',title:'Activate my SIM / eSIM',sub:'Physical SIM or instant eSIM',action:'How do I activate my SIM?'},
-      {ico:'👨‍👩‍👧',title:'Family plan savings',sub:'20% off automatically with 3+ lines',action:'Tell me about family plans'},
-      {ico:'🌍',title:'International calling',sub:'70–200+ countries included free',action:'Which countries can I call free?'},
-      {ico:'📲',title:'Bring my own phone',sub:'BYOD · Keep your number free',action:'I want to bring my own phone'},
-      {ico:'🎧',title:'Talk to a live agent',sub:'Callback within 24 hours · 24/7 support',action:'I want to speak to an agent'}
+      {ico:'🇺🇸',title:'Military & Veterans Deals',sub:'20% lifetime discount + family 15%',action:'Tell me about military and veterans lifetime deals'},
+      {ico:'🎓',title:'College Student Discount',sub:'20% off any plan with student ID',action:'Tell me about the college student program'},
+      {ico:'🛡️',title:'Device Protection',sub:'From $9.99/mo — powered by AKKO',action:'Tell me about Zoiko device protection'},
+      {ico:'🤝',title:'Become a Partner',sub:'Retail, wholesale, affiliate, corporate',action:'Tell me about becoming a Zoiko partner'}
     ])];
     streamMsg(greeting, null, bootCards);
   }, 700);
