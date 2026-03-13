@@ -59,4 +59,8 @@ gsutil iam ch serviceAccount:${SA_EMAIL}:objectAdmin gs://${GCR_BUCKET} 2>/dev/n
 echo ""
 echo "══════════════════════════════════════════════"
 echo "  Done! Now re-run your GitHub Actions pipeline"
+<<<<<<< HEAD
 echo "══════════════════════════════════════════════"
+=======
+echo "══════════════════════════════════════════════"
+>>>>>>> f556376018e2f2c2db4dee3a33b2927f105ae76b
