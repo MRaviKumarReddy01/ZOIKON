@@ -41,8 +41,5 @@ CMD exec uvicorn backend.app:app \
       --host 0.0.0.0 \
       --port ${PORT} \
       --workers 1 \
-<<<<<<< HEAD
       --log-level info
-=======
-      --log-level info
->>>>>>> f556376018e2f2c2db4dee3a33b2927f105ae76b
+
