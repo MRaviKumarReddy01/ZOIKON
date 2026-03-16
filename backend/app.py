@@ -7,6 +7,7 @@ import json, smtplib, re, time, os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
+from fastapi import Form
 from datetime import datetime
 
 app = FastAPI()
@@ -101,6 +102,13 @@ def send_email(to_addr: str, subject: str, html_body: str, reply_to: str = None)
         msg.attach(MIMEText(html_body, "html"))
 
         print(f"   Connecting to SMTP server...")
+        with smtplib.SMTP(SMTP_HOST, 587, timeout=10) as server:
+            print("   Connected! Starting TLS...")
+            server.starttls()
+            print("   TLS started. Logging in...")
+            server.login(SMTP_USER, SMTP_PASS)
+            print("   Logged in! Sending email...")
+            server.sendmail(SMTP_USER, to_addr, msg.as_string())
         with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=10) as server:
             print(f"   Connected! Logging in...")
             server.login(SMTP_USER, SMTP_PASS)
@@ -116,7 +124,33 @@ def send_email(to_addr: str, subject: str, html_body: str, reply_to: str = None)
     except Exception as e:
         print(f"❌ Error: {str(e)}")
         raise
+from fastapi.responses import HTMLResponse
 
+@app.get("/send-request", response_class=HTMLResponse)
+async def send_request_form():
+    return """
+    <html>
+    <head><title>Send Callback Request</title></head>
+    <body>
+        <h2>Zoiko Mobile Callback Request</h2>
+        <form method="post" action="/send-request">
+            Name:<br>
+            <input name="name"><br><br>
+
+            Email:<br>
+            <input name="email"><br><br>
+
+            Phone:<br>
+            <input name="phone"><br><br>
+
+            Issue:<br>
+            <textarea name="issue"></textarea><br><br>
+
+            <button type="submit">Send Request</button>
+        </form>
+    </body>
+    </html>
+    """
 # ── /send-request ─────────────────────────────────────────────────────────────
 @app.post("/send-request")
 async def send_request(data: CallbackRequest):
