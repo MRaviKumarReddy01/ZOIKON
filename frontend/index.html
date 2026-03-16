@@ -552,7 +552,7 @@ CRITICAL RULES — NEVER VIOLATE:
 
 MANDATORY URLs — always use these exact links:
 - Login:            https://zoikomobile.com/login
-- Business Plans:   https://zoikomobile.com/business-postpaid-plans
+- Business Plans:   https://zoikomobile.com/business-deals
 - Contact Us:       https://zoikomobile.com/contact-us
 - Customer Service: https://zoikomobile.com/customer-service
 - All Plans:        https://zoikomobile.com/all-plans
@@ -564,7 +564,7 @@ MANDATORY URLs — always use these exact links:
 - Refurbished Phones:   https://zoikomobile.com/product-category/refurbished
 - Device Protection:    https://zoikomobile.com/device-protection
 - Travel Plans:         https://zoikomobile.com/travel-plans
-- Roaming Rates:        https://zoikomobile.com/roamingrates
+- Roaming Rates:        https://zoikomobile.com/roaming-rates
 - College Student:      https://zoikomobile.com/college-student
 - Military/Veterans:    https://zoikomobile.com/military-veterans
 - USPS Workers:         https://zoikomobile.com/postal-service-workers
@@ -597,7 +597,7 @@ When user says "travel" or "international":
 → Direct to https://zoikomobile.com/travel-plans. All travel passes include unlimited 5G, free talk & text, Canada & Mexico roaming, mobile hotspot. Starting at $7.50/day in 200+ countries.
 
 When user says "business" or "business plan":
-→ Direct to https://zoikomobile.com/business-postpaid-plans and use get_plan_details.
+→ Direct to https://zoikomobile.com/business-deals and use get_plan_details.
 
 When escalation is needed:
 → Provide BOTH: https://zoikomobile.com/contact-us AND https://zoikomobile.com/customer-service
@@ -637,7 +637,7 @@ TRAVEL PLANS (Zoiko Daily TravelPass — all include: unlimited data, free talk 
 - Zoiko Explorer Pass: $52.00 / 14 days / 15GB high-speed + unlimited
 - Global Connect: $65.00 / 1 day / 10GB high-speed + unlimited (frequent traveler plan)
 - Activate as eSIM add-on in 2 minutes. No hidden fees. 24/7 support.
-- Roaming rates: https://zoikomobile.com/roamingrates | Info: https://zoikomobile.com/travel-plans
+- Roaming rates: https://zoikomobile.com/roaming-rates | Info: https://zoikomobile.com/travel-plans
 
 SMARTPHONES & DEVICES:
 - New phones at https://phones.zoikomobile.com — NUU F4L Flip ($59), BLU C5L MAX ($59), PCD P65 ($69), Nokia G10 ($79), Samsung Galaxy A03s ($109), Motorola G 5G 2022 ($119), Motorola G Play 2023 ($129), Motorola G Play 2024 ($129). All network-unlocked.
@@ -725,7 +725,7 @@ const PLANS = {
   "zoiko supreme unlimited":{ name:"Zoiko Supreme Unlimited",type:"postpaid", price:65, data:"35GB priority + truly unlimited", hotspot:"20GB", talk:"3,000 min", texts:"35,000", countries:"200+", esim:true, link:"https://zoikomobile.com/all-plans", perks:["35GB priority data","20GB super-fast hotspot","VIP support","Device financing","200+ countries"] },
   "byod starter":           { name:"BYOD Starter",           type:"prepaid",  price:15, data:"4GB", hotspot:"1GB", talk:"Unlimited", texts:"Unlimited", countries:"70+", esim:true, link:"https://zoikomobile.com/byod-plans/", perks:["Bring your own phone","Keep your number free","Check IMEI at zoikomobile.com/byod-plans/","Instant activation"] },
   "zoiko lite":             { name:"Zoiko Lite",             type:"postpaid", price:20, data:"Basic", hotspot:"Included", talk:"Unlimited", texts:"Unlimited", countries:"50+", esim:true, link:"https://zoikomobile.com/all-plans", perks:["Light use plan","No credit check","International calling","Great for backup lines"] },
-  "zoiko business":         { name:"Zoiko Business",         type:"postpaid", price:35, data:"Unlimited 5G", hotspot:"Included", talk:"Unlimited", texts:"Unlimited", countries:"100+", esim:true, link:"https://zoikomobile.com/business-postpaid-plans", perks:["Unlimited 5G data","Dedicated business support","Multi-line management","Device financing","No credit check","Priority network access"] }
+  "zoiko business":         { name:"Zoiko Business",         type:"postpaid", price:35, data:"Unlimited 5G", hotspot:"Included", talk:"Unlimited", texts:"Unlimited", countries:"100+", esim:true, link:"https://zoikomobile.com/business-deals", perks:["Unlimited 5G data","Dedicated business support","Multi-line management","Device financing","No credit check","Priority network access"] }
 };
 
 
@@ -772,7 +772,7 @@ function executeTool(name, input) {
         monthly_savings:saved, annual_savings:saved?+(saved*12).toFixed(0):null,
         note:lines>=3?`With ${lines} lines you get 20% off automatically — $${+(pp*0.2*lines).toFixed(2)}/mo savings!`:`Add ${3-lines} more line(s) to unlock the 20% family discount!`,
         signup_url:"https://zoikomobile.com/all-plans",
-        business_url:"https://zoikomobile.com/business-postpaid-plans"
+        business_url:"https://zoikomobile.com/business-deals"
       };
     }
 
@@ -1473,7 +1473,7 @@ function smartReply(text) {
   
   // Cheapest BUSINESS plan
   if (/cheapest.*business|business.*cheapest|lowest.*business/i.test(t)) {
-    return {text:"The **cheapest business plan is Business Starter at $35/mo**! 💼", cards:[makeInfoCard('💼','Business Starter — $35/mo',[{label:'Price',val:'$35.00/month',org:true},{label:'Data',val:'15GB Premium',org:true},{label:'Hotspot',val:'10GB'},{label:'Countries',val:'200+'},{label:'Account Manager',val:'✓ Included'}]),makeLinksBar([{url:'https://zoikomobile.com/business-postpaid-plans',label:'View Business Starter'}]),makeActionBar([{label:'💼 Get Starter',action:'Tell me about Business Starter plan',type:'primary'},{label:'📈 See All Business Plans',action:'Tell me about business plans'}])]};
+    return {text:"The **cheapest business plan is Business Starter at $35/mo**! 💼", cards:[makeInfoCard('💼','Business Starter — $35/mo',[{label:'Price',val:'$35.00/month',org:true},{label:'Data',val:'15GB Premium',org:true},{label:'Hotspot',val:'10GB'},{label:'Countries',val:'200+'},{label:'Account Manager',val:'✓ Included'}]),makeLinksBar([{url:'https://zoikomobile.com/plans/zoiko-business-starter',label:'Get Business Starter'}]),makeActionBar([{label:'💼 Get Starter',action:'Tell me about Business Starter plan',type:'primary'},{label:'📈 See All Business Plans',action:'Tell me about business plans'}])]};
   }
 
   // Cheapest POSTPAID plan  
@@ -1692,7 +1692,7 @@ function smartReply(text) {
         {name:'Business Advanced', price:67, data:'35GB Premium',     perks:['200+ countries','20GB hotspot','BYOD/Financing'],   badge:'BEST FOR TEAMS'},
         {name:'Business Infinite', price:74, data:'Truly Unlimited',  perks:['30GB hotspot','24/7 support','Zoiko Protect+'],    badge:'ULTIMATE BUSINESS'}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/business-postpaid-plans',label:'View All Business Plans'},{url:'https://zoikomobile.com/contact-us',label:'Talk to Business Sales'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/business-deals',label:'View All Business Plans'},{url:'https://zoikomobile.com/contact-us',label:'Talk to Business Sales'}]),
       makeActionBar([{label:'💼 Starter $35',action:'Tell me about Business Starter plan',type:'primary'},{label:'📈 Advanced $67',action:'Tell me about Business Advanced plan'},{label:'🚀 Infinite $74',action:'Tell me about Business Infinite plan'}])
     ]};
   }
@@ -1711,7 +1711,7 @@ function smartReply(text) {
       ]),
       makeNotif('info','💡','All passes include FREE international calls to 200+ countries and mobile hotspot access!'),
       makeNotif('teal','📶','Wi-Fi Calling is free on ALL plans — call home over hotel Wi-Fi at zero extra cost!'),
-      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'View Travel Plans'},{url:'https://zoikomobile.com/roamingrates',label:'Rates by Country'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'View Travel Plans'},{url:'https://zoikomobile.com/roaming-rates',label:'Rates by Country'}]),
       makeActionBar([{label:'🌅 Daily $7.50', action:'Tell me about the Daily Adventure Pass'},{label:'🗺️ 7-day $16', action:'Tell me about the Voyager Pass'},{label:'🧭 14-day $52', action:'Tell me about the Zoiko Explorer Pass'}])
     ]};
   }
@@ -1782,7 +1782,7 @@ function smartReply(text) {
         {label:'Best for',         val:'Day trips, stopovers, or weekend breaks', org:true}
       ]),
       makeNotif('info','💡','Wi-Fi Calling is FREE on ALL Zoiko plans — call home over hotel Wi-Fi at no cost!'),
-      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'Buy Daily Adventure Pass'},{url:'https://zoikomobile.com/roamingrates',label:'Rates by Country'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'Buy Daily Adventure Pass'},{url:'https://zoikomobile.com/roaming-rates',label:'Rates by Country'}]),
       makeActionBar([{label:'📍 Buy now', action:'__callback__', type:'primary'},{label:'🗺️ Compare all passes', action:'Tell me about travel passes'}])
     ]};
   }
@@ -1800,7 +1800,7 @@ function smartReply(text) {
         {label:'Great value',      val:'Only $2.30/day for a full week!',       org:true}
       ]),
       makeNotif('success','✈️','Popular for European vacations, Caribbean trips, and Asia travel!'),
-      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'Buy Voyager Pass'},{url:'https://zoikomobile.com/roamingrates',label:'Country Rates'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'Buy Voyager Pass'},{url:'https://zoikomobile.com/roaming-rates',label:'Country Rates'}]),
       makeActionBar([{label:'🗺️ Buy now', action:'__callback__', type:'primary'},{label:'🌍 Compare all passes', action:'Tell me about travel passes'}])
     ]};
   }
@@ -1818,7 +1818,7 @@ function smartReply(text) {
         {label:'Per day cost',     val:'Only $3.71/day — best value!'}
       ]),
       makeNotif('info','🌟','Perfect for backpacking, business trips, and semester abroad!'),
-      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'Buy Zoiko Explorer Pass'},{url:'https://zoikomobile.com/roamingrates',label:'Check Country Rates'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'Buy Zoiko Explorer Pass'},{url:'https://zoikomobile.com/roaming-rates',label:'Check Country Rates'}]),
       makeActionBar([{label:'🧭 Buy now', action:'__callback__', type:'primary'},{label:'💚 Shorter trip?', action:'Tell me about the Voyager Pass'}])
     ]};
   }
@@ -1835,7 +1835,7 @@ function smartReply(text) {
       ]),
       makeNotif('info','💡','All passes include FREE international calls to 200+ countries and mobile hotspot access!'),
       makeNotif('teal','📶','Wi-Fi Calling is FREE on ALL Zoiko plans — call home over hotel Wi-Fi at zero cost!'),
-      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'View Travel Plans'},{url:'https://zoikomobile.com/roamingrates',label:'Country Rates'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/travel-plans',label:'View Travel Plans'},{url:'https://zoikomobile.com/roaming-rates',label:'Country Rates'}]),
       makeActionBar([{label:'🌅 Daily $7.50', action:'Tell me about the Daily Adventure Pass'},{label:'🗺️ 7-day $16', action:'Tell me about the Voyager Pass'},{label:'🧭 14-day $52', action:'Tell me about the Zoiko Explorer Pass'}])
     ]};
   }
@@ -1857,7 +1857,7 @@ function smartReply(text) {
       ]),
       makeNotif('info','💡','Calling Canada & Mexico is FREE on all plans. Roaming IN those countries needs Unlimited One ($30) or above.'),
       makeNotif('teal','🌐','For the complete per-country rate list — including specific rates, zones, and out-of-bundle pricing — visit our Roaming Rates page:'),
-      makeLinksBar([{url:'https://zoikomobile.com/roamingrates',label:'🌍 Full Country Rates — zoikomobile.com/roamingrates'},{url:'https://zoikomobile.com/all-plans',label:'View All Plans'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/roaming-rates',label:'🌍 Full Country Rates — zoikomobile.com/roaming-rates'},{url:'https://zoikomobile.com/all-plans',label:'View All Plans'}]),
       makeActionBar([{label:'🇮🇳 India', action:'India calling'},{label:'🇵🇭 Philippines', action:'Philippines calling'},{label:'🇲🇽 Mexico roaming', action:'Mexico roaming'},{label:'🇨🇦 Canada roaming', action:'Canada roaming'}])
     ]};
   }
@@ -1876,7 +1876,7 @@ function smartReply(text) {
       makeNotif('success','✈️','International calling included on ALL plans — 70–200+ countries free depending on your plan!'),
       makeNotif('teal','🌐','For exact per-country rates, zones, and out-of-bundle pricing — check our full Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roamingrates',label:'🌍 Full Roaming Rates — all countries & zones'},
+        {url:'https://zoikomobile.com/roaming-rates',label:'🌍 Full Roaming Rates — all countries & zones'},
         {url:'https://zoikomobile.com/travel-plans',label:'Travel Day Passes'}
       ]),
       makeActionBar([{label:'🇮🇳 India', action:'India calling'},{label:'🇵🇭 Philippines', action:'Philippines calling'},{label:'🌏 Travel Passes', action:'Tell me about travel passes'}])
@@ -1896,7 +1896,7 @@ function smartReply(text) {
       ]),
       makeNotif('teal','🌐','For exact per-country rates, zones, and out-of-bundle pricing — check the full Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roamingrates',label:'🌍 View Full Roaming Rates — all countries'},
+        {url:'https://zoikomobile.com/roaming-rates',label:'🌍 View Full Roaming Rates — all countries'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans'}
       ]),
       makeActionBar([{label:'✈️ Travel Passes', action:'Tell me about travel passes', type:'primary'},{label:'📶 Wi-Fi Calling', action:'How does Wi-Fi Calling work?'}])
@@ -1908,7 +1908,7 @@ function smartReply(text) {
     return {text:"The full list of 200+ countries is on our **Roaming Rates page** — it includes every country, zone, and exact rate! 🌍", cards:[
       makeNotif('success','🌐','Zoiko serves 200+ countries across North America, Europe, Asia-Pacific, Middle East, Caribbean, Africa, and South America.'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roamingrates',label:'🌍 See All 200+ Countries & Rates — zoikomobile.com/roamingrates'},
+        {url:'https://zoikomobile.com/roaming-rates',label:'🌍 See All 200+ Countries & Rates — zoikomobile.com/roaming-rates'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans'}
       ]),
       makeActionBar([{label:'📋 View Roaming Rates', action:'Do I pay extra for roaming?', type:'primary'},{label:'✈️ Travel Passes', action:'Tell me about travel passes'}])
@@ -1924,11 +1924,11 @@ function smartReply(text) {
         {label:'Free calling on Flex',   val:'India not in the 70-country free list — check rates', org:true},
         {label:'Roaming IN India',       val:'Travel pass required — from $7.50/day',             org:true},
         {label:'Wi-Fi Calling',          val:'FREE on all plans — call India via hotel Wi-Fi',    org:true},
-        {label:'Exact per-min rates',    val:'See full details at zoikomobile.com/roamingrates', org:true}
+        {label:'Exact per-min rates',    val:'See full details at zoikomobile.com/roaming-rates', org:true}
       ]),
       makeNotif('teal','🌐','For exact rates and minute allowances to India, visit our full Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roamingrates',label:'🇮🇳 India Roaming & Calling Rates'},
+        {url:'https://zoikomobile.com/roaming-rates',label:'🇮🇳 India Roaming & Calling Rates'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans with India Calling'}
       ]),
       makeActionBar([{label:'⚡ Get Zoiko Core $25', action:'Tell me about Zoiko Core plan', type:'primary'},{label:'✈️ Travel Pass for India', action:'Tell me about travel passes'}])
@@ -1941,11 +1941,11 @@ function smartReply(text) {
         {label:'Free calling to Philippines', val:'Included on Core ($25+), Max, Infinity, Supreme', org:true},
         {label:'Roaming IN Philippines',      val:'Travel pass required — from $7.50/day',          org:true},
         {label:'Wi-Fi Calling',               val:'FREE on all plans — call home via hotel Wi-Fi',  org:true},
-        {label:'Exact per-min rates',         val:'See full details at zoikomobile.com/roamingrates', org:true}
+        {label:'Exact per-min rates',         val:'See full details at zoikomobile.com/roaming-rates', org:true}
       ]),
       makeNotif('teal','🌐','For the exact minute allowance and rates for the Philippines, visit our Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roamingrates',label:'🇵🇭 Philippines Roaming & Calling Rates'},
+        {url:'https://zoikomobile.com/roaming-rates',label:'🇵🇭 Philippines Roaming & Calling Rates'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans with Philippines Calling'}
       ]),
       makeActionBar([{label:'⚡ Get a Plan', action:'Show me all plans', type:'primary'},{label:'✈️ Travel Pass', action:'Tell me about travel passes'}])
@@ -1958,11 +1958,11 @@ function smartReply(text) {
         {label:'Free calling to Pakistan', val:'Included on Core ($25+), Max, Infinity, Supreme', org:true},
         {label:'Roaming IN Pakistan',      val:'Travel pass required — from $7.50/day',          org:true},
         {label:'Wi-Fi Calling',            val:'FREE on all plans — great for Pakistan calls',   org:true},
-        {label:'Exact per-min rates',      val:'See full details at zoikomobile.com/roamingrates', org:true}
+        {label:'Exact per-min rates',      val:'See full details at zoikomobile.com/roaming-rates', org:true}
       ]),
       makeNotif('teal','🌐','For exact rates and minute allowances to Pakistan, visit our Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roamingrates',label:'🇵🇰 Pakistan Roaming & Calling Rates'},
+        {url:'https://zoikomobile.com/roaming-rates',label:'🇵🇰 Pakistan Roaming & Calling Rates'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans with Pakistan Calling'}
       ]),
       makeActionBar([{label:'⚡ Get Zoiko Core $25', action:'Tell me about Zoiko Core plan', type:'primary'},{label:'✈️ Travel Pass', action:'Tell me about travel passes'}])
@@ -1976,11 +1976,11 @@ function smartReply(text) {
         {label:'Roaming IN Canada',       val:'FREE on Unlimited One ($30+), Infinity, Supreme',org:true},
         {label:'Roaming on Flex/Core',    val:'Travel pass required for roaming IN Canada',     org:true},
         {label:'Wi-Fi Calling',           val:'FREE on all plans — no extra charge',            org:true},
-        {label:'Exact zone/rates',        val:'See full details at zoikomobile.com/roamingrates', org:true}
+        {label:'Exact zone/rates',        val:'See full details at zoikomobile.com/roaming-rates', org:true}
       ]),
       makeNotif('teal','🌐','For exact zone rates and out-of-bundle pricing for Canada, visit our Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roamingrates',label:'🇨🇦 Canada Roaming Rates & Zones'},
+        {url:'https://zoikomobile.com/roaming-rates',label:'🇨🇦 Canada Roaming Rates & Zones'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans with Free Canada Roaming'}
       ]),
       makeActionBar([{label:'🎮 Get Unlimited One $30', action:'Tell me about Unlimited One plan', type:'primary'},{label:'📱 See all plans', action:'Show me all plans'}])
@@ -1994,11 +1994,11 @@ function smartReply(text) {
         {label:'Roaming IN Mexico',       val:'FREE on Unlimited One ($30+), Infinity, Supreme',org:true},
         {label:'Roaming on Flex/Core',    val:'Travel pass required for roaming IN Mexico',     org:true},
         {label:'Wi-Fi Calling',           val:'FREE on all plans — no extra charge',            org:true},
-        {label:'Exact zone/rates',        val:'See full details at zoikomobile.com/roamingrates', org:true}
+        {label:'Exact zone/rates',        val:'See full details at zoikomobile.com/roaming-rates', org:true}
       ]),
       makeNotif('teal','🌐','For exact zone rates and out-of-bundle pricing for Mexico, visit our Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roamingrates',label:'🇲🇽 Mexico Roaming Rates & Zones'},
+        {url:'https://zoikomobile.com/roaming-rates',label:'🇲🇽 Mexico Roaming Rates & Zones'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans with Free Mexico Roaming'}
       ]),
       makeActionBar([{label:'🎮 Get Unlimited One $30', action:'Tell me about Unlimited One plan', type:'primary'},{label:'📱 See all plans', action:'Show me all plans'}])
@@ -2011,11 +2011,11 @@ function smartReply(text) {
         {label:'Free calling to UK',  val:'Included on Essentials ($20+), Core, Max, Infinity, Supreme', org:true},
         {label:'Roaming IN the UK',   val:'Travel pass required — from $7.50/day',                       org:true},
         {label:'Wi-Fi Calling',       val:'FREE on all plans — ideal for UK trips',                      org:true},
-        {label:'Exact per-min rates', val:'See full details at zoikomobile.com/roamingrates',           org:true}
+        {label:'Exact per-min rates', val:'See full details at zoikomobile.com/roaming-rates',           org:true}
       ]),
       makeNotif('teal','🌐','For exact zone rates and minute allowances for the UK, visit our Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roamingrates',label:'🇬🇧 UK Roaming & Calling Rates'},
+        {url:'https://zoikomobile.com/roaming-rates',label:'🇬🇧 UK Roaming & Calling Rates'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans with UK Calling'}
       ]),
       makeActionBar([{label:'⚡ Get Essentials $20', action:'Tell me about Essentials plan', type:'primary'},{label:'✈️ Travel Pass', action:'Tell me about travel passes'}])
@@ -2028,11 +2028,11 @@ function smartReply(text) {
         {label:'Free calling to Australia', val:'Included on Core ($25+), Max, Infinity, Supreme', org:true},
         {label:'Roaming IN Australia',      val:'Travel pass required — from $7.50/day',          org:true},
         {label:'Wi-Fi Calling',             val:'FREE on all plans — call Australia via Wi-Fi',   org:true},
-        {label:'Exact per-min rates',       val:'See full details at zoikomobile.com/roamingrates', org:true}
+        {label:'Exact per-min rates',       val:'See full details at zoikomobile.com/roaming-rates', org:true}
       ]),
       makeNotif('teal','🌐','For exact zone rates and minute allowances for Australia, visit our Roaming Rates page:'),
       makeLinksBar([
-        {url:'https://zoikomobile.com/roamingrates',label:'🇦🇺 Australia Roaming & Calling Rates'},
+        {url:'https://zoikomobile.com/roaming-rates',label:'🇦🇺 Australia Roaming & Calling Rates'},
         {url:'https://zoikomobile.com/all-plans',label:'View Plans with Australia Calling'}
       ]),
       makeActionBar([{label:'⚡ Get Zoiko Core $25', action:'Tell me about Zoiko Core plan', type:'primary'},{label:'✈️ Travel Pass', action:'Tell me about travel passes'}])
@@ -2043,14 +2043,14 @@ function smartReply(text) {
   if (/which\s*country\s*are\s*you\s*asking|country\s*are\s*you|which\s*country/i.test(t) && !/roaming|travel|pass/i.test(t)) {
     return {text:"Just tell me which country you're interested in! 🌍 And for the full per-country rates and zones, check our Roaming Rates page:", cards:[
       makeInfoCard('🌍','Popular Country Quick-Links',[
-        {label:'🇮🇳 India',       val:'Free calling on Core ($25+) · rates at zoikomobile.com/roamingrates', org:true},
-        {label:'🇵🇭 Philippines', val:'Free calling on Core ($25+) · rates at zoikomobile.com/roamingrates', org:true},
-        {label:'🇵🇰 Pakistan',    val:'Free calling on Core ($25+) · rates at zoikomobile.com/roamingrates', org:true},
+        {label:'🇮🇳 India',       val:'Free calling on Core ($25+) · rates at zoikomobile.com/roaming-rates', org:true},
+        {label:'🇵🇭 Philippines', val:'Free calling on Core ($25+) · rates at zoikomobile.com/roaming-rates', org:true},
+        {label:'🇵🇰 Pakistan',    val:'Free calling on Core ($25+) · rates at zoikomobile.com/roaming-rates', org:true},
         {label:'🇨🇦 Canada',      val:'Calling FREE all plans · roaming free on $30+',                        org:true},
         {label:'🇲🇽 Mexico',      val:'Calling FREE all plans · roaming free on $30+',                        org:true},
         {label:'🇬🇧 UK',          val:'Free calling on Essentials ($20+)',                                     org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/roamingrates',label:'🌍 Full Country Rates — zoikomobile.com/roamingrates'},{url:'https://zoikomobile.com/travel-plans',label:'Travel Passes'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/roaming-rates',label:'🌍 Full Country Rates — zoikomobile.com/roaming-rates'},{url:'https://zoikomobile.com/travel-plans',label:'Travel Passes'}]),
       makeActionBar([{label:'📋 Free countries by plan', action:'Which countries can I call free?', type:'primary'}])
     ]};
   }
@@ -2086,7 +2086,7 @@ function smartReply(text) {
         {ico:'💚',title:'Cheapest plan — $13/mo',          sub:'Zoiko Flex · No contract',                           action:'What is the cheapest plan?'},
         {ico:'🚀',title:'Elite plans — from $65/mo',       sub:'Zero throttle · VIP perks',                          action:'Tell me about your elite plans'}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'View All Plans Online'},{url:'https://zoikomobile.com/business-postpaid-plans',label:'Business Plans'}])
+      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'View All Plans Online'},{url:'https://zoikomobile.com/business-deals',label:'Business Plans'}])
     ]};
   }
 
@@ -2405,7 +2405,7 @@ function smartReply(text) {
         {label:'📲 Free Port-In',   val:'Transfer from any carrier — $0',            org:true},
         {label:'⚡ No Activation Fees',val:'On any plan, ever',                       org:true}
       ]),
-      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Shop All Deals'},{url:'https://zoikomobile.com/business-postpaid-plans',label:'Business Deals'}]),
+      makeLinksBar([{url:'https://zoikomobile.com/all-plans',label:'Shop All Deals'},{url:'https://zoikomobile.com/business-deals',label:'Business Deals'}]),
       makeActionBar([{label:'📬 USPS discount', action:'Tell me about the USPS postal service worker program', type:'primary'},{label:'👨‍👩‍👧 Family savings', action:'Calculate my family savings'}])
     ]};
   }
@@ -3034,7 +3034,7 @@ function getSuggestions(reply) {
   if (r.includes('cancel')||r.includes('close.*account'))
     return ['Switch to a lower plan','Talk to retention team','How do I port my number?'];
   // Business
-  if (r.includes('business')||r.includes('business-postpaid-plans'))
+  if (r.includes('business')||r.includes('business-postpaid-plans')||r.includes('business-deals'))
     return ['Calculate savings for 5 lines','Show me all postpaid plans','Talk to a live agent'];
   // Plans
   if ((r.includes('flex')||r.includes('$13'))&&!r.includes('core'))
@@ -3051,7 +3051,7 @@ function getSuggestions(reply) {
   if (r.includes('family')||r.includes('20%')||r.includes('lines'))
     return ['Calculate savings for 4 lines','Can I mix prepaid and postpaid?','How many lines can I add?'];
   // International / countries
-  if (r.includes('roamingrates')||r.includes('roaming rates')||r.includes('international calling'))
+  if (r.includes('roamingrates')||r.includes('roaming rates')||r.includes('roaming-rates')||r.includes('international calling'))
     return ['Is India included?','What about Philippines?','Do I pay extra for roaming?'];
   if (r.includes('india'))
     return ['Which countries can I call free?','Tell me about travel passes','Tell me about Zoiko Core plan'];
