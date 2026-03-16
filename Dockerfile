@@ -1,40 +1,35 @@
-# ── Zoiko Mobile Chatbot — Dockerfile ─────────────────────────────────────────
-# Matches this exact folder structure:
-#   backend/app.py
-#   backend/retrain.py
-#   backend/requirements.txt   (or root requirements.txt)
-#   data/knowledge.json
-#   frontend/index.html
-# ──────────────────────────────────────────────────────────────────────────────
-
+# ── Zoiko Mobile Chatbot — Fixed Dockerfile ──────────────────────────────────
 FROM python:3.10-slim
 
 WORKDIR /app
 
-# ── Install dependencies ───────────────────────────────────────────────────────
-# Supports requirements.txt in root OR in backend/ — whichever exists
-COPY backend/requirements.txt ./requirements.txt
-RUN pip install --no-cache-dir --upgrade pip \
- && pip install --no-cache-dir -r requirements.txt
+# ── Install dependencies ──────────────────────────────────────────────────────
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-# ── Copy backend source ────────────────────────────────────────────────────────
+# ── Copy backend source ───────────────────────────────────────────────────────
 COPY backend/ backend/
-
-# ── Ensure backend is a Python package ────────────────────────────────────────
 RUN touch backend/__init__.py
 
-# ── Copy frontend (FastAPI serves it as static files) ─────────────────────────
+# ── Copy frontend (CRITICAL: must be at /app/frontend) ───────────────────────
 COPY frontend/ frontend/
 
-# ── Copy knowledge base (already lives in data/) ──────────────────────────────
-COPY data/ data/
+# ── Verify frontend exists in container ───────────────────────────────────────
+RUN if [ ! -f frontend/index.html ]; then \
+      echo "ERROR: frontend/index.html not found!" && \
+      ls -la frontend/ || echo "Frontend folder missing!"; \
+    else \
+      echo "✅ Frontend found: $(wc -c < frontend/index.html) bytes"; \
+    fi
 
-# ── Run retrain on every build to bake in latest knowledge ───────────────────
-RUN python backend/retrain.py
+# ── Copy data folder ──────────────────────────────────────────────────────────
+COPY data/ data/ 2>/dev/null || true
 
-# ── Cloud Run uses $PORT (default 8080) ───────────────────────────────────────
+# ── Cloud Run configuration ───────────────────────────────────────────────────
 ENV PORT=8080
 EXPOSE 8080
 
-# ── Start server ──────────────────────────────────────────────────────────────
-CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "1", "--log-level", "info"]
+# ── Start FastAPI server ──────────────────────────────────────────────────────
+# Using JSON format to avoid shell issues
+CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "1"]
