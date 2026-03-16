@@ -3,7 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-import json, smtplib, re, time, os    
+import json, smtplib, re, time, os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
@@ -12,12 +12,15 @@ from datetime import datetime
 
 app = FastAPI()
 
-# ── CORS ──────────────────────────────────────────────────────────────────────
+# ── CORS (CRITICAL - Must be before routes) ────────────────────────────────────
+# This config allows all origins, methods, and headers - required for Cloud Run
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=["*"],                           # Allow all origins
+    allow_credentials=True,                        # Allow cookies/auth
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],  
+    allow_headers=["*"],                           # Allow all headers
+    max_age=600,                                   # Cache preflight 10 minutes
 )
 
 # ── EMAIL CONFIG — env vars first, hardcoded fallback ─────────────────────────
@@ -530,3 +533,20 @@ print("║  POST   /chat               (Chatbot responses)            ║")
 print("║  GET    /ui                 (Frontend interface)           ║")
 print("╚════════════════════════════════════════════════════════════╝\n")
 print("✅ All systems ready!\n")
+# ── EXPLICIT CORS HEADERS (Fallback if middleware fails) ─────────────────────
+@app.options("/{full_path:path}")
+async def preflight_handler(full_path: str):
+    """
+    Handle CORS preflight requests explicitly.
+    This ensures OPTIONS requests return proper CORS headers.
+    """
+    return JSONResponse(
+        content={},
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Max-Age": "600",
+        }
+    )
