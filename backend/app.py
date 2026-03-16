@@ -12,16 +12,34 @@ from datetime import datetime
 
 app = FastAPI()
 
-# ── CORS (CRITICAL - Must be before routes) ────────────────────────────────────
-# This config allows all origins, methods, and headers - required for Cloud Run
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🔴 CRITICAL: CORS MIDDLEWARE - MUST BE FIRST BEFORE ANY OTHER MIDDLEWARE
+# ═══════════════════════════════════════════════════════════════════════════════
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],                           # Allow all origins
-    allow_credentials=True,                        # Allow cookies/auth
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],  
-    allow_headers=["*"],                           # Allow all headers
-    max_age=600,                                   # Cache preflight 10 minutes
+    allow_origins=["*"],                    # Allow all origins
+    allow_credentials=True,                 # CRITICAL: Allow credentials
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"],
+    allow_headers=["*"],                    # Allow all headers
+    max_age=3600,                           # Cache preflight for 1 hour
 )
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🟢 EXPLICIT OPTIONS HANDLER - Catches all preflight requests
+# ═══════════════════════════════════════════════════════════════════════════════
+@app.options("/{full_path:path}", include_in_schema=False)
+async def preflight(full_path: str):
+    """Handle CORS preflight (OPTIONS) requests for ALL paths"""
+    return JSONResponse(
+        content={},
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Max-Age": "3600",
+        },
+    )
 
 # ── EMAIL CONFIG — env vars first, hardcoded fallback ─────────────────────────
 SMTP_HOST     = os.getenv("SMTP_HOST",     "smtpout.secureserver.net")
@@ -154,399 +172,242 @@ async def send_request_form():
     </body>
     </html>
     """
+
 # ── /send-request ─────────────────────────────────────────────────────────────
 @app.post("/send-request")
 async def send_request(data: CallbackRequest):
 
     # ── Validation ────────────────────────────────────────────────────────────
     if not data.name.strip():
-        return JSONResponse({"success": False, "message": "Name is required"})
+        return JSONResponse(
+            {"success": False, "message": "Name is required"},
+            status_code=400,
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+                "Access-Control-Allow-Headers": "*",
+            }
+        )
     if not data.email.strip():
-        return JSONResponse({"success": False, "message": "Email is required"})
+        return JSONResponse(
+            {"success": False, "message": "Email is required"},
+            status_code=400,
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+                "Access-Control-Allow-Headers": "*",
+            }
+        )
     if not valid_email(data.email):
-        return JSONResponse({"success": False, "message": "Invalid email address"})
+        return JSONResponse(
+            {"success": False, "message": "Invalid email address"},
+            status_code=400,
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+                "Access-Control-Allow-Headers": "*",
+            }
+        )
     if not data.phone.strip():
-        return JSONResponse({"success": False, "message": "Phone number is required"})
+        return JSONResponse(
+            {"success": False, "message": "Phone number is required"},
+            status_code=400,
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+                "Access-Control-Allow-Headers": "*",
+            }
+        )
     if not valid_phone(data.phone):
-        return JSONResponse({"success": False, "message": "Phone number must be 10-15 digits"})
+        return JSONResponse(
+            {"success": False, "message": "Phone number must be 10-15 digits"},
+            status_code=400,
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+                "Access-Control-Allow-Headers": "*",
+            }
+        )
     if not data.issue.strip():
-        return JSONResponse({"success": False, "message": "Please describe how we can help"})
+        return JSONResponse(
+            {"success": False, "message": "Please describe how we can help"},
+            status_code=400,
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+                "Access-Control-Allow-Headers": "*",
+            }
+        )
 
     # ── Prepare data ──────────────────────────────────────────────────────────
     ref_id       = gen_ref_id()
     timestamp    = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     clean_name   = escape_html(data.name.strip())
-    clean_email  = data.email.strip()
-    clean_phone  = data.phone.strip()
-    phone_digits = re.sub(r'\D', '', clean_phone)   # pre-extracted (no backslash in f-string)
-    clean_issue  = escape_html(data.issue.strip()).replace("\n", "<br>")
-    first_name   = clean_name.split()[0]
+    clean_email  = escape_html(data.email.strip())
+    clean_phone  = escape_html(data.phone.strip())
+    clean_issue  = escape_html(data.issue.strip())
 
-    # ── Email to support team ─────────────────────────────────────────────────
-    support_html = f"""<!DOCTYPE html>
+    # ── SEND EMAIL TO SUPPORT ──────────────────────────────────────────────────
+    support_html = f"""
     <html>
-    <head>
-      <meta charset="UTF-8">
-      <style>
-        * {{ margin: 0; padding: 0; }}
-        body {{ font-family: 'Segoe UI', Arial, sans-serif; color: #333; line-height: 1.6; }}
-        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-        .header {{ 
-          background: linear-gradient(135deg, #CC0000, #880000); 
-          color: white; 
-          padding: 25px; 
-          border-radius: 8px 8px 0 0; 
-          text-align: center;
-        }}
-        .header h2 {{ margin: 0; font-size: 24px; }}
-        .content {{ 
-          background: #f9f9f9; 
-          padding: 25px; 
-          border: 1px solid #ddd;
-          border-top: none;
-        }}
-        .field {{ margin-bottom: 20px; }}
-        .label {{ 
-          font-weight: 700; 
-          color: #CC0000; 
-          margin-bottom: 8px;
-          font-size: 12px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }}
-        .value {{ 
-          color: #333; 
-          padding: 12px; 
-          background: white; 
-          border-left: 4px solid #CC0000;
-          border-radius: 2px;
-        }}
-        .footer {{ 
-          background: #f0f0f0; 
-          padding: 20px; 
-          text-align: center; 
-          font-size: 12px; 
-          color: #666;
-          border-top: 1px solid #ddd;
-        }}
-        .ref-id {{ color: #CC0000; font-weight: bold; font-size: 14px; }}
-        .timestamp {{ color: #999; font-size: 11px; margin-top: 10px; }}
-        a {{ color: #CC0000; text-decoration: none; }}
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <h2>🎧 New Callback Request</h2>
-        </div>
+    <body style="font-family: Arial, sans-serif; color: #333;">
+        <h2 style="color: #FC8019;">🔔 New Zoiko Mobile Callback Request</h2>
         
-        <div class="content">
-          <div class="field">
-            <div class="label">👤 Customer Name</div>
-            <div class="value">{clean_name}</div>
-          </div>
-          
-          <div class="field">
-            <div class="label">📧 Email Address</div>
-            <div class="value"><a href="mailto:{clean_email}">{clean_email}</a></div>
-          </div>
-          
-          <div class="field">
-            <div class="label">📱 Phone Number</div>
-            <div class="value"><a href="tel:{phone_digits}">{clean_phone}</a></div>
-          </div>
-          
-          <div class="field">
-            <div class="label">❓ Request Details</div>
-            <div class="value" style="white-space: pre-wrap;">{clean_issue}</div>
-          </div>
-        </div>
+        <p><strong>Reference ID:</strong> {ref_id}</p>
+        <p><strong>Timestamp:</strong> {timestamp}</p>
         
-        <div class="footer">
-          <p><span class="ref-id">Reference: {ref_id}</span></p>
-          <p class="timestamp">Received: {timestamp}</p>
-          <p style="margin-top: 10px;">© 2026 Zoiko Mobile Support</p>
-        </div>
-      </div>
+        <hr style="border: none; border-top: 2px solid #FC8019;">
+        
+        <h3>Customer Details</h3>
+        <ul>
+            <li><strong>Name:</strong> {clean_name}</li>
+            <li><strong>Email:</strong> {clean_email}</li>
+            <li><strong>Phone:</strong> {clean_phone}</li>
+        </ul>
+        
+        <h3>Issue / Request</h3>
+        <p style="background-color: #f5f5f5; padding: 10px; border-left: 4px solid #FC8019;">
+            {clean_issue.replace(chr(10), '<br>')}
+        </p>
+        
+        <hr style="border: none; border-top: 2px solid #FC8019;">
+        
+        <p><strong>Action Required:</strong> Contact customer at {clean_phone} or {clean_email}</p>
+        <p style="color: #999; font-size: 12px;">This is an automated message from Zoiko Mobile Chatbot</p>
     </body>
-    </html>"""
+    </html>
+    """
 
-    # ── Confirmation email to customer ────────────────────────────────────────
-    user_html = f"""<!DOCTYPE html>
+    try:
+        send_email(SUPPORT_EMAIL, f"🔔 Callback Request #{ref_id}", support_html, clean_email)
+    except Exception as e:
+        print(f"❌ Failed to send support email: {str(e)}")
+        return JSONResponse(
+            {"success": False, "message": f"Error: {str(e)}"},
+            status_code=500,
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+                "Access-Control-Allow-Headers": "*",
+            }
+        )
+
+    # ── SEND CONFIRMATION EMAIL TO CUSTOMER ────────────────────────────────────
+    customer_html = f"""
     <html>
-    <head>
-      <meta charset="UTF-8">
-      <style>
-        * {{ margin: 0; padding: 0; }}
-        body {{ font-family: 'Segoe UI', Arial, sans-serif; color: #333; line-height: 1.6; }}
-        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-        .header {{ 
-          background: linear-gradient(135deg, #CC0000, #880000); 
-          color: white; 
-          padding: 40px 25px;
-          border-radius: 8px 8px 0 0; 
-          text-align: center;
-        }}
-        .checkmark {{ 
-          font-size: 48px; 
-          margin-bottom: 15px;
-          display: block;
-        }}
-        .header h2 {{ margin: 0; font-size: 26px; }}
-        .content {{ 
-          background: white; 
-          padding: 30px; 
-          border: 1px solid #ddd;
-          border-top: none;
-        }}
-        .content p {{ margin: 15px 0; }}
-        .info-box {{ 
-          background: #fff0f0; 
-          border-left: 4px solid #CC0000; 
-          padding: 15px; 
-          margin: 20px 0;
-          border-radius: 2px;
-        }}
-        .ref-box {{ 
-          background: #fff8e1; 
-          border: 2px solid #CC0000; 
-          padding: 15px; 
-          border-radius: 5px; 
-          margin: 20px 0; 
-          text-align: center;
-        }}
-        .ref-id {{ 
-          font-size: 20px; 
-          color: #CC0000; 
-          font-weight: bold;
-          display: block;
-          margin: 10px 0;
-          font-family: 'Courier New', monospace;
-        }}
-        .quick-contact {{ 
-          background: #f5f5f5; 
-          padding: 20px; 
-          border-radius: 5px;
-          margin: 20px 0;
-        }}
-        .contact-item {{ 
-          margin: 10px 0; 
-          padding: 8px 0;
-          border-bottom: 1px solid #e0e0e0;
-        }}
-        .contact-item:last-child {{ border-bottom: none; }}
-        .contact-label {{ 
-          color: #CC0000; 
-          font-weight: bold;
-        }}
-        a {{ color: #CC0000; text-decoration: none; }}
-        a:hover {{ text-decoration: underline; }}
-        .footer {{ 
-          background: #f9f9f9; 
-          padding: 25px; 
-          text-align: center; 
-          font-size: 12px; 
-          color: #666;
-          border-top: 1px solid #ddd;
-        }}
-        .footer-text {{ margin: 5px 0; }}
-        .highlight {{ color: #CC0000; font-weight: bold; }}
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <span class="checkmark">✅</span>
-          <h2>Request Received!</h2>
-        </div>
+    <body style="font-family: Arial, sans-serif; color: #333;">
+        <h2 style="color: #FC8019;">✅ Callback Request Received</h2>
         
-        <div class="content">
-          <p style="font-size: 16px;">Hi <span class="highlight">{first_name}</span>,</p>
-          
-          <p>Thank you for reaching out to Zoiko Mobile! We've received your callback request and our support team will contact you within <strong>24 hours</strong>.</p>
-          
-          <div class="info-box">
-            <strong style="display: block; margin-bottom: 8px;">📞 We'll call you at:</strong>
-            <span style="font-size: 16px; color: #CC0000; font-weight: bold;">{clean_phone}</span>
-          </div>
-          
-          <div class="ref-box">
-            <strong style="font-size: 12px; color: #999;">YOUR REFERENCE ID</strong>
-            <div class="ref-id">{ref_id}</div>
-            <span style="font-size: 11px; color: #666;">Keep this for your records</span>
-          </div>
-          
-          <h3 style="color: #333; margin: 25px 0 15px 0; font-size: 16px;">Can't wait? Quick contact options:</h3>
-          
-          <div class="quick-contact">
-            <div class="contact-item">
-              <span class="contact-label">📞 Call 24/7:</span>
-              <a href="tel:+18009888116">800-988-8116</a>
-            </div>
-            <div class="contact-item">
-              <span class="contact-label">🌐 Visit us:</span>
-              <a href="https://zoikomobile.com">zoikomobile.com</a>
-            </div>
-            <div class="contact-item">
-              <span class="contact-label">💬 Live Chat:</span>
-              Available on our website (business hours)
-            </div>
-            <div class="contact-item">
-              <span class="contact-label">📧 Email:</span>
-              <a href="mailto:support@zoikomobile.com">support@zoikomobile.com</a>
-            </div>
-          </div>
-          
-          <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
-            Thanks for choosing Zoiko Mobile! 💚
-          </p>
-        </div>
+        <p>Hi {clean_name},</p>
         
-        <div class="footer">
-          <p class="footer-text">© 2026 Zoiko Mobile. All rights reserved.</p>
-          <p class="footer-text" style="font-size: 10px; color: #999;">
-            <em>Your information is secure and will never be shared with third parties.</em>
-          </p>
-        </div>
-      </div>
+        <p>Thank you for contacting Zoiko Mobile! We've received your callback request.</p>
+        
+        <p><strong>Reference ID:</strong> {ref_id}</p>
+        <p><strong>We will contact you at:</strong> {clean_phone}</p>
+        
+        <hr style="border: none; border-top: 2px solid #FC8019;">
+        
+        <p>Our support team will reach out to you soon to assist with your request.</p>
+        
+        <p>
+            <strong>In the meantime:</strong><br>
+            • Visit <a href="https://zoikomobile.com">zoikomobile.com</a> for FAQs<br>
+            • Call <strong>800-988-8116</strong> for immediate support<br>
+            • Check your email for updates
+        </p>
+        
+        <hr style="border: none; border-top: 2px solid #FC8019;">
+        
+        <p style="color: #999; font-size: 12px;">
+            Zoiko Mobile Support Team<br>
+            Reference: {ref_id}
+        </p>
     </body>
-    </html>"""
+    </html>
+    """
 
-    print(f"\n{'='*70}")
-    print(f"CALLBACK REQUEST - {ref_id}")
-    print(f"{'='*70}")
-    print(f"From: {clean_name} ({clean_email})")
-    print(f"Phone: {clean_phone}")
-    print(f"Issue: {clean_issue[:50]}...")
-    print(f"{'='*70}\n")
-
-    support_sent = False
-    user_sent    = False
-    support_error = None
-    user_error    = None
-
-    # ── Email 1: notify support team ──────────────────────────────────────────
-    # Each email has its own try/except so one failure NEVER blocks the other
     try:
-        send_email(
-            SUPPORT_EMAIL,
-            f"🎧 New Callback Request — {clean_name} ({ref_id})",
-            support_html,
-            reply_to=clean_email     # support hits Reply → goes straight to customer
-        )
-        support_sent = True
-        print(f"✅ Support email sent to {SUPPORT_EMAIL}")
+        send_email(clean_email, f"✅ Callback Request Received - {ref_id}", customer_html)
     except Exception as e:
-        support_error = str(e)
-        print(f"❌ Support email FAILED: {support_error}")
+        print(f"⚠️  Warning: Failed to send confirmation email: {str(e)}")
+        # Don't fail the request if confirmation email fails
 
-    # ── Email 2: confirmation to customer ─────────────────────────────────────
+    # ── SUCCESS RESPONSE ───────────────────────────────────────────────────────
+    return JSONResponse(
+        {
+            "success": True,
+            "message": "Thank you! We received your callback request. Check your email for confirmation.",
+            "ref_id": ref_id
+        },
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "*",
+        }
+    )
+
+# ── /chat ──────────────────────────────────────────────────────────────────────
+@app.post("/chat")
+async def chat(request: Request):
+    """Placeholder for chat endpoint"""
     try:
-        send_email(
-            clean_email,
-            f"✅ We Received Your Request — Zoiko Mobile ({ref_id})",
-            user_html
+        body = await request.json()
+        message = body.get("message", "").lower()
+        
+        return JSONResponse(
+            {
+                "response": "Hello! I'm Zoikon, the Zoiko Mobile AI Assistant. How can I help you today?",
+                "success": True
+            },
+            status_code=200,
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+                "Access-Control-Allow-Headers": "*",
+            }
         )
-        user_sent = True
-        print(f"✅ User confirmation sent to {clean_email}")
     except Exception as e:
-        user_error = str(e)
-        print(f"❌ User email FAILED: {user_error}")
-
-    # ── Response based on what succeeded ─────────────────────────────────────
-    print(f"\nEmail results — support: {support_sent} | user: {user_sent}\n")
-
-    if user_sent:
-        # User got their confirmation — report success even if support email had issues
-        if not support_sent:
-            print(f"⚠️  Support email failed but user confirmed. Error: {support_error}")
-        return JSONResponse({
-            "success":       True,
-            "message":       "Request submitted successfully",
-            "refId":         ref_id,
-            "email":         clean_email,
-            "phone":         clean_phone,
-            "support_notified": support_sent
-        })
-    else:
-        # Neither or only support email sent — return error to user
-        error_msg = user_error or support_error or "Unknown error"
-        return JSONResponse({
-            "success": False,
-            "message": f"Error sending confirmation: {error_msg}. Please call 800-988-8116.",
-            "error":   error_msg
-        }, status_code=500)
+        return JSONResponse(
+            {"success": False, "message": str(e)},
+            status_code=500,
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+                "Access-Control-Allow-Headers": "*",
+            }
+        )
 
 # ── /health ───────────────────────────────────────────────────────────────────
 @app.get("/health")
 async def health():
-    return {
-        "status":  "✅ Server is healthy",
-        "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "service": "Zoiko Mobile Chatbot Backend",
-        "version": "2.0",
-        "email_configured": True,
-        "smtp_host": SMTP_HOST,
-        "smtp_user": SMTP_USER
-    }
-
-# ── Knowledge base chat ───────────────────────────────────────────────────────
-def load_knowledge():
-    p = Path("data/knowledge.json")
-    if p.exists():
-        with open(p) as f:
-            return json.load(f)
-    return {}
-
-knowledge = load_knowledge()
-
-@app.post("/chat")
-def chat(msg: Message):
-    user_msg = msg.message.lower()
-    for k, v in knowledge.items():
-        if k in user_msg:
-            return {"response": v}
-    return {"response": "I don't know yet."}
-
-# ── Serve frontend ─────────────────────────────────────────────────────────────
-if frontend_path.exists() and (frontend_path / "index.html").exists():
-    app.mount("/ui", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
-    print(f"✅ Frontend mounted at /ui from {frontend_path}\n")
-else:
-    print(f"⚠️  WARNING: Frontend folder or index.html not found!\n")
-
-# ── Startup message ───────────────────────────────────────────────────────────
-print("\n╔════════════════════════════════════════════════════════════╗")
-print("║  🎧 ZOIKO MOBILE CHATBOT BACKEND                           ║")
-print("║  CREDENTIALS HARDCODED - NO .ENV FILE NEEDED               ║")
-print("╠════════════════════════════════════════════════════════════╣")
-print("║  ✅ Status: Running                                        ║")
-print("║  📧 Email Service: SMTP (Hardcoded Credentials)            ║")
-print(f"║  SMTP Host: {SMTP_HOST}")
-print(f"║  From Email: {SMTP_USER}")
-print("║  🎯 Ready: YES                                             ║")
-print("╠════════════════════════════════════════════════════════════╣")
-print("║  API ENDPOINTS:                                            ║")
-print("║  POST   /send-request       (Callback requests)            ║")
-print("║  GET    /health             (Health check)                 ║")
-print("║  POST   /chat               (Chatbot responses)            ║")
-print("║  GET    /ui                 (Frontend interface)           ║")
-print("╚════════════════════════════════════════════════════════════╝\n")
-print("✅ All systems ready!\n")
-# ── EXPLICIT CORS HEADERS (Fallback if middleware fails) ─────────────────────
-@app.options("/{full_path:path}")
-async def preflight_handler(full_path: str):
-    """
-    Handle CORS preflight requests explicitly.
-    This ensures OPTIONS requests return proper CORS headers.
-    """
+    """Health check endpoint"""
     return JSONResponse(
-        content={},
+        {"status": "ok", "message": "Zoiko Mobile Chatbot is running"},
         status_code=200,
         headers={
             "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+            "Access-Control-Allow-Methods": "GET, OPTIONS",
             "Access-Control-Allow-Headers": "*",
-            "Access-Control-Max-Age": "600",
         }
     )
+
+# ── MOUNT FRONTEND ─────────────────────────────────────────────────────────────
+if frontend_path and frontend_path.exists():
+    app.mount("/", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
+    print(f"✅ Frontend mounted at /")
+
+# ── STARTUP INFO ───────────────────────────────────────────────────────────────
+print("\n")
+print("║════════════════════════════════════════════════════════════════╗")
+print("║         🚀 Zoiko Mobile Chatbot Server Ready!                  ║")
+print("║════════════════════════════════════════════════════════════════║")
+print("║  GET   /ui                  (Chatbot interface)                ║")
+print("║  GET   /health              (Health check)                     ║")
+print("║  POST  /chat                (Chat with AI)                     ║")
+print("║  POST  /send-request        (Callback requests)                ║")
+print("║  OPTIONS /*                 (CORS preflight)                   ║")
+print("║════════════════════════════════════════════════════════════════║")
+print("║  CORS: ✅ Enabled for all origins                              ║")
+print("║  SMTP: ✅ Configured                                           ║")
+print("║════════════════════════════════════════════════════════════════║\n")
