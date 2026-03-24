@@ -84,46 +84,25 @@ def escape_html(s: str) -> str:
              .replace(">","&gt;").replace('"',"&quot;").replace("'","&#039;"))
 
 def send_email(to_addr: str, subject: str, html_body: str, reply_to: str = None):
-    """
-    Send email via company SMTP.
-    reply_to: optional Reply-To address (set to customer email on support emails)
-    """
     print(f"\n📧 Sending email to: {to_addr}")
     print(f"   Subject: {subject}")
     print(f"   Via: {SMTP_HOST}:{SMTP_PORT}")
 
-    try:
-        msg = MIMEMultipart("alternative")
-        msg["Subject"] = subject
-        msg["From"]    = SMTP_USER
-        msg["To"]      = to_addr
-        if reply_to:
-            msg["Reply-To"] = reply_to   # ← support can hit Reply to reach customer directly
-        msg.attach(MIMEText(html_body, "html"))
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"]    = SMTP_USER
+    msg["To"]      = to_addr
+    if reply_to:
+        msg["Reply-To"] = reply_to
+    msg.attach(MIMEText(html_body, "html"))
 
-        print(f"   Connecting to SMTP server...")
-        with smtplib.SMTP(SMTP_HOST, 587, timeout=10) as server:
-            print("   Connected! Starting TLS...")
-            server.starttls()
-            print("   TLS started. Logging in...")
-            server.login(SMTP_USER, SMTP_PASS)
-            print("   Logged in! Sending email...")
-            server.sendmail(SMTP_USER, to_addr, msg.as_string())
-        with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=10) as server:
-            print(f"   Connected! Logging in...")
-            server.login(SMTP_USER, SMTP_PASS)
-            print(f"   Logged in! Sending email...")
-            server.sendmail(SMTP_USER, to_addr, msg.as_string())
-            print(f"   ✅ Email sent successfully to {to_addr}")
-    except smtplib.SMTPAuthenticationError as e:
-        print(f"❌ SMTP Authentication Error: {str(e)}")
-        raise
-    except smtplib.SMTPException as e:
-        print(f"❌ SMTP Error: {str(e)}")
-        raise
-    except Exception as e:
-        print(f"❌ Error: {str(e)}")
-        raise
+    # Single SSL connection — matches your port 465 config
+    with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=10) as server:
+        print("   Connected! Logging in...")
+        server.login(SMTP_USER, SMTP_PASS)
+        print("   Logged in! Sending email...")
+        server.sendmail(SMTP_USER, to_addr, msg.as_string())
+        print(f"   ✅ Email sent successfully to {to_addr}")
 from fastapi.responses import HTMLResponse
 
 @app.get("/send-request", response_class=HTMLResponse)
